@@ -2,14 +2,13 @@
 //pass ENML to md, and back
 
 // const xml2js = require('xml2js');
+const hljs = require('highlight.js');
 const MarkdownIt = require('markdown-it');
 const toMarkdown = require('to-markdown');
 const md = new MarkdownIt({
-    html: true, // Enable HTML tags in source
-    linkify: true, // Autoconvert URL-like text to links
+    html: true, 
+    linkify: true, 
 
-    // Highlighter function. Should return escaped HTML,
-    // or '' if the source string is not changed
     highlight(code, lang) {
         if (code.match(/^graph/) || code.match(/^sequenceDiagram/) || code.match(/^gantt/)) {
             return `<div class="mermaid">${code}</div>`

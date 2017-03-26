@@ -13,7 +13,8 @@
     "activationEvents": [
         "onCommand:extension.navToNote",
         "onCommand:extension.publishNote",
-        "onCommand:extension.openDevPage"
+        "onCommand:extension.openDevPage",
+        "onCommand:extension.sync"
     ],
     "main": "./src/extension",
     "contributes": {
@@ -28,23 +29,27 @@
             {
                 "command": "extension.openDevPage",
                 "title": "ever token"
+            },
+            {
+                "command": "extension.sync",
+                "title": "ever sync"
             }
         ],
         "configuration": {
             "title": "EverMonkey Configuration",
             "type": "object",
             "properties": {
-                "evernote.token": {
+                "evermonkey.token": {
                     "type": "string",
                     "default": "",
                     "description": "Copy your Developer Token from the website. (ever token: Open Developer Page)"
                 },
-                "evernote.noteStoreUrl": {
+                "evermonkey.noteStoreUrl": {
                     "type": "string",
                     "default": "",
                     "description": "Copy your NoteStore URL from the website. (ever token: Open Developer Page)"
                 },
-                "evernote.showTips": {
+                "evermonkey.showTips": {
                     "type": "boolean",
                     "default": true,
                     "description": "Show you friendly tips."
