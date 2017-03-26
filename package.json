@@ -11,18 +11,60 @@
         "Other"
     ],
     "activationEvents": [
-        "onCommand:extension.sayHello"
+        "onCommand:extension.navToNote",
+        "onCommand:extension.publishNote",
+        "onCommand:extension.openDevPage"
     ],
-    "main": "./extension",
+    "main": "./src/extension",
     "contributes": {
         "commands": [{
-            "command": "extension.sayHello",
-            "title": "Hello World"
-        }]
+                "command": "extension.navToNote",
+                "title": "ever open"
+            },
+            {
+                "command": "extension.publishNote",
+                "title": "ever publish"
+            },
+            {
+                "command": "extension.openDevPage",
+                "title": "ever token"
+            }
+        ],
+        "configuration": {
+            "title": "EverMonkey Configuration",
+            "type": "object",
+            "properties": {
+                "evernote.token": {
+                    "type": "string",
+                    "default": "",
+                    "description": "Copy your Developer Token from the website. (ever token: Open Developer Page)"
+                },
+                "evernote.noteStoreUrl": {
+                    "type": "string",
+                    "default": "",
+                    "description": "Copy your NoteStore URL from the website. (ever token: Open Developer Page)"
+                },
+                "evernote.showTips": {
+                    "type": "boolean",
+                    "default": true,
+                    "description": "Show you friendly tips."
+                }
+            }
+        }
     },
+
     "scripts": {
         "postinstall": "node ./node_modules/vscode/bin/install",
         "test": "node ./node_modules/vscode/bin/test"
+    },
+    "dependencies": {
+        "evernote": "^2.0.1-beta",
+        "highlight.js": "9.10.0",
+        "hljs": "6.2.3",
+        "lodash": "4.17.4",
+        "markdown-it": "8.3.1",
+        "open": "0.0.5",
+        "to-markdown": "3.0.4"
     },
     "devDependencies": {
         "typescript": "^2.0.3",
