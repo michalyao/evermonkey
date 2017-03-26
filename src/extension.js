@@ -1,28 +1,26 @@
-// The module 'vscode' contains the VS Code extensibility API
-// Import the module and reference it with the alias vscode in your code below
 const vscode = require('vscode');
 const converter = require('./converter');
 const EvernoteClient = require('./everapi');
 const _ = require('lodash');
 const open = require('open');
 
-
 const config = vscode.workspace.getConfiguration('evermonkey');
 const client = new EvernoteClient(config.token, config.noteStoreUrl);
-// const client = new EvernoteClient('S=s1:U=937a9:E=16252cc3284:C=15afb1b0380:P=1cd:A=en-devtoken:V=2:H=7110d1259eee40fdb73e702928dceb88', 'https://sandbox.evernote.com/shard/s1/notestore');
 const TIP_BACK = 'back...';
 
 let notebooks, notesMap, selectedNotebook;
 const localNote = {};
 let showTips = config.showTips;
 
-function listNotebooks() {
-    if (!notebooks || !notesMap) {
-        return sync();
-    }
-    return vscode.window.showQuickPick(notebooks.map(notebook => notebook.name));
+
+// nav to one Note
+function navToNote() {
+    listNotebooks()
+        .then(selected => listNotes(selected))
+        .then(selected => openNote(selected))
 }
 
+// sycn account
 function sync() {
     vscode.window.setStatusBarMessage('Synchronizing your account...', 2);
     return client.listNotebooks().then(allNotebooks => {
@@ -37,27 +35,21 @@ function sync() {
     catch(e => wrapError(e));
 }
 
-function listNotes(selected) {
-    if (!selected) {
-        throw "";
-    }
-    selectedNotebook = notebooks.find(notebook => notebook.name === selected);
-    let noteLists = notesMap[selectedNotebook.guid];
-    if (!noteLists) {
-        vscode.window.showInformationMessage("can not open an empty notebook.");
-        return navToNote();
-    } else {
-        let noteTitles = noteLists.map(note => note.title);
-        return vscode.window.showQuickPick(noteTitles.concat(TIP_BACK));
-    }
+// open evernote dev page.
+function openDevPage() {
+    console.log(config);
+    vscode.window.showQuickPick(["China", "Other"]).then(choice => {
+        if (!choice) {
+            return;
+        }
+        if (choice === "China") {
+            open("https://app.yinxiang.com/api/DeveloperToken.action");
+        } else {
+            open("https://www.evernote.com/api/DeveloperToken.action");
+        }
+    });
 }
 
-// nav to one Note
-function navToNote() {
-    listNotebooks()
-        .then(selected => listNotes(selected))
-        .then(selected => openNote(selected))
-}
 // TODO: add tags in inputbox?
 function publishNote() {
     let editor = vscode.window.activeTextEditor;
@@ -85,25 +77,33 @@ function publishNote() {
                     vscode.window.showInformationMessage(`${result} created successfully.`);
                 }
             })
-        })
+        });
     }
-
 }
 
-function openDevPage() {
-    console.log(config);
-    vscode.window.showQuickPick(["China", "Other"]).then(choice => {
-        if (!choice) {
-            return;
-        }
-        if (choice === "China") {
-            open("https://app.yinxiang.com/api/DeveloperToken.action");
-        } else {
-            open("https://www.evernote.com/api/DeveloperToken.action");
-        }
-    });
 
+function listNotebooks() {
+    if (!notebooks || !notesMap) {
+        return sync();
+    }
+    return vscode.window.showQuickPick(notebooks.map(notebook => notebook.name));
 }
+
+function listNotes(selected) {
+    if (!selected) {
+        throw "";
+    }
+    selectedNotebook = notebooks.find(notebook => notebook.name === selected);
+    let noteLists = notesMap[selectedNotebook.guid];
+    if (!noteLists) {
+        vscode.window.showInformationMessage("can not open an empty notebook.");
+        return navToNote();
+    } else {
+        let noteTitles = noteLists.map(note => note.title);
+        return vscode.window.showQuickPick(noteTitles.concat(TIP_BACK));
+    }
+}
+
 
 function openNote(selected) {
     if (!selected) {
