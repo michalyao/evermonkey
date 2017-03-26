@@ -1,8 +1,8 @@
 {
-    "name": "evernote-markdown",
-    "displayName": "evernote-markdown",
+    "name": "evermonkey",
+    "displayName": "evermonkey",
     "description": "Markdown support for Evernote.",
-    "version": "0.0.1",
+    "version": "0.0.2",
     "publisher": "michalyao",
     "engines": {
         "vscode": "^1.10.0"
@@ -10,6 +10,11 @@
     "categories": [
         "Other"
     ],
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/michalyao/evermonkey.git"
+    },
+    "homepage": "https://github.com/michalyao/evermonkey",
     "activationEvents": [
         "onCommand:extension.navToNote",
         "onCommand:extension.publishNote",
@@ -57,7 +62,6 @@
             }
         }
     },
-
     "scripts": {
         "postinstall": "node ./node_modules/vscode/bin/install",
         "test": "node ./node_modules/vscode/bin/test"
