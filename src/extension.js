@@ -60,11 +60,11 @@ function publishNote() {
     } else {
         content = converter.toEnml(doc.getText());
     }
-    if (localNote.meta) {
+    if (localNote[doc.fileName]) {
         // update
-        let title = localNote.meta.title;
-        client.updateNoteContent(localNote.meta.guid, title, content).catch(e => wrapError(e));
-        vscode.window.showInformationMessage(`${localNote.meta.title} updated successfully.`);
+        let title = localNote[doc.fileName].title;
+        client.updateNoteContent(localNote[doc.fileName].guid, title, content).catch(e => wrapError(e));
+        vscode.window.showInformationMessage(`${title} updated successfully.`);
     } else {
         // new 
         listNotebooks().then(selected => {
@@ -113,11 +113,13 @@ function openNote(selected) {
         return navToNote();
     }
     let selectedNote = notesMap[selectedNotebook.guid].find(note => note.title === selected);
-    localNote.meta = selectedNote;
     return client.getNoteContent(selectedNote.guid).then(content => {
         return vscode.workspace.openTextDocument({
             language: 'markdown'
         }).then(doc => {
+            console.log(doc);
+            localNote[doc.fileName] = selectedNote;
+            console.log(localNote);
             return vscode.window.showTextDocument(doc);
         }).then(editor => {
             let startPos = new vscode.Position(1, 0);
