@@ -8,7 +8,7 @@ const TIP_BACK = 'back...';
 let notebooks, notesMap, selectedNotebook;
 const localNote = {};
 let showTips;
-
+let client;
 
 // nav to one Note
 function navToNote() {
@@ -20,7 +20,7 @@ function navToNote() {
 // sycn account
 function sync() {
     const config = vscode.workspace.getConfiguration('evermonkey');
-    const client = new EvernoteClient(config.token, config.noteStoreUrl);
+    client = new EvernoteClient(config.token, config.noteStoreUrl);
     showTips = config.showTips;
     
     vscode.window.setStatusBarMessage('Synchronizing your account...', 2);
