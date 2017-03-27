@@ -18,6 +18,7 @@
     "activationEvents": [
         "onCommand:extension.navToNote",
         "onCommand:extension.publishNote",
+        "onCommand:extension.openDevPage",
         "onCommand:extension.sync"
     ],
     "main": "./src/extension",

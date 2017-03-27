@@ -3,13 +3,11 @@ const converter = require('./converter');
 const EvernoteClient = require('./everapi');
 const _ = require('lodash');
 const open = require('open');
-
-const config = vscode.workspace.getConfiguration('evermonkey');
 const TIP_BACK = 'back...';
 
 let notebooks, notesMap, selectedNotebook;
 const localNote = {};
-let showTips = config.showTips;
+let showTips;
 
 
 // nav to one Note
@@ -21,6 +19,10 @@ function navToNote() {
 
 // sycn account
 function sync() {
+    const config = vscode.workspace.getConfiguration('evermonkey');
+    const client = new EvernoteClient(config.token, config.noteStoreUrl);
+    showTips = config.showTips;
+    
     vscode.window.setStatusBarMessage('Synchronizing your account...', 2);
     return client.listNotebooks().then(allNotebooks => {
         notebooks = allNotebooks;
@@ -36,7 +38,6 @@ function sync() {
 
 // open evernote dev page.
 function openDevPage() {
-    console.log(config);
     vscode.window.showQuickPick(["China", "Other"]).then(choice => {
         if (!choice) {
             return;
@@ -150,8 +151,6 @@ function wrapError(error) {
 }
 
 function activate(context) {
-    const client = new EvernoteClient(config.token, config.noteStoreUrl);
-
     vscode.workspace.onDidCloseTextDocument(removeLocal);
     vscode.workspace.onDidSaveTextDocument(alertToUpdate);
     let listAllNotebooksCmd = vscode.commands.registerCommand('extension.navToNote', navToNote);
