@@ -5,7 +5,6 @@ const _ = require('lodash');
 const open = require('open');
 
 const config = vscode.workspace.getConfiguration('evermonkey');
-const client = new EvernoteClient(config.token, config.noteStoreUrl);
 const TIP_BACK = 'back...';
 
 let notebooks, notesMap, selectedNotebook;
@@ -73,11 +72,8 @@ function publishNote() {
                 placeHolder: "Name your note please."
             }).then(result => {
                 if (result) {
-                    console.log(notesMap);
                     client.createNote(result, selectedNotebook.guid, content).then(note => {
-                        console.log(note);
                         notesMap[selectedNotebook.guid].push(note);
-                        console.log(notesMap);
                     }).catch(e => wrapError(e));
                     
                     vscode.window.showInformationMessage(`${result} created successfully.`);
@@ -147,13 +143,15 @@ function wrapError(error) {
     } else if (error.errorCode && error.parameter) {
         errMsg = `Evernote Error: ${error.errorCode} - ${error.parameter}`;
     } else {
-        errMsg = "Unexpected Error: " + error.toString();
+        errMsg = "Unexpected Error: " + error;
     }
 
     vscode.window.showErrorMessage(errMsg);
 }
 
 function activate(context) {
+    const client = new EvernoteClient(config.token, config.noteStoreUrl);
+
     vscode.workspace.onDidCloseTextDocument(removeLocal);
     vscode.workspace.onDidSaveTextDocument(alertToUpdate);
     let listAllNotebooksCmd = vscode.commands.registerCommand('extension.navToNote', navToNote);
