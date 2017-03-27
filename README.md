@@ -29,7 +29,7 @@ Just new one file, edit it and use `ever publish`
 This extension contributes the following settings, you can use `ever token` command to open the website where you can get all these information:
 
 * `evermonkey.token`: Evernote developer token.
-* `evermonkey.storeUrl`: Evernote storeUrl.
+* `evermonkey.noteStoreUrl`: Evernote noteStoreUrl.
 
 
 ## Release Notes
