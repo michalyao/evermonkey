@@ -2,7 +2,7 @@
     "name": "evermonkey",
     "displayName": "evermonkey",
     "description": "Markdown support for Evernote.",
-    "version": "0.4.0",
+    "version": "0.5.0",
     "publisher": "michalyao",
     "engines": {
         "vscode": "^1.10.0"

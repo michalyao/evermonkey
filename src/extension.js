@@ -32,7 +32,7 @@ function sync() {
         notesMap = _.groupBy(notes, 'notebookGuid');
         return vscode.window.showQuickPick(notebooks.map(notebook => notebook.name));
     }).
-    catch(e => wrapError(e));
+        catch(e => wrapError(e));
 }
 
 // open evernote dev page.
@@ -73,7 +73,13 @@ function publishNote() {
                 placeHolder: "Name your note please."
             }).then(result => {
                 if (result) {
-                    client.createNote(result, selectedNotebook.guid, content).catch(e => wrapError(e));
+                    console.log(notesMap);
+                    client.createNote(result, selectedNotebook.guid, content).then(note => {
+                        console.log(note);
+                        notesMap[selectedNotebook.guid].push(note);
+                        console.log(notesMap);
+                    }).catch(e => wrapError(e));
+                    
                     vscode.window.showInformationMessage(`${result} created successfully.`);
                 }
             })
@@ -181,5 +187,5 @@ function alertToUpdate() {
 }
 
 // this method is called when your extension is deactivated
-function deactivate() {}
+function deactivate() { }
 exports.deactivate = deactivate;
