@@ -2,7 +2,7 @@
     "name": "evermonkey",
     "displayName": "evermonkey",
     "description": "Markdown support for Evernote.",
-    "version": "0.0.2",
+    "version": "0.4.0",
     "publisher": "michalyao",
     "engines": {
         "vscode": "^1.10.0"
@@ -23,7 +23,8 @@
     ],
     "main": "./src/extension",
     "contributes": {
-        "commands": [{
+        "commands": [
+            {
                 "command": "extension.navToNote",
                 "title": "ever open"
             },

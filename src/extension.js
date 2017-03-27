@@ -117,9 +117,7 @@ function openNote(selected) {
         return vscode.workspace.openTextDocument({
             language: 'markdown'
         }).then(doc => {
-            console.log(doc);
             localNote[doc.fileName] = selectedNote;
-            console.log(localNote);
             return vscode.window.showTextDocument(doc);
         }).then(editor => {
             let startPos = new vscode.Position(1, 0);
@@ -150,6 +148,7 @@ function wrapError(error) {
 }
 
 function activate(context) {
+    vscode.workspace.onDidCloseTextDocument(removeLocal);
     vscode.workspace.onDidSaveTextDocument(alertToUpdate);
     let listAllNotebooksCmd = vscode.commands.registerCommand('extension.navToNote', navToNote);
     let publishNoteCmd = vscode.commands.registerCommand('extension.publishNote', publishNote);
@@ -159,18 +158,20 @@ function activate(context) {
     context.subscriptions.push(publishNoteCmd);
     context.subscriptions.push(openDevPageCmd);
     context.subscriptions.push(syncCmd);
-    
-
-
 }
 exports.activate = activate;
+
+// remove local cache when closed the editor.
+function removeLocal(event) {
+    localNote[event.fileName] = null;
+}
 
 function alertToUpdate() {
     if (!showTips) {
         return;
     }
 
-    let msg = "Saving to local won't sync the remote. Try ever: publishs";
+    let msg = "Saving to local won't sync the remote. Try ever publish";
     let option = "Ignore";
     vscode.window.showWarningMessage(msg, option).then(result => {
         if (result === option) {
