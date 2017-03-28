@@ -22,7 +22,7 @@ function sync() {
     const config = vscode.workspace.getConfiguration('evermonkey');
     client = new EvernoteClient(config.token, config.noteStoreUrl);
     showTips = config.showTips;
-    
+
     vscode.window.setStatusBarMessage('Synchronizing your account...', 2);
     return client.listNotebooks().then(allNotebooks => {
         notebooks = allNotebooks;
@@ -74,9 +74,13 @@ function publishNote() {
             }).then(result => {
                 if (result) {
                     client.createNote(result, selectedNotebook.guid, content).then(note => {
-                        notesMap[selectedNotebook.guid].push(note);
+                        if (!notesMap[selectedNotebook.guid]) {
+                            notesMap[selectedNotebook.guid] = [note];
+                        } else {
+                            notesMap[selectedNotebook.guid].push(note);
+                        }
                     }).catch(e => wrapError(e));
-                    
+
                     vscode.window.showInformationMessage(`${result} created successfully.`);
                 }
             })
