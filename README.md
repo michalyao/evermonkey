@@ -4,10 +4,10 @@ Evernoting in vscode.
 
 ## Features
 
-This extension 
+You can new an untitle file, edit it and use `ever publish` to publish it to evernote.
 
 Commands:
-* `ever open` :
+* `ever open` 
 * `ever publish`
 * `ever sync`
 * `ever token`
@@ -24,7 +24,7 @@ Commands:
 
 Use command `ever token` to help you get your token & noteStoreUrl. After enter that command (Or your can visit the page directly - [China](https://app.yinxiang.com/api/DeveloperToken.action) | [Other Countries](https://www.evernote.com/api/DeveloperToken.action)).
 
-Then open your user setting by `Preferences: Open User Settings`, and copy&paste token info to (Search `evernote` to get you there):
+Then open your user setting by `Preferences: Open User Settings`, and copy&paste token info to (Search `evermonkey` to get you there):
 
 * `evermonkey.token`: your developer token
 * `evermonkey.noteStoreUrl`: your API url
