@@ -20,8 +20,7 @@ class EvernoteClient {
 
     listAllNoteMetadatas(notebookGuid) {
         return this.noteStore.findNotesMetadata(
-            
-            {notebookGuid}, 0, MAX_NOTE_COUNTS, {includeTitle: true, includeNotebookGuid: true}
+            {notebookGuid}, 0, MAX_NOTE_COUNTS, {includeTitle: true, includeNotebookGuid: true, includeTagGuids: true}
         )
     }
 
