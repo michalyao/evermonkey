@@ -17,10 +17,13 @@ notebook: %s
 
 `
 
+// TODO: Local cache needs cleaning, maybe add a clean cmd.
 let notebooks, notesMap, selectedNotebook;
 const localNote = {};
 let showTips;
 let client;
+const tagCache = {};
+
 
 //  exact text Metadata by convention
 function exactMetadata(text) {
@@ -34,19 +37,19 @@ function exactMetadata(text) {
             let metaArray = metadataStr.split('\n');
             metaArray.forEach(value => {
                 let entry = value.split(':');
-                metadata[entry[0]]=entry[1].trim()
+                metadata[entry[0]] = entry[1].trim()
             });
             if (metadata['tags']) {
                 let tagStr = metadata['tags'];
                 metadata['tags'] = tagStr.split(',').map(value => value.trim());
             }
         }
-    } 
-    return {"metadata": metadata, "content": content};
+    }
+    return { "metadata": metadata, "content": content };
 }
 
 function genMetaHeader(title, tags, notebook) {
-    return util.format(METADATA_HEADER, title, tags, notebook);
+    return util.format(METADATA_HEADER, title, tags.join(','), notebook);
 }
 
 // nav to one Note
@@ -61,7 +64,11 @@ function sync() {
     const config = vscode.workspace.getConfiguration('evermonkey');
     client = new EvernoteClient(config.token, config.noteStoreUrl);
     showTips = config.showTips;
-
+    // init cache.
+    client.listTags().then(tags => {
+        console.log(tags);
+        tags.forEach(tag => tagCache[tag.guid] = tagCache[tag.name]);
+    }).catch(e => wrapError(e));
     vscode.window.setStatusBarMessage('Synchronizing your account...', 2);
     return client.listNotebooks().then(allNotebooks => {
         notebooks = allNotebooks;
@@ -169,7 +176,16 @@ function openNote(selected) {
             let startPos = new vscode.Position(1, 0);
             editor.edit(edit => {
                 let mdContent = converter.toMd(content);
-                edit.insert(startPos, mdContent);
+                let tagGuids = selectedNote.tagGuids;
+                let tags;
+                if (tagGuids) {
+                    tags = tagGuids.map(guid => tagCache[guid]);
+                } else {
+                    tags = [];
+                }
+                let metaHeader = genMetaHeader(selectedNote.title, tags,
+                    notebooks.find(notebook => notebook.guid === selectedNote.notebookGuid).name);
+                edit.insert(startPos, metaHeader + mdContent);
             });
         });
     });
@@ -194,6 +210,7 @@ function wrapError(error) {
 }
 
 function activate(context) {
+
     vscode.workspace.onDidCloseTextDocument(removeLocal);
     vscode.workspace.onDidSaveTextDocument(alertToUpdate);
     let listAllNotebooksCmd = vscode.commands.registerCommand('extension.navToNote', navToNote);
