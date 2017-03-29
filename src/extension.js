@@ -3,9 +3,19 @@ const converter = require('./converter');
 const EvernoteClient = require('./everapi');
 const _ = require('lodash');
 const open = require('open');
+const util = require('util');
 
 const TIP_BACK = 'back...';
 const METADATA_PATTERN = /^---[ \t]*\n((?:[ \t]*[^ \t:]+[ \t]*:[^\n]*\n)+)---[ \t]*\n/;
+
+const METADATA_HEADER = `\
+---
+title: %s
+tags: %s
+notebook: %s
+---
+
+`
 
 let notebooks, notesMap, selectedNotebook;
 const localNote = {};
@@ -33,6 +43,10 @@ function exactMetadata(text) {
         }
     } 
     return {"metadata": metadata, "content": content};
+}
+
+function genMetaHeader(title, tags, notebook) {
+    return util.format(METADATA_HEADER, title, tags, notebook);
 }
 
 // nav to one Note
