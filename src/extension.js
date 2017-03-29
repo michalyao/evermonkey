@@ -3,12 +3,37 @@ const converter = require('./converter');
 const EvernoteClient = require('./everapi');
 const _ = require('lodash');
 const open = require('open');
+
 const TIP_BACK = 'back...';
+const METADATA_PATTERN = /^---[ \t]*\n((?:[ \t]*[^ \t:]+[ \t]*:[^\n]*\n)+)---[ \t]*\n/;
 
 let notebooks, notesMap, selectedNotebook;
 const localNote = {};
 let showTips;
 let client;
+
+//  exact text Metadata by convention
+function exactMetadata(text) {
+    let metadata = {};
+    let content = text;
+    if (_.startsWith(text, '---')) {
+        let match = METADATA_PATTERN.exec(text);
+        if (match) {
+            content = text.substring(match[0].trim().length);
+            let metadataStr = match[1].trim();
+            let metaArray = metadataStr.split('\n');
+            metaArray.forEach(value => {
+                let entry = value.split(':');
+                metadata[entry[0]]=entry[1].trim()
+            });
+            if (metadata['tags']) {
+                let tagStr = metadata['tags'];
+                metadata['tags'] = tagStr.split(',').map(value => value.trim());
+            }
+        }
+    } 
+    return {"metadata": metadata, "content": content};
+}
 
 // nav to one Note
 function navToNote() {
