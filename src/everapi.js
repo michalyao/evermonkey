@@ -20,7 +20,8 @@ class EvernoteClient {
 
     listAllNoteMetadatas(notebookGuid) {
         return this.noteStore.findNotesMetadata(
-            {notebookGuid}, 0, MAX_NOTE_COUNTS, {includeTitle: true, includeNotebookGuid: true, includeTagGuids: true}
+            
+            {notebookGuid}, 0, MAX_NOTE_COUNTS, {includeTitle: true, includeNotebookGuid: true}
         )
     }
 
@@ -38,11 +39,6 @@ class EvernoteClient {
 
     createNote(title, notebookGuid, content) {
         return this.noteStore.createNote({title, notebookGuid, content});
-    }
-
-    // list all tags, and store it in local. guid -> name (hash by guid)
-    listTags() {
-        return this.noteStore.listTags();
     }
 }
 module.exports = EvernoteClient
