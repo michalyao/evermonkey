@@ -4,7 +4,13 @@ Evernoting in vscode.
 
 ## Features
 
-You can new an untitle file, edit it and use `ever publish` to publish it to evernote.
+You can new an untitle file, edit it and use `ever publish` to publish it to evernote. And of course more than that.
+
+Why EverMonkey is better? EverMonkey is Inspired by the Sublime Test one, make local caches to avoid making net request everytime and in result
+you got a fast experience. 
+
+Although nowadays it looks simple or maybe ugly, but I am going to make it better. 
+
 
 Commands:
 * `ever open` 
@@ -34,11 +40,21 @@ Then open your user setting by `Preferences: Open User Settings`, and copy&paste
 ## Known Issues
 
 - Open note in notebook may cause a mess, because unsupported transfer from enml to markdown.
-- You can report issues here [issues](https://github.com/michalyao/evermonkey/issues)
+- You can report issues here [Github issues](https://github.com/michalyao/evermonkey/issues)
 
 TODOs:
 + Add tags for note
 + More markdown style support. 
+
+Tags support coming soon :-), something like this ↓
+
+```
+---
+title: note title
+tags: tag1, tag2, tag3
+notebook: notebook
+---
+```
 
 -----------------------------------------------------------------------------------------------------------
 

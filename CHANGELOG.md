@@ -9,3 +9,6 @@
 - v1.0.2
     - fixed can not create note in an empty notebook.
     - update readme.
+
+- v1.0.3
+    - Fix some markdown error.
