@@ -1,36 +1,14 @@
-'use strict'
-//pass ENML to md, and back
 
-// const xml2js = require('xml2js');
-const hljs = require('highlight.js');
-const MarkdownIt = require('markdown-it');
 const toMarkdown = require('to-markdown');
-const md = new MarkdownIt({
-    html: true, 
-    linkify: true, 
+const marked = require('marked');
+const MAGIC_SPELL = "%EVERMONKEY%";
 
-    highlight(code, lang) {
-        if (code.match(/^graph/) || code.match(/^sequenceDiagram/) || code.match(/^gantt/)) {
-            return `<div class="mermaid">${code}</div>`
-        }
-
-        if (lang && hljs.getLanguage(lang)) {
-            try {
-                return `<pre class="hljs"><code>${hljs.highlight(lang, code, true).value}</code></pre>`
-            } catch (err) {
-                // Ignore error
-            }
-        }
-
-        return `<pre class="hljs"><code>${md.utils.escapeHtml(code)}</code></pre>`
-    }
-});
-
-const inlineCodeRule = md.renderer.rules.code_inline
-md.renderer.rules.code_inline = (...args) => {
-    const result = inlineCodeRule.call(md, ...args)
-    return result.replace('<code>', '<code class="inline">')
-}
+const customRenderer = new marked.Renderer();
+customRenderer.heading = (text, level) => {
+    return '<h'+ level + '>'
+    + text
+    + '</h' + level + '>\n';
+};
 
 function toMd(enml) {
     if (!enml) {
@@ -41,25 +19,35 @@ function toMd(enml) {
     let startIndex = enml.indexOf('>', beginTagIndex) + 1;
     let endIndex = enml.indexOf('</en-note>');
     let rawContent = enml.substring(startIndex, endIndex);
-
-    let commentRegex = /<!--.*?-->/;
-    let htmlStr = rawContent.replace(commentRegex, '');
-    return toMarkdown(htmlStr);
+    
+    if (rawContent.indexOf(MAGIC_SPELL) != -1) { 
+        
+        let beginMark = '<!--' + MAGIC_SPELL;
+        let beginMagicIdx = rawContent.indexOf(beginMark) + beginMark.length;
+        let endMagicIdx = rawContent.indexOf(MAGIC_SPELL + '-->');
+        let magicString = rawContent.substring(beginMagicIdx, endMagicIdx);
+        let base64content = new Buffer(magicString, 'base64');
+        return base64content.toString('utf-8');
+    } else { 
+        let commentRegex = /<!--.*?-->/;
+        let htmlStr = rawContent.replace(commentRegex, '');
+        return toMarkdown(htmlStr);
+    }
 }
 
 function toHtml(markdown) {
-    return md.render(markdown);
+    return marked(markdown, { xhtml: true, renderer: customRenderer });
 }
 
 function toEnml(content) {
     let enml = '<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE en-note SYSTEM "http://xml.evernote.com/pub/enml2.dtd"><en-note style=";">';
+    enml += '<!--' + MAGIC_SPELL;
+    enml += new Buffer(content, 'utf-8').toString('base64');
+    enml += MAGIC_SPELL + '-->';
     enml += toHtml(content);
-
     enml += '</en-note>';
-
     return enml;
 }
 
 exports.toMd = toMd;
 exports.toEnml = toEnml;
-exports.toHtml = toHtml;
