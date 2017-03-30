@@ -2,7 +2,7 @@
     "name": "evermonkey",
     "displayName": "evermonkey",
     "description": "Markdown support for Evernote.",
-    "version": "1.0.3",
+    "version": "1.0.5",
     "publisher": "michalyao",
     "engines": {
         "vscode": "^1.10.0"
@@ -70,10 +70,8 @@
     },
     "dependencies": {
         "evernote": "^2.0.1-beta",
-        "highlight.js": "9.10.0",
-        "hljs": "6.2.3",
         "lodash": "4.17.4",
-        "markdown-it": "8.3.1",
+        "marked": "0.3.6",
         "open": "0.0.5",
         "to-markdown": "3.0.4"
     },
