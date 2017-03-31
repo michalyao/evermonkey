@@ -156,6 +156,20 @@ function listNotes(selected) {
     }
 }
 
+// create a note with metadata
+function newNote() {
+    return vscode.workspace.openTextDocument({
+        language: 'markdown'
+    }).then(doc => {
+        return vscode.window.showTextDocument(doc);
+    }).then(editor => {
+        let startPos = new vscode.Position(1, 0);
+        editor.edit(edit => {
+            let metaHeader = util.format(METADATA_HEADER, '', '', '');
+            edit.insert(startPos, metaHeader);
+        });
+    });
+}
 
 function openNote(selected) {
     if (!selected) {
@@ -216,10 +230,14 @@ function activate(context) {
     let publishNoteCmd = vscode.commands.registerCommand('extension.publishNote', publishNote);
     let openDevPageCmd = vscode.commands.registerCommand('extension.openDevPage', openDevPage);
     let syncCmd = vscode.commands.registerCommand('extension.sync', sync);
+    let newNoteCmd = vscode.commands.registerCommand('extension.newNote', newNote);
+    
     context.subscriptions.push(listAllNotebooksCmd);
     context.subscriptions.push(publishNoteCmd);
     context.subscriptions.push(openDevPageCmd);
     context.subscriptions.push(syncCmd);
+    context.subscriptions.push(newNoteCmd);
+    
 }
 exports.activate = activate;
 
