@@ -2,7 +2,7 @@
     "name": "evermonkey",
     "displayName": "evermonkey",
     "description": "Markdown support for Evernote.",
-    "version": "1.0.5",
+    "version": "1.2.2",
     "publisher": "michalyao",
     "engines": {
         "vscode": "^1.10.0"
@@ -16,6 +16,7 @@
     },
     "icon": "assets/icon.png",
     "homepage": "https://github.com/michalyao/evermonkey",
+    "main": "./src/extension",
     "activationEvents": [
         "onCommand:extension.navToNote",
         "onCommand:extension.publishNote",
@@ -23,7 +24,6 @@
         "onCommand:extension.sync",
         "onCommand:extension.newNote"
     ],
-    "main": "./src/extension",
     "contributes": {
         "commands": [
             {
@@ -75,10 +75,10 @@
     },
     "dependencies": {
         "evernote": "^2.0.1-beta",
-        "lodash": "4.17.4",
-        "marked": "0.3.6",
+        "lodash": "^4.17.4",
+        "marked": "^0.3.6",
         "open": "0.0.5",
-        "to-markdown": "3.0.4"
+        "to-markdown": "^3.0.3"
     },
     "devDependencies": {
         "typescript": "^2.0.3",
