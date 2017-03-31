@@ -12,3 +12,7 @@
 
 - v1.0.3
     - Fix some markdown error.
+
+- v1.1.0
+    - add metadata support for tags
+    - add new command ever new to create a file with metadata.
