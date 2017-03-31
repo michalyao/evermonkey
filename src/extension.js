@@ -65,7 +65,6 @@ function sync() {
     showTips = config.showTips;
     // init cache.
     client.listTags().then(tags => {
-        console.log(tags);
         tags.forEach(tag => tagCache[tag.guid] = tagCache[tag.name]);
     }).catch(e => wrapError(e));
     vscode.window.setStatusBarMessage('Synchronizing your account...', 2);
@@ -77,6 +76,26 @@ function sync() {
         let notes = _.flattenDeep(allMetas.map(meta => meta.notes));
         notesMap = _.groupBy(notes, 'notebookGuid');
         return vscode.window.showQuickPick(notebooks.map(notebook => notebook.name));
+    }).
+        catch(e => wrapError(e));
+}
+
+function syncAccount() {
+    const config = vscode.workspace.getConfiguration('evermonkey');
+    client = new EvernoteClient(config.token, config.noteStoreUrl);
+    showTips = config.showTips;
+    // init cache.
+    client.listTags().then(tags => {
+        tags.forEach(tag => tagCache[tag.guid] = tagCache[tag.name]);
+    }).catch(e => wrapError(e));
+    vscode.window.setStatusBarMessage('Synchronizing your account...', 2);
+    return client.listNotebooks().then(allNotebooks => {
+        notebooks = allNotebooks;
+        let promises = notebooks.map(notebook => client.listAllNoteMetadatas(notebook.guid));
+        return Promise.all(promises);
+    }).then(allMetas => {
+        let notes = _.flattenDeep(allMetas.map(meta => meta.notes));
+        notesMap = _.groupBy(notes, 'notebookGuid');
     }).
         catch(e => wrapError(e));
 }
@@ -98,38 +117,36 @@ function openDevPage() {
 // TODO: add tags in inputbox?
 function publishNote() {
     let editor = vscode.window.activeTextEditor;
-    let content;
     let doc = editor.document;
-    if (doc.languageId === "markdown") {
-        content = converter.toEnml(doc.getText());
-    } else {
-        content = converter.toEnml(doc.getText());
-    }
-    if (localNote[doc.fileName]) {
+    let result = exactMetadata(doc.getText());
+    let content = converter.toEnml(result.content);
+    let meta = result.metadata;
+    let tagNames = meta['tags'];
+    let title = meta['title'];
+    let notebook = meta['notebook'];
+    if (localNote[doc.fileName] && title === localNote[doc.fileName].title) {
         // update
-        let title = localNote[doc.fileName].title;
-        client.updateNoteContent(localNote[doc.fileName].guid, title, content).catch(e => wrapError(e));
-        vscode.window.showInformationMessage(`${title} updated successfully.`);
+        client.updateNoteContent(localNote[doc.fileName].guid, title, content, tagNames).then(result => {
+            vscode.window.showInformationMessage(`${title} updated successfully.`);
+        }).catch(e => wrapError(e));
     } else {
-        // new 
-        listNotebooks().then(selected => {
-            let selectedNotebook = notebooks.find(notebook => notebook.name === selected);
-            vscode.window.showInputBox({
-                placeHolder: "Name your note please."
-            }).then(result => {
-                if (result) {
-                    client.createNote(result, selectedNotebook.guid, content).then(note => {
-                        if (!notesMap[selectedNotebook.guid]) {
-                            notesMap[selectedNotebook.guid] = [note];
-                        } else {
-                            notesMap[selectedNotebook.guid].push(note);
-                        }
-                    }).catch(e => wrapError(e));
+        // new
+        title = meta['title'];
 
-                    vscode.window.showInformationMessage(`${result} created successfully.`);
+        let selectedNotebook = notebooks.find(nb => notebook === nb.name);
+        if (!selectedNotebook) {
+            client.createNotebook(notebook).then(result => client.createNote(title, result.guid, content, tagNames)).catch(e => wrapError(e));
+        } else {
+            client.createNote(title, selectedNotebook.guid, content, tagNames).then(note => {
+                if (!notesMap[selectedNotebook.guid]) {
+                    notesMap[selectedNotebook.guid] = [note];
+                } else {
+                    notesMap[selectedNotebook.guid].push(note);
                 }
-            })
-        });
+            }).then(re =>
+                vscode.window.showInformationMessage(`${title} created successfully.`))
+                .catch(e => wrapError(e));
+        }
     }
 }
 
@@ -158,6 +175,9 @@ function listNotes(selected) {
 
 // create a note with metadata
 function newNote() {
+    if (!notebooks) {
+        syncAccount();
+    }
     return vscode.workspace.openTextDocument({
         language: 'markdown'
     }).then(doc => {
@@ -231,13 +251,13 @@ function activate(context) {
     let openDevPageCmd = vscode.commands.registerCommand('extension.openDevPage', openDevPage);
     let syncCmd = vscode.commands.registerCommand('extension.sync', sync);
     let newNoteCmd = vscode.commands.registerCommand('extension.newNote', newNote);
-    
+
     context.subscriptions.push(listAllNotebooksCmd);
     context.subscriptions.push(publishNoteCmd);
     context.subscriptions.push(openDevPageCmd);
     context.subscriptions.push(syncCmd);
     context.subscriptions.push(newNoteCmd);
-    
+
 }
 exports.activate = activate;
 
