@@ -1,7 +1,5 @@
 # EverMonkey
 
-[![Build Status](https://travis-ci.org/michalyao/evermonkey.svg?branch=master)](https://travis-ci.org/michalyao/evermonkey)
-
 Evernoting in vscode.
 
 ## Features
