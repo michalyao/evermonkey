@@ -20,7 +20,8 @@
         "onCommand:extension.navToNote",
         "onCommand:extension.publishNote",
         "onCommand:extension.openDevPage",
-        "onCommand:extension.sync"
+        "onCommand:extension.sync",
+        "onCommand:extension.newNote"
     ],
     "main": "./src/extension",
     "contributes": {
@@ -40,6 +41,10 @@
             {
                 "command": "extension.sync",
                 "title": "ever sync"
+            },
+            {
+                "command": "extension.newNote",
+                "title": "ever new"
             }
         ],
         "configuration": {
