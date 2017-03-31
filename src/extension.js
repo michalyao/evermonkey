@@ -3,12 +3,53 @@ const converter = require('./converter');
 const EvernoteClient = require('./everapi');
 const _ = require('lodash');
 const open = require('open');
-const TIP_BACK = 'back...';
+const util = require('util');
 
+const TIP_BACK = 'back...';
+const METADATA_PATTERN = /^---[ \t]*\n((?:[ \t]*[^ \t:]+[ \t]*:[^\n]*\n)+)---[ \t]*\n/;
+
+const METADATA_HEADER = `\
+---
+title: %s
+tags: %s
+notebook: %s
+---
+`
+
+// TODO: Local cache needs cleaning, maybe add a clean cmd.
 let notebooks, notesMap, selectedNotebook;
 const localNote = {};
 let showTips;
 let client;
+const tagCache = {};
+
+
+//  exact text Metadata by convention
+function exactMetadata(text) {
+    let metadata = {};
+    let content = text;
+    if (_.startsWith(text, '---')) {
+        let match = METADATA_PATTERN.exec(text);
+        if (match) {
+            content = text.substring(match[0].trim().length);
+            let metadataStr = match[1].trim();
+            let metaArray = metadataStr.split('\n');
+            metaArray.forEach(value => {
+                let entry = value.split(':');
+                metadata[entry[0]] = entry[1].trim()
+            });
+            if (metadata['tags']) {
+                let tagStr = metadata['tags'];
+                metadata['tags'] = tagStr.split(',').map(value => value.trim());
+            }
+        }
+    }
+    return { "metadata": metadata, "content": content };
+}
+
+function genMetaHeader(title, tags, notebook) {
+    return util.format(METADATA_HEADER, title, tags.join(','), notebook);
+}
 
 // nav to one Note
 function navToNote() {
@@ -22,7 +63,11 @@ function sync() {
     const config = vscode.workspace.getConfiguration('evermonkey');
     client = new EvernoteClient(config.token, config.noteStoreUrl);
     showTips = config.showTips;
-
+    // init cache.
+    client.listTags().then(tags => {
+        console.log(tags);
+        tags.forEach(tag => tagCache[tag.guid] = tagCache[tag.name]);
+    }).catch(e => wrapError(e));
     vscode.window.setStatusBarMessage('Synchronizing your account...', 2);
     return client.listNotebooks().then(allNotebooks => {
         notebooks = allNotebooks;
@@ -130,7 +175,16 @@ function openNote(selected) {
             let startPos = new vscode.Position(1, 0);
             editor.edit(edit => {
                 let mdContent = converter.toMd(content);
-                edit.insert(startPos, mdContent);
+                let tagGuids = selectedNote.tagGuids;
+                let tags;
+                if (tagGuids) {
+                    tags = tagGuids.map(guid => tagCache[guid]);
+                } else {
+                    tags = [];
+                }
+                let metaHeader = genMetaHeader(selectedNote.title, tags,
+                    notebooks.find(notebook => notebook.guid === selectedNote.notebookGuid).name);
+                edit.insert(startPos, metaHeader + mdContent);
             });
         });
     });
@@ -155,6 +209,7 @@ function wrapError(error) {
 }
 
 function activate(context) {
+
     vscode.workspace.onDidCloseTextDocument(removeLocal);
     vscode.workspace.onDidSaveTextDocument(alertToUpdate);
     let listAllNotebooksCmd = vscode.commands.registerCommand('extension.navToNote', navToNote);
