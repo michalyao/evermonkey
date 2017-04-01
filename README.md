@@ -14,8 +14,7 @@ you got a fast experience.
 Although nowadays it looks simple or maybe ugly, but I am going to make it better. 
 
 
-**For tags use: you may have to use comma "," to split tags**. This is pretty simple but can be useful, going to be better.  
-
+**For tags use: you may have to use comma "," to split tags**. You can get tips if you insert tags already exsist. Otherwise a new tag will be created. 
 
 ```
 ---
@@ -32,11 +31,11 @@ Commands:
 * `ever new` -- create a new file with markdown language and metadata init.
 * `ever token` -- Open dev page to help you configure.
 
-![open-notebook](assets/opennotebooks.png)
-![open-note](assets/opennote.png)
-![update-note](assets/updatenote.png)
-![create-note](assets/createnote.png)
+![example](assets/monkey.gif)
 
+Result:
+
+![result](assets/result.jpg)
 
 ## Extension Settings
 
