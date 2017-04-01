@@ -243,9 +243,24 @@ function wrapError(error) {
 }
 
 function activate(context) {
-     vscode.languages.registerCompletionItemProvider('markdown', {
+    // quick match for monkey.
+    let action = vscode.languages.registerCompletionItemProvider({ 'scheme': 'untitled', 'language': 'markdown' }, {
         provideCompletionItems(doc, position, token) {
-            return tagCache;
+            // simple but enough validation for title, tags, notebook
+            // title dont show tips.
+            if (position.line === 1) {
+                return [];
+            } else if (position.line === 2) {
+                // tags
+                if (tagCache) {
+                    return _.values(tagCache).map(tag => new vscode.CompletionItem(tag));
+                }
+            } else if (position.line === 3) {
+                if (notebooks) {
+                    return notebooks.map(notebook => new vscode.CompletionItem(notebook.name));
+                }
+            }
+
         }
     });
     vscode.workspace.onDidCloseTextDocument(removeLocal);
@@ -261,6 +276,8 @@ function activate(context) {
     context.subscriptions.push(openDevPageCmd);
     context.subscriptions.push(syncCmd);
     context.subscriptions.push(newNoteCmd);
+    context.subscriptions.push(action);
+
 
 }
 exports.activate = activate;
@@ -285,7 +302,7 @@ function alertToUpdate() {
 }
 
 function showMetaTips() {
-   
+
 }
 
 // this method is called when your extension is deactivated
