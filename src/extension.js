@@ -65,7 +65,7 @@ function sync() {
     showTips = config.showTips;
     // init cache.
     client.listTags().then(tags => {
-        tags.forEach(tag => tagCache[tag.guid] = tagCache[tag.name]);
+        tags.forEach(tag => tagCache[tag.guid] = tag.name);
     }).catch(e => wrapError(e));
     vscode.window.setStatusBarMessage('Synchronizing your account...', 2);
     return client.listNotebooks().then(allNotebooks => {
@@ -86,7 +86,7 @@ function syncAccount() {
     showTips = config.showTips;
     // init cache.
     client.listTags().then(tags => {
-        tags.forEach(tag => tagCache[tag.guid] = tagCache[tag.name]);
+        tags.forEach(tag => tagCache[tag.guid] = tag.name);
     }).catch(e => wrapError(e));
     vscode.window.setStatusBarMessage('Synchronizing your account...', 2);
     return client.listNotebooks().then(allNotebooks => {
@@ -243,7 +243,11 @@ function wrapError(error) {
 }
 
 function activate(context) {
-
+     vscode.languages.registerCompletionItemProvider('markdown', {
+        provideCompletionItems(doc, position, token) {
+            return tagCache;
+        }
+    });
     vscode.workspace.onDidCloseTextDocument(removeLocal);
     vscode.workspace.onDidSaveTextDocument(alertToUpdate);
     let listAllNotebooksCmd = vscode.commands.registerCommand('extension.navToNote', navToNote);
@@ -278,6 +282,10 @@ function alertToUpdate() {
             showTips = false;
         }
     });
+}
+
+function showMetaTips() {
+   
 }
 
 // this method is called when your extension is deactivated
