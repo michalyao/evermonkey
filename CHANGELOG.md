@@ -25,3 +25,6 @@
 - v1.2.5
     - Add search note support.
     - Minor experience improved.
+
+- v1.2.6
+    - fixed can't create new notebook

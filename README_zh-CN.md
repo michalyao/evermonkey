@@ -12,15 +12,16 @@
 可以使用 `ever token` 命令或者点击此处获取相关的配置信息[Evernote](https://app.yinxiang.com/api/DeveloperToken.action)
 
 在如下页面获取 token 以及 noteStoreUrl
-![token](assets/token.png), 打开全局设置, 搜索evermonkey, 将对应的配置项 `evermonkey.token`, `evermonkey.noteStoreUrl` 填好即可。
+, 打开全局设置, 搜索evermonkey, 将对应的配置项 `evermonkey.token`, `evermonkey.noteStoreUrl` 填好即可。
+![token](assets/token.png)
 
 ## 使用
 
 ### 新建笔记 -- `ever new`
 
 打开命令面板(F1 或者 ctrl + shift +p), 输入 `ever new` 即可新建一个空白笔记, 文档顶部是笔记元数据，包括笔记的标题，标签，所属笔记本等(不支持分级)。
-![new](assets/new.png)
 当输入笔记本和标签时，如果是已经存在的，则会有代码补全提示，否则将会在印象笔记中新建。标签需要用**半角**逗号分隔。
+![new](assets/new.png)
 
 ### 打开笔记 -- `ever open`
 
