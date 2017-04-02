@@ -2,7 +2,7 @@
 
 [![Build Status](https://travis-ci.org/michalyao/evermonkey.svg?branch=master)](https://travis-ci.org/michalyao/evermonkey)
 
-Evernoting in vscode.
+Evernoting in vscode. [中文版说明](README_zh-CN.md)
 
 ## Features
 
