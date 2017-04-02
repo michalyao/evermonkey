@@ -22,7 +22,8 @@
         "onCommand:extension.publishNote",
         "onCommand:extension.openDevPage",
         "onCommand:extension.sync",
-        "onCommand:extension.newNote"
+        "onCommand:extension.newNote",
+        "onCommand:extension.searchNote"
     ],
     "contributes": {
         "commands": [
@@ -45,6 +46,10 @@
             {
                 "command": "extension.newNote",
                 "title": "ever new"
+            },
+            {
+                "command": "extension.searchNote",
+                "title": "ever search"
             }
         ],
         "configuration": {

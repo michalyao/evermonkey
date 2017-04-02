@@ -16,7 +16,7 @@ notebook: %s
 ---
 `
 
-// TODO: Local cache needs cleaning, maybe add a clean cmd.
+// notesMap -- notebook - notes.
 let notebooks, notesMap, selectedNotebook;
 const localNote = {};
 let showTips;
@@ -112,7 +112,6 @@ function openDevPage() {
     });
 }
 
-// TODO: add tags in inputbox?
 function publishNote() {
     let editor = vscode.window.activeTextEditor;
     let doc = editor.document;
@@ -187,6 +186,30 @@ function newNote() {
             edit.insert(startPos, metaHeader);
         });
     });
+}
+
+function searchNote() {
+    if (!notesMap || !notebooks) {
+        syncAccount();
+    }
+    vscode.window.showInputBox({
+            placeHolder: "Use Evernote query to search notes."
+        })
+        .then(input => {
+            client.searchNote(input).then(result => {
+                // result -> noteTitleList and show in vscode. with notebook
+                let searchResult = result.notes.map(note => {
+                    let title = note['title'];
+                    selectedNotebook = notebooks.find(notebook => notebook.guid === note.notebookGuid);
+                    return selectedNotebook.name + ">>" + title;
+                });
+                return vscode.window.showQuickPick(searchResult);
+            }).then(selected => {
+                let index = selected.indexOf(">>");
+                let note = selected.substring(index + 2);
+                return openNote(note);
+            }).catch(e => wrapError(e));
+        })
 }
 
 function openNote(selected) {
@@ -278,6 +301,7 @@ function activate(context) {
     let openDevPageCmd = vscode.commands.registerCommand('extension.openDevPage', openDevPage);
     let syncCmd = vscode.commands.registerCommand('extension.sync', syncAccount);
     let newNoteCmd = vscode.commands.registerCommand('extension.newNote', newNote);
+    let searchNoteCmd = vscode.commands.registerCommand('extension.searchNote', searchNote);
 
     context.subscriptions.push(listAllNotebooksCmd);
     context.subscriptions.push(publishNoteCmd);
@@ -285,6 +309,7 @@ function activate(context) {
     context.subscriptions.push(syncCmd);
     context.subscriptions.push(newNoteCmd);
     context.subscriptions.push(action);
+    context.subscriptions.push(searchNoteCmd);
 
 
 }
@@ -307,10 +332,6 @@ function alertToUpdate() {
             showTips = false;
         }
     });
-}
-
-function showMetaTips() {
-
 }
 
 // this method is called when your extension is deactivated
