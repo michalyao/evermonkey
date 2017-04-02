@@ -132,7 +132,7 @@ function publishNote() {
 
         let selectedNotebook = notebooks.find(nb => notebook === nb.name);
         if (!selectedNotebook) {
-            client.createNotebook(notebook).then(result => client.createNote(title, result.guid, content, tagNames)).catch(e => wrapError(e));
+            client.createNotebook(notebook).then(createdNotebook => client.createNote(title, createdNotebook.guid, content, tagNames)).catch(e => wrapError(e));
         } else {
             client.createNote(title, selectedNotebook.guid, content, tagNames).then(note => {
                     if (!notesMap[selectedNotebook.guid]) {
