@@ -8,7 +8,7 @@ Evernoting in vscode.
 
 You can use `ever new` to create an untitle file with metadata support, edit it and use `ever publish` to publish it to evernote. And of course more than that.
 
-Why EverMonkey is better? EverMonkey is Inspired by the Sublime Test one, make local caches to avoid making net request everytime and in result
+Why EverMonkey is better? EverMonkey is Inspired by the Sublime Text one, make local caches to avoid making net request everytime and in result
 you got a fast experience. 
 
 Although nowadays it looks simple or maybe ugly, but I am going to make it better. 
