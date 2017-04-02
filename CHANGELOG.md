@@ -20,4 +20,8 @@
 - v1.2.4
     - Add metadata tips for tags and notebook.
     - Bug fixed.
-    - Made documents better. 
+    - Made documents better.
+
+- v1.2.5
+    - Add search note support.
+    - Minor experience improved.

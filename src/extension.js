@@ -16,7 +16,7 @@ notebook: %s
 ---
 `
 
-// TODO: Local cache needs cleaning, maybe add a clean cmd.
+// notesMap -- notebook - notes.
 let notebooks, notesMap, selectedNotebook;
 const localNote = {};
 let showTips;
@@ -44,7 +44,10 @@ function exactMetadata(text) {
             }
         }
     }
-    return { "metadata": metadata, "content": content };
+    return {
+        "metadata": metadata,
+        "content": content
+    };
 }
 
 function genMetaHeader(title, tags, notebook) {
@@ -60,9 +63,6 @@ function navToNote() {
 
 // sycn account
 function sync() {
-    const config = vscode.workspace.getConfiguration('evermonkey');
-    client = new EvernoteClient(config.token, config.noteStoreUrl);
-    showTips = config.showTips;
     // init cache.
     client.listTags().then(tags => {
         tags.forEach(tag => tagCache[tag.guid] = tag.name);
@@ -77,18 +77,15 @@ function sync() {
         notesMap = _.groupBy(notes, 'notebookGuid');
         return vscode.window.showQuickPick(notebooks.map(notebook => notebook.name));
     }).
-        catch(e => wrapError(e));
+    catch(e => wrapError(e));
 }
 
 function syncAccount() {
-    const config = vscode.workspace.getConfiguration('evermonkey');
-    client = new EvernoteClient(config.token, config.noteStoreUrl);
-    showTips = config.showTips;
     // init cache.
     client.listTags().then(tags => {
         tags.forEach(tag => tagCache[tag.guid] = tag.name);
     }).catch(e => wrapError(e));
-    vscode.window.setStatusBarMessage('Synchronizing your account...', 2);
+    vscode.window.setStatusBarMessage('Synchronizing your account...', 1000);
     return client.listNotebooks().then(allNotebooks => {
         notebooks = allNotebooks;
         let promises = notebooks.map(notebook => client.listAllNoteMetadatas(notebook.guid));
@@ -96,8 +93,9 @@ function syncAccount() {
     }).then(allMetas => {
         let notes = _.flattenDeep(allMetas.map(meta => meta.notes));
         notesMap = _.groupBy(notes, 'notebookGuid');
+        vscode.window.setStatusBarMessage('Synchronizing succeeded!', 1000);
     }).
-        catch(e => wrapError(e));
+    catch(e => wrapError(e));
 }
 
 // open evernote dev page.
@@ -114,7 +112,6 @@ function openDevPage() {
     });
 }
 
-// TODO: add tags in inputbox?
 function publishNote() {
     let editor = vscode.window.activeTextEditor;
     let doc = editor.document;
@@ -138,13 +135,13 @@ function publishNote() {
             client.createNotebook(notebook).then(result => client.createNote(title, result.guid, content, tagNames)).catch(e => wrapError(e));
         } else {
             client.createNote(title, selectedNotebook.guid, content, tagNames).then(note => {
-                if (!notesMap[selectedNotebook.guid]) {
-                    notesMap[selectedNotebook.guid] = [note];
-                } else {
-                    notesMap[selectedNotebook.guid].push(note);
-                }
-            }).then(re =>
-                vscode.window.showInformationMessage(`${title} created successfully.`))
+                    if (!notesMap[selectedNotebook.guid]) {
+                        notesMap[selectedNotebook.guid] = [note];
+                    } else {
+                        notesMap[selectedNotebook.guid].push(note);
+                    }
+                }).then(re =>
+                    vscode.window.showInformationMessage(`${title} created successfully.`))
                 .catch(e => wrapError(e));
         }
     }
@@ -189,6 +186,30 @@ function newNote() {
             edit.insert(startPos, metaHeader);
         });
     });
+}
+
+function searchNote() {
+    if (!notesMap || !notebooks) {
+        syncAccount();
+    }
+    vscode.window.showInputBox({
+            placeHolder: "Use Evernote query to search notes."
+        })
+        .then(input => {
+            client.searchNote(input).then(result => {
+                // result -> noteTitleList and show in vscode. with notebook
+                let searchResult = result.notes.map(note => {
+                    let title = note['title'];
+                    selectedNotebook = notebooks.find(notebook => notebook.guid === note.notebookGuid);
+                    return selectedNotebook.name + ">>" + title;
+                });
+                return vscode.window.showQuickPick(searchResult);
+            }).then(selected => {
+                let index = selected.indexOf(">>");
+                let note = selected.substring(index + 2);
+                return openNote(note);
+            }).catch(e => wrapError(e));
+        })
 }
 
 function openNote(selected) {
@@ -243,9 +264,19 @@ function wrapError(error) {
 }
 
 function activate(context) {
+    const config = vscode.workspace.getConfiguration('evermonkey');
+    if (!config.token || !config.noteStoreUrl) {
+        vscode.window.showWarningMessage('Please use ever token command to get the token and storeUrl, copy&paste to the settings, and then restart the vscode.');
+        vscode.commands.executeCommand('workbench.action.openGlobalSettings');
+    }
+    client = new EvernoteClient(config.token, config.noteStoreUrl);
+
     // quick match for monkey.
-    let action = vscode.languages.registerCompletionItemProvider({ 'scheme': 'untitled', 'language': 'markdown' }, {
-        provideCompletionItems(doc, position, token) {
+    let action = vscode.languages.registerCompletionItemProvider({
+        'scheme': 'untitled',
+        'language': 'markdown'
+    }, {
+        provideCompletionItems(doc, position) {
             // simple but enough validation for title, tags, notebook
             // title dont show tips.
             if (position.line === 1) {
@@ -268,8 +299,9 @@ function activate(context) {
     let listAllNotebooksCmd = vscode.commands.registerCommand('extension.navToNote', navToNote);
     let publishNoteCmd = vscode.commands.registerCommand('extension.publishNote', publishNote);
     let openDevPageCmd = vscode.commands.registerCommand('extension.openDevPage', openDevPage);
-    let syncCmd = vscode.commands.registerCommand('extension.sync', sync);
+    let syncCmd = vscode.commands.registerCommand('extension.sync', syncAccount);
     let newNoteCmd = vscode.commands.registerCommand('extension.newNote', newNote);
+    let searchNoteCmd = vscode.commands.registerCommand('extension.searchNote', searchNote);
 
     context.subscriptions.push(listAllNotebooksCmd);
     context.subscriptions.push(publishNoteCmd);
@@ -277,6 +309,7 @@ function activate(context) {
     context.subscriptions.push(syncCmd);
     context.subscriptions.push(newNoteCmd);
     context.subscriptions.push(action);
+    context.subscriptions.push(searchNoteCmd);
 
 
 }
@@ -301,10 +334,6 @@ function alertToUpdate() {
     });
 }
 
-function showMetaTips() {
-
-}
-
 // this method is called when your extension is deactivated
-function deactivate() { }
+function deactivate() {}
 exports.deactivate = deactivate;

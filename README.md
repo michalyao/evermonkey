@@ -8,13 +8,13 @@ Evernoting in vscode.
 
 You can use `ever new` to create an untitle file with metadata support, edit it and use `ever publish` to publish it to evernote. And of course more than that.
 
-Why EverMonkey is better? EverMonkey is Inspired by the Sublime Test one, make local caches to avoid making net request everytime and in result
-you got a fast experience. 
+Why EverMonkey is better? EverMonkey is inspired by the Sublime Text one, make local caches to avoid making net request everytime and in result
+you got a faster experience.
 
-Although nowadays it looks simple or maybe ugly, but I am going to make it better. 
+Although nowadays it looks simple or maybe ugly, but I am going to make it better.
 
 
-**For tags use: you may have to use comma "," to split tags**. You can get tips if you insert tags already exsist. Otherwise a new tag will be created. 
+**For tags use: you may have to use comma "," to split tags**. You can get tips if you insert tags already exsist. Otherwise a new tag will be created.
 
 ```
 ---
@@ -25,11 +25,13 @@ notebook: notebook
 ```
 
 Commands:
+
 * `ever open` -- open note much like a tree structure. 
 * `ever publish` -- update or create a new note. (use this whenver you want to publish your note to Evernote.)
 * `ever sync` -- sync account (**Maybe you use evernote concurrently in multi endpoints, most of time I wish you dont do this**)
 * `ever new` -- create a new file with markdown language and metadata init.
 * `ever token` -- Open dev page to help you configure.
+* `ever search` -- Use evernote query to search note. More details about [Evernote Search Grammar](https://dev.evernote.com/doc/articles/search_grammar.php)
 
 ![example](assets/monkey.gif)
 
@@ -52,12 +54,13 @@ Then open your user setting by `Preferences: Open User Settings`, and copy&paste
 
 ## Known Issues
 
-- Open note in notebook may cause a mess, because unsupported transfer from enml to markdown.
-- You can report issues here [Github issues](https://github.com/michalyao/evermonkey/issues)
+* Open note in notebook may cause a mess, because unsupported transfer from enml to markdown.
+* You can report issues here [Github issues](https://github.com/michalyao/evermonkey/issues)
 
 TODOs:
-+ More markdown style support. 
-+ Much better experience.
+
+* More markdown syntax support.
+* Much better experience.
 
 
 -----------------------------------------------------------------------------------------------------------
