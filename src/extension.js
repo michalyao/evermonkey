@@ -61,24 +61,6 @@ function navToNote() {
         .then(selected => openNote(selected))
 }
 
-// sycn account
-function sync() {
-    // init cache.
-    client.listTags().then(tags => {
-        tags.forEach(tag => tagCache[tag.guid] = tag.name);
-    }).catch(e => wrapError(e));
-    vscode.window.setStatusBarMessage('Synchronizing your account...', 2);
-    return client.listNotebooks().then(allNotebooks => {
-        notebooks = allNotebooks;
-        let promises = notebooks.map(notebook => client.listAllNoteMetadatas(notebook.guid));
-        return Promise.all(promises);
-    }).then(allMetas => {
-        let notes = _.flattenDeep(allMetas.map(meta => meta.notes));
-        notesMap = _.groupBy(notes, 'notebookGuid');
-        return vscode.window.showQuickPick(notebooks.map(notebook => notebook.name));
-    }).
-    catch(e => wrapError(e));
-}
 
 function syncAccount() {
     // init cache.
@@ -132,7 +114,19 @@ function publishNote() {
 
         let selectedNotebook = notebooks.find(nb => notebook === nb.name);
         if (!selectedNotebook) {
-            client.createNotebook(notebook).then(createdNotebook => client.createNote(title, createdNotebook.guid, content, tagNames)).catch(e => wrapError(e));
+            client.createNotebook(notebook).then(createdNotebook => {
+                    selectedNotebook = createdNotebook;
+                    notebooks.push(selectedNotebook);
+                    client.createNote(title, createdNotebook.guid, content, tagNames);
+                }).then(note => {
+                    if (!notesMap[selectedNotebook.guid]) {
+                        notesMap[selectedNotebook.guid] = [note];
+                    } else {
+                        notesMap[selectedNotebook.guid].push(note);
+                    }
+                }).then(re =>
+                    vscode.window.showInformationMessage(`${title} created successfully.`))
+                .catch(e => wrapError(e));
         } else {
             client.createNote(title, selectedNotebook.guid, content, tagNames).then(note => {
                     if (!notesMap[selectedNotebook.guid]) {
@@ -150,7 +144,7 @@ function publishNote() {
 
 function listNotebooks() {
     if (!notebooks || !notesMap) {
-        return sync();
+        return syncAccount().then(re => vscode.window.showQuickPick(notebooks.map(notebook => notebook.name)));
     }
     return vscode.window.showQuickPick(notebooks.map(notebook => notebook.name));
 }
@@ -205,6 +199,9 @@ function searchNote() {
                 });
                 return vscode.window.showQuickPick(searchResult);
             }).then(selected => {
+                if (!selected) {
+                    throw ""; //user dismiss
+                }
                 let index = selected.indexOf(">>");
                 let note = selected.substring(index + 2);
                 return openNote(note);
@@ -272,10 +269,10 @@ function activate(context) {
     client = new EvernoteClient(config.token, config.noteStoreUrl);
 
     // quick match for monkey.
-    let action = vscode.languages.registerCompletionItemProvider({
+    let action = vscode.languages.registerCompletionItemProvider(['plaintext', {
         'scheme': 'untitled',
         'language': 'markdown'
-    }, {
+    }], {
         provideCompletionItems(doc, position) {
             // simple but enough validation for title, tags, notebook
             // title dont show tips.
