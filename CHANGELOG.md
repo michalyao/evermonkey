@@ -28,3 +28,7 @@
 
 - v1.2.6
     - fixed can't create new notebook
+
+- v1.2.7
+    - fixed notebook cache.
+    - Markdown completion should be opened via configuration.
