@@ -55,6 +55,7 @@ Then open your user setting by `Preferences: Open User Settings`, and copy&paste
 ## Known Issues
 
 * Open note in notebook may cause a mess, because unsupported transfer from enml to markdown.
+* Code Highlight and media-type not supported currently.
 * You can report issues here [Github issues](https://github.com/michalyao/evermonkey/issues)
 
 TODOs:
