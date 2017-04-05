@@ -32,3 +32,6 @@
 - v1.2.7
     - fixed notebook cache.
     - Markdown completion should be opened via configuration.
+
+- v1.2.8
+    - fixed #12 -- add new create note to local cache.
