@@ -66,5 +66,9 @@ class EvernoteClient {
             includeNotebookGuid: true, includeTitle: true
         });
     }
+
+    getDefaultNotebook() {
+        return this.noteStore.getDefaultNotebook();
+    }
 }
 module.exports = EvernoteClient

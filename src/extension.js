@@ -111,34 +111,50 @@ function publishNote() {
     } else {
         // new
         title = meta['title'];
-
-        let selectedNotebook = notebooks.find(nb => notebook === nb.name);
-        if (!selectedNotebook) {
-            client.createNotebook(notebook).then(createdNotebook => {
-                selectedNotebook = createdNotebook;
-                notebooks.push(selectedNotebook);
-                client.createNote(title, createdNotebook.guid, content, tagNames).then(note => {
+        let selectedNotebook;
+        if (notebook) {
+            selectedNotebook = notebooks.find(nb => notebook === nb.name);
+            if (!selectedNotebook) {
+                client.createNotebook(notebook).then(createdNotebook => {
+                    selectedNotebook = createdNotebook;
+                    notebooks.push(selectedNotebook);
+                    client.createNote(title, createdNotebook.guid, content, tagNames).then(note => {
+                        if (!notesMap[selectedNotebook.guid]) {
+                            notesMap[selectedNotebook.guid] = [note];
+                        } else {
+                            notesMap[selectedNotebook.guid].push(note);
+                        }
+                        localNote[doc.fileName] = note;
+                    });
+                }).then(re =>
+                    vscode.window.showInformationMessage(`${title} created successfully.`))
+                    .catch(e => wrapError(e));
+            } else {
+                client.createNote(title, selectedNotebook.guid, content, tagNames).then(note => {
                     if (!notesMap[selectedNotebook.guid]) {
                         notesMap[selectedNotebook.guid] = [note];
                     } else {
                         notesMap[selectedNotebook.guid].push(note);
                     }
                     localNote[doc.fileName] = note;
-                });
-            }).then(re =>
-                vscode.window.showInformationMessage(`${title} created successfully.`))
-                .catch(e => wrapError(e));
+                }).then(re =>
+                    vscode.window.showInformationMessage(`${title} created successfully.`))
+                    .catch(e => wrapError(e));
+            }
         } else {
-            client.createNote(title, selectedNotebook.guid, content, tagNames).then(note => {
-                if (!notesMap[selectedNotebook.guid]) {
-                    notesMap[selectedNotebook.guid] = [note];
-                } else {
-                    notesMap[selectedNotebook.guid].push(note);
-                }
-                localNote[doc.fileName] = note;
-            }).then(re =>
-                vscode.window.showInformationMessage(`${title} created successfully.`))
-                .catch(e => wrapError(e));
+            // use default notebook.
+            client.getDefaultNotebook().then(defaultNotebook =>
+                client.createNote(title, defaultNotebook.guid, content, tagNames)
+                    .then(note => {
+                        if (!notesMap[defaultNotebook.guid]) {
+                            notesMap[defaultNotebook.guid] = [note];
+                        } else {
+                            notesMap[defaultNotebook.guid].push(note);
+                        }
+                        localNote[doc.fileName] = note;
+                    }).then((re =>
+                        vscode.window.showInformationMessage(`${title} created successfully.`)))
+                    .catch(e => wrapError(e)));
         }
     }
 }
@@ -243,9 +259,6 @@ function openNote(selected) {
     if (selected === TIP_BACK) {
         return navToNote();
     }
-    console.log(selected)
-    console.log(notesMap)
-    console.log(selectedNotebook)
     let selectedNote = notesMap[selectedNotebook.guid].find(note => note.title === selected);
     return client.getNoteContent(selectedNote.guid).then(content => {
         return vscode.workspace.openTextDocument({
@@ -337,8 +350,6 @@ function activate(context) {
     context.subscriptions.push(newNoteCmd);
     context.subscriptions.push(action);
     context.subscriptions.push(searchNoteCmd);
-
-
 }
 exports.activate = activate;
 
