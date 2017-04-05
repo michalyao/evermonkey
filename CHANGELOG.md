@@ -35,3 +35,6 @@
 
 - v1.2.8
     - fixed #12 -- add new create note to local cache.
+
+- v1.2.9
+    - Search algorithm tuned. Support for a large notes count. -- #17
