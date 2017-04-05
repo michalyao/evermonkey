@@ -64,19 +64,19 @@ function navToNote() {
 
 function syncAccount() {
     // init cache.
-    client.listTags().then(tags => {
+    return client.listTags().then(tags => {
         tags.forEach(tag => tagCache[tag.guid] = tag.name);
-    }).catch(e => wrapError(e));
-    vscode.window.setStatusBarMessage('Synchronizing your account...', 1000);
-    return client.listNotebooks().then(allNotebooks => {
-        notebooks = allNotebooks;
-        let promises = notebooks.map(notebook => client.listAllNoteMetadatas(notebook.guid));
-        return Promise.all(promises);
-    }).then(allMetas => {
-        let notes = _.flattenDeep(allMetas.map(meta => meta.notes));
-        notesMap = _.groupBy(notes, 'notebookGuid');
-        vscode.window.setStatusBarMessage('Synchronizing succeeded!', 1000);
-    }).
+        return vscode.window.setStatusBarMessage('Synchronizing your account...', 1000);
+    }).then(re => client.listNotebooks())
+        .then(allNotebooks => {
+            notebooks = allNotebooks;
+            let promises = notebooks.map(notebook => client.listAllNoteMetadatas(notebook.guid));
+            return Promise.all(promises);
+        }).then(allMetas => {
+            let notes = _.flattenDeep(allMetas.map(meta => meta.notes));
+            notesMap = _.groupBy(notes, 'notebookGuid');
+            vscode.window.setStatusBarMessage('Synchronizing succeeded!', 1000);
+        }).
         catch(e => wrapError(e));
 }
 
@@ -185,6 +185,7 @@ function newNote() {
 }
 
 function searchNote() {
+    let resultNotes;
     if (!notesMap || !notebooks) {
         syncAccount();
     }
@@ -193,6 +194,7 @@ function searchNote() {
     })
         .then(input => {
             client.searchNote(input).then(result => {
+                resultNotes = result;
                 // result -> noteTitleList and show in vscode. with notebook
                 let searchResult = result.notes.map(note => {
                     let title = note['title'];
@@ -205,8 +207,31 @@ function searchNote() {
                     throw ""; //user dismiss
                 }
                 let index = selected.indexOf(">>");
-                let note = selected.substring(index + 2);
-                return openNote(note);
+                let searchNoteResult = selected.substring(index + 2);
+                let chooseNote = resultNotes.notes.find(note => note.title === searchNoteResult);
+                return client.getNoteContent(chooseNote.guid).then(content => {
+                    return vscode.workspace.openTextDocument({
+                        language: 'markdown'
+                    }).then(doc => {
+                        localNote[doc.fileName] = chooseNote;
+                        return vscode.window.showTextDocument(doc);
+                    }).then(editor => {
+                        let startPos = new vscode.Position(1, 0);
+                        editor.edit(edit => {
+                            let mdContent = converter.toMd(content);
+                            let tagGuids = chooseNote.tagGuids;
+                            let tags;
+                            if (tagGuids) {
+                                tags = tagGuids.map(guid => tagCache[guid]);
+                            } else {
+                                tags = [];
+                            }
+                            let metaHeader = genMetaHeader(chooseNote.title, tags,
+                                notebooks.find(notebook => notebook.guid === chooseNote.notebookGuid).name);
+                            edit.insert(startPos, metaHeader + mdContent);
+                        });
+                    });
+                });
             }).catch(e => wrapError(e));
         })
 }
@@ -218,6 +243,9 @@ function openNote(selected) {
     if (selected === TIP_BACK) {
         return navToNote();
     }
+    console.log(selected)
+    console.log(notesMap)
+    console.log(selectedNotebook)
     let selectedNote = notesMap[selectedNotebook.guid].find(note => note.title === selected);
     return client.getNoteContent(selectedNote.guid).then(content => {
         return vscode.workspace.openTextDocument({
