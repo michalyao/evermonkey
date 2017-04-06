@@ -106,15 +106,18 @@ function publishNote() {
     // LOCAL NOTE SHOULD BE UPDATED WHETHER THE THE TITLE IS EQUAL OR NOT.
     if (localNote[doc.fileName]) {
         // update
-
+        console.log(localNote[doc.fileName])
         if (notebook) {
             let notebookGuid = notebooks.find(nb => nb.name === notebook).guid;
             client.updateNoteContent(localNote[doc.fileName].guid, title, content, tagNames, notebookGuid).then(result => {
+                localNote[doc.fileName] = result;
+                console.log(localNote[doc.fileName])
                 vscode.window.showInformationMessage(`${title} updated successfully.`);
             }).catch(e => wrapError(e));
         } else {
             client.getDefaultNotebook().then(notebook => {
                 client.updateNoteContent(localNote[doc.fileName].guid, title, content, tagNames, notebook.guid).then(result => {
+                    localNote[doc.fileName] = result;
                     vscode.window.showInformationMessage(`${title} updated successfully.`);
                 }).catch(e => wrapError(e));
             }).catch(e => wrapError(e));
