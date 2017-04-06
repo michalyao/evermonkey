@@ -38,3 +38,7 @@
 
 - v1.2.9
     - Search algorithm tuned. Support for a large notes count. -- #17
+
+- v1.3.0
+    - If none notebook specific, the default notebook will be chosen.
+    - Add support for editing metadata to update note instead of creating a new one. -- title, tags, notebook
