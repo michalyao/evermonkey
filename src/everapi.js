@@ -32,12 +32,13 @@ class EvernoteClient {
         return this.noteStore.getNoteContent(noteGuid);
     }
 
-    updateNoteContent(guid, title, content, tagNames) {
+    updateNoteContent(guid, title, content, tagNames, notebookGuid) {
         return this.noteStore.updateNote({
             guid,
             title,
             content,
-            tagNames
+            tagNames,
+            notebookGuid
         });
     }
 
