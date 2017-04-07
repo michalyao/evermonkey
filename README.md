@@ -50,9 +50,9 @@ Then open your user setting by `Preferences: Open User Settings`, and copy&paste
 * `evermonkey.token`: your developer token
 * `evermonkey.noteStoreUrl`: your API url
 
-If you get **Evernote Error: 2 - Note.title** on Windows, when trying to publish, you may also include the following:
+If you get **Evernote Error: 2 - Note.title** on Windows, when trying to publish, you may also need to include the following:
 
-* "files.eol": "\n"
+* `files.eol`: "\n"
 
 **If you get an Unexpected error, then you may have to check the configuration and restart the vscode.**
 
