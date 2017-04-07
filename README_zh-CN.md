@@ -60,6 +60,9 @@
 
 可以的， 打开或者新建笔记之后都可以通过编写文档顶部的元数据进行标签，题目，笔记本的更新。
 
+4. `ever publish` 报错 Evernote Error: 5 - Note.title 怎么处理？
+
+Windows 操作系统下需要将换行符改为 'LF', 否则元数据解析会失败，具体配置方法可以看一下  [https://github.com/Microsoft/vscode/issues/2957](https://github.com/Microsoft/vscode/issues/2957)
 
 ## 建议与改进
 
