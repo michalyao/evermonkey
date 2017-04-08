@@ -23,7 +23,8 @@
     "onCommand:extension.openDevPage",
     "onCommand:extension.sync",
     "onCommand:extension.newNote",
-    "onCommand:extension.searchNote"
+    "onCommand:extension.searchNote",
+    "onCommand:extension.openRecentNotes"
   ],
   "contributes": {
     "commands": [
@@ -50,6 +51,10 @@
       {
         "command": "extension.searchNote",
         "title": "ever search"
+      },
+      {
+        "command": "extension.openRecentNotes",
+        "title": "ever recent"
       }
     ],
     "configuration": {

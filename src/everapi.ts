@@ -1,6 +1,7 @@
 import * as Evernote from 'evernote';
 import * as vscode from 'vscode';
 const MAX_NOTE_COUNTS = 200;
+const RECENT_NOTE_COUNTS = 12;
 
 //TODO: add some friendly msg.
 export class EvernoteClient {
@@ -15,6 +16,15 @@ export class EvernoteClient {
         const client = new Evernote.Client(options);
         this.noteStore = client.getNoteStore(noteStoreUrl);
     }
+
+    listRecentNotes() {
+      return this.noteStore.findNotesMetadata({order : Evernote.Types.NoteSortOrder.UPDATED}, 0, RECENT_NOTE_COUNTS, {
+            includeTitle: true,
+            includeNotebookGuid: true,
+            includeTagGuids: true
+        });
+    }
+
     listNotebooks() {
         return this.noteStore.listNotebooks();
     }
@@ -26,7 +36,7 @@ export class EvernoteClient {
             includeTitle: true,
             includeNotebookGuid: true,
             includeTagGuids: true
-        })
+        });
     }
 
     getNoteContent(noteGuid) {
