@@ -80,6 +80,11 @@
           "type": "boolean",
           "default": true,
           "description": "Show you friendly tips."
+        },
+        "evermonkey.recentNotesCount": {
+          "type": "integer",
+          "default": 10,
+          "description": "Recent edited notes returned count."
         }
       }
     }
