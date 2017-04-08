@@ -103,7 +103,7 @@ async function syncAccount() {
 
 // Publish note to Evernote Server.
 async function publishNote() {
-  let editor = vscode.window.activeTextEditor;
+  const editor = await vscode.window.activeTextEditor;
   let doc = editor.document;
   let result = exactMetadata(doc.getText());
   let content = await converter.toEnml(result.content);
