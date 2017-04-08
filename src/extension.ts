@@ -7,12 +7,6 @@ import * as evernote from 'evernote';
 import {
   EvernoteClient
 } from './everapi';
-// const vscode = require('vscode');
-// const converter = require('./converter');
-// const EvernoteClient = require('./everapi');
-// const _ = require('lodash');
-// const open = require('open');
-// const util = require('util');
 
 const TIP_BACK = 'back...';
 const METADATA_PATTERN = /^---[ \t]*\n((?:[ \t]*[^ \t:]+[ \t]*:[^\n]*\n)+)---[ \t]*\n/;
