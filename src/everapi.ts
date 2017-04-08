@@ -1,9 +1,10 @@
-const Evernote = require('evernote');
-const vscode = require('vscode');
+import * as Evernote from 'evernote';
+import * as vscode from 'vscode';
 const MAX_NOTE_COUNTS = 200;
 
 //TODO: add some friendly msg.
-class EvernoteClient {
+export class EvernoteClient {
+    noteStore;
     constructor(token, noteStoreUrl) {
         if (!token) {
             vscode.window.showWarningMessage('missing token in configuration');
@@ -72,4 +73,3 @@ class EvernoteClient {
         return this.noteStore.getDefaultNotebook();
     }
 }
-module.exports = EvernoteClient

@@ -1,6 +1,5 @@
-
-const toMarkdown = require('to-markdown');
-const marked = require('marked');
+import * as toMarkdown from 'to-markdown';
+import * as marked from 'marked';
 const MAGIC_SPELL = "%EVERMONKEY%";
 
 const customRenderer = new marked.Renderer();
@@ -10,7 +9,7 @@ customRenderer.heading = (text, level) => {
     + '</h' + level + '>\n';
 };
 
-function toMd(enml) {
+export function toMd(enml) {
     if (!enml) {
         return "";
     }
@@ -39,7 +38,7 @@ function toHtml(markdown) {
     return marked(markdown, { xhtml: true, renderer: customRenderer });
 }
 
-function toEnml(content) {
+export function toEnml(content) {
     let enml = '<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE en-note SYSTEM "http://xml.evernote.com/pub/enml2.dtd"><en-note style=";">';
     enml += '<!--' + MAGIC_SPELL;
     enml += new Buffer(content, 'utf-8').toString('base64');
@@ -48,6 +47,3 @@ function toEnml(content) {
     enml += '</en-note>';
     return enml;
 }
-
-exports.toMd = toMd;
-exports.toEnml = toEnml;
