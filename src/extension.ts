@@ -103,29 +103,36 @@ async function syncAccount() {
 
 // Publish note to Evernote Server.
 async function publishNote() {
-  const editor = await vscode.window.activeTextEditor;
-  let doc = editor.document;
-  let result = exactMetadata(doc.getText());
-  let content = await converter.toEnml(result.content);
-  let meta = result.metadata;
-  let title = meta['title'];
-  if (localNote[doc.fileName]) {
-    // update the note.
-    let noteGuid = localNote[doc.fileName].guid;
-    const updatedNote = await updateNote(meta, content, noteGuid);
-    localNote[doc.fileName] = updatedNote;
-    let notebookName = notebooks.find(notebook => notebook.guid === updatedNote.notebookGuid).name;
-    return vscode.window.showInformationMessage(`${notebookName}>>${title} updated successfully.`);
-  } else {
-    const createdNote = await createNote(meta, content);
-    if (!notesMap[createdNote.notebookGuid]) {
-      notesMap[createdNote.notebookGuid] = [createdNote];
-    } else {
-      notesMap[createdNote.notebookGuid].push(createdNote);
+  try {
+    if (!notebooks || !notesMap) {
+      await syncAccount();
     }
-    localNote[doc.fileName] = createdNote;
-    let notebookName = notebooks.find(notebook => notebook.guid === createdNote.notebookGuid).name;
-    return vscode.window.showInformationMessage(`${notebookName}>>${title} created successfully.`);
+    const editor = await vscode.window.activeTextEditor;
+    let doc = editor.document;
+    let result = exactMetadata(doc.getText());
+    let content = await converter.toEnml(result.content);
+    let meta = result.metadata;
+    let title = meta['title'];
+    if (localNote[doc.fileName]) {
+      // update the note.
+      let noteGuid = localNote[doc.fileName].guid;
+      const updatedNote = await updateNote(meta, content, noteGuid);
+      localNote[doc.fileName] = updatedNote;
+      let notebookName = notebooks.find(notebook => notebook.guid === updatedNote.notebookGuid).name;
+      return vscode.window.showInformationMessage(`${notebookName}>>${title} updated successfully.`);
+    } else {
+      const createdNote = await createNote(meta, content);
+      if (!notesMap[createdNote.notebookGuid]) {
+        notesMap[createdNote.notebookGuid] = [createdNote];
+      } else {
+        notesMap[createdNote.notebookGuid].push(createdNote);
+      }
+      localNote[doc.fileName] = createdNote;
+      let notebookName = notebooks.find(notebook => notebook.guid === createdNote.notebookGuid).name;
+      return vscode.window.showInformationMessage(`${notebookName}>>${title} created successfully.`);
+    }
+  } catch (err) {
+    wrapError(err);
   }
 }
 
