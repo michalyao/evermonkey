@@ -42,3 +42,8 @@
 - v1.3.0
     - If none notebook specific, the default notebook will be chosen.
     - Add support for editing metadata to update note instead of creating a new one. -- title, tags, notebook
+
+- v2.0.0
+    - support markdown code highlight
+    - support markdown todo
+    - Use typescript. Markdown lib change to markdown-it.

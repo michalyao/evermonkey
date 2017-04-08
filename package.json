@@ -1,109 +1,109 @@
 {
-  "name": "evermonkey",
-  "displayName": "evermonkey",
-  "description": "Markdown support for Evernote.",
-  "version": "1.3.0",
-  "publisher": "michalyao",
-  "engines": {
-    "vscode": "^1.10.0"
-  },
-  "categories": [
-    "Other"
-  ],
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/michalyao/evermonkey.git"
-  },
-  "icon": "assets/icon.png",
-  "homepage": "https://github.com/michalyao/evermonkey",
-  "main": "./out/src/extension",
-  "activationEvents": [
-    "onCommand:extension.navToNote",
-    "onCommand:extension.publishNote",
-    "onCommand:extension.openDevPage",
-    "onCommand:extension.sync",
-    "onCommand:extension.newNote",
-    "onCommand:extension.searchNote"
-  ],
-  "contributes": {
-    "commands": [
-      {
-        "command": "extension.navToNote",
-        "title": "ever open"
-      },
-      {
-        "command": "extension.publishNote",
-        "title": "ever publish"
-      },
-      {
-        "command": "extension.openDevPage",
-        "title": "ever token"
-      },
-      {
-        "command": "extension.sync",
-        "title": "ever sync"
-      },
-      {
-        "command": "extension.newNote",
-        "title": "ever new"
-      },
-      {
-        "command": "extension.searchNote",
-        "title": "ever search"
-      }
+    "name": "evermonkey",
+    "displayName": "evermonkey",
+    "description": "Markdown support for Evernote.",
+    "version": "2.0.0",
+    "publisher": "michalyao",
+    "engines": {
+        "vscode": "^1.10.0"
+    },
+    "categories": [
+        "Other"
     ],
-    "configuration": {
-      "title": "EverMonkey Configuration",
-      "type": "object",
-      "properties": {
-        "evermonkey.token": {
-          "type": "string",
-          "default": "",
-          "description": "Copy your Developer Token from the website. (ever token: Open Developer Page)"
-        },
-        "evermonkey.noteStoreUrl": {
-          "type": "string",
-          "default": "",
-          "description": "Copy your NoteStore URL from the website. (ever token: Open Developer Page)"
-        },
-        "evermonkey.highlightTheme": {
-          "type": "string",
-          "default": "github",
-          "description": "Config your code highlight theme. Use highlight.js lib."
-        },
-        "evermonkey.showTips": {
-          "type": "boolean",
-          "default": true,
-          "description": "Show you friendly tips."
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/michalyao/evermonkey.git"
+    },
+    "icon": "assets/icon.png",
+    "homepage": "https://github.com/michalyao/evermonkey",
+    "main": "./out/src/extension",
+    "activationEvents": [
+        "onCommand:extension.navToNote",
+        "onCommand:extension.publishNote",
+        "onCommand:extension.openDevPage",
+        "onCommand:extension.sync",
+        "onCommand:extension.newNote",
+        "onCommand:extension.searchNote"
+    ],
+    "contributes": {
+        "commands": [
+            {
+                "command": "extension.navToNote",
+                "title": "ever open"
+            },
+            {
+                "command": "extension.publishNote",
+                "title": "ever publish"
+            },
+            {
+                "command": "extension.openDevPage",
+                "title": "ever token"
+            },
+            {
+                "command": "extension.sync",
+                "title": "ever sync"
+            },
+            {
+                "command": "extension.newNote",
+                "title": "ever new"
+            },
+            {
+                "command": "extension.searchNote",
+                "title": "ever search"
+            }
+        ],
+        "configuration": {
+            "title": "EverMonkey Configuration",
+            "type": "object",
+            "properties": {
+                "evermonkey.token": {
+                    "type": "string",
+                    "default": "",
+                    "description": "Copy your Developer Token from the website. (ever token: Open Developer Page)"
+                },
+                "evermonkey.noteStoreUrl": {
+                    "type": "string",
+                    "default": "",
+                    "description": "Copy your NoteStore URL from the website. (ever token: Open Developer Page)"
+                },
+                "evermonkey.highlightTheme": {
+                    "type": "string",
+                    "default": "github",
+                    "description": "Config your code highlight theme. Use highlight.js lib."
+                },
+                "evermonkey.showTips": {
+                    "type": "boolean",
+                    "default": true,
+                    "description": "Show you friendly tips."
+                }
+            }
         }
-      }
+    },
+    "scripts": {
+        "vscode:prepublish": "tsc -p ./",
+        "compile": "tsc -watch -p ./",
+        "postinstall": "node ./node_modules/vscode/bin/install"
+    },
+    "dependencies": {
+        "bluebird": "^3.5.0",
+        "cheerio": "^0.22.0",
+        "evernote": "^2.0.1-beta",
+        "highlight.js": "^9.10.0",
+        "inline-css": "^2.2.2",
+        "lodash": "^4.17.4",
+        "markdown-it": "^8.3.1",
+        "markdown-it-enml-todo": "^1.0.2",
+        "markdown-it-sub": "^1.0.0",
+        "markdown-it-sup": "^1.0.0",
+        "open": "0.0.5",
+        "to-markdown": "^3.0.3"
+    },
+    "devDependencies": {
+        "typescript": "^2.0.3",
+        "vscode": "^1.0.0",
+        "mocha": "^2.3.3",
+        "eslint": "^3.6.0",
+        "@types/node": "^6.0.40",
+        "@types/mocha": "^2.2.32"
     }
-  },
-  "scripts": {
-    "vscode:prepublish": "tsc -p ./",
-    "compile": "tsc -watch -p ./",
-    "postinstall": "node ./node_modules/vscode/bin/install"
-  },
-  "dependencies": {
-    "bluebird": "^3.5.0",
-    "cheerio": "^0.22.0",
-    "evernote": "^2.0.1-beta",
-    "highlight.js": "^9.10.0",
-    "inline-css": "^2.2.2",
-    "lodash": "^4.17.4",
-    "markdown-it": "^8.3.1",
-    "markdown-it-enml-todo": "^1.0.2",
-    "markdown-it-sub": "^1.0.0",
-    "markdown-it-sup": "^1.0.0",
-    "open": "0.0.5",
-    "to-markdown": "^3.0.3"
-  },
-  "devDependencies": {
-    "typescript": "^2.0.3",
-    "vscode": "^1.0.0",
-    "mocha": "^2.3.3",
-    "eslint": "^3.6.0",
-    "@types/node": "^6.0.40",
-    "@types/mocha": "^2.2.32"
-  }
 }
