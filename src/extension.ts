@@ -1,5 +1,5 @@
 import * as vscode from 'vscode';
-import * as converter from './converter';
+import Converter from './converterplus';
 import * as _ from 'lodash';
 import * as open from 'open';
 import * as util from 'util';
@@ -31,7 +31,7 @@ const localNote = {};
 let showTips;
 let client;
 const tagCache = {};
-
+const converter = new Converter({});
 
 //  exact text Metadata by convention
 function exactMetadata(text) {
@@ -112,7 +112,7 @@ async function publishNote() {
   let editor = vscode.window.activeTextEditor;
   let doc = editor.document;
   let result = exactMetadata(doc.getText());
-  let content = converter.toEnml(result.content);
+  let content = await converter.toEnml(result.content);
   let meta = result.metadata;
   let title = meta['title'];
   if (localNote[doc.fileName]) {
