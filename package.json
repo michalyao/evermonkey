@@ -66,6 +66,11 @@
           "default": "",
           "description": "Copy your NoteStore URL from the website. (ever token: Open Developer Page)"
         },
+        "evermonkey.highlightTheme": {
+          "type": "string",
+          "default": "github",
+          "description": "Config your code highlight theme. Use highlight.js lib."
+        },
         "evermonkey.showTips": {
           "type": "boolean",
           "default": true,
@@ -77,13 +82,19 @@
   "scripts": {
     "vscode:prepublish": "tsc -p ./",
     "compile": "tsc -watch -p ./",
-    "postinstall": "node ./node_modules/vscode/bin/install",
-    "test": "node ./node_modules/vscode/bin/test"
+    "postinstall": "node ./node_modules/vscode/bin/install"
   },
   "dependencies": {
+    "bluebird": "^3.5.0",
+    "cheerio": "^0.22.0",
     "evernote": "^2.0.1-beta",
+    "highlight.js": "^9.10.0",
+    "inline-css": "^2.2.2",
     "lodash": "^4.17.4",
-    "marked": "^0.3.6",
+    "markdown-it": "^8.3.1",
+    "markdown-it-enml-todo": "^1.0.2",
+    "markdown-it-sub": "^1.0.0",
+    "markdown-it-sup": "^1.0.0",
     "open": "0.0.5",
     "to-markdown": "^3.0.3"
   },
