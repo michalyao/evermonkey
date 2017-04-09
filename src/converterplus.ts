@@ -6,9 +6,6 @@ import * as mdSub from 'markdown-it-sub';
 import * as mdSup from 'markdown-it-sup';
 import * as mdEmoji from 'markdown-it-emoji';
 import * as mdEnmlTodo from 'markdown-it-enml-todo';
-import * as mermaidLib from 'mermaid/lib';
-import * as mermaidCli from 'mermaid/lib/cli';
-import * as svg2png from 'svg2png';
 import * as path from 'path';
 import fs from './file'
 import * as toMarkdown from 'to-markdown';
@@ -65,16 +62,8 @@ export default class Converter {
     const tokens = this.md.parse(markcontent, {});
     const html = this.md.renderer.render(tokens, this.md.options);
     const $ = cheerio.load(html);
-    await this.processDiagram($);
     await this.processStyle($);
     return $.xml();
-  }
-
-  // get mermaid tokens.
-  async processDiagram($) {
-    const mermaidList = [];
-    const mermaidElements = $('.mermaid');
-    mermaidElements.each((idx, element) => mermaidList.push($(element).text()));
   }
 
   async toEnml(markcontent) {
