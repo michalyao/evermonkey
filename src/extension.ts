@@ -200,7 +200,8 @@ async function listResources() {
         selectedFileName = selected.substr(8);
         selectedAttachment = localResources.find(resource => resource.attributes.fileName === selectedFileName);
         source = ATTACHMENT_SOURCE_LOCAL;
-        uri = _.findKey(attachmentsCache[doc.fileName], cache => _.values(cache)[0] === selectedFileName);
+        let selectedCache = attachmentsCache[doc.fileName].find(cache => _.values(cache)[0].attributes.fileName === selectedFileName);
+        uri = _.keys(selectedCache)[0];
       }
       openAttachment(selectedAttachment, source, uri);
     } else {
