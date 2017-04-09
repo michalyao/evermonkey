@@ -217,9 +217,7 @@ async function openAttachment(attachment, source, uri) {
     case ATTACHMENT_SOURCE_SERVER:
       const resource = await client.getResource(attachment.guid);
       const fileName = resource.attributes.fileName;
-      const mime = guessExtension(resource.mime);
       const data = resource.data.body;
-      if (mime === 'png') {
         try {
           const isExist = await fs.exsit(ATTACHMENT_FOLDER_PATH);
           if (!isExist) {
@@ -232,8 +230,6 @@ async function openAttachment(attachment, source, uri) {
         } catch (error) {
           wrapError(error);
         }
-
-      }
       break;
   }
 }
