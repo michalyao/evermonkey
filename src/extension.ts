@@ -2,7 +2,7 @@ import * as buffer from 'buffer';
 import * as vscode from 'vscode';
 import Converter from './converterplus';
 import * as _ from 'lodash';
-import * as open from 'open';
+import * as open from 'opener';
 import * as util from 'util';
 import * as path from 'path';
 import {
