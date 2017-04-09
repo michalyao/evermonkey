@@ -82,7 +82,7 @@ export default class Converter {
     const html = await this.toHtml(markcontent);
     let enml = '<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE en-note SYSTEM "http://xml.evernote.com/pub/enml2.dtd"><en-note style=";">';
     enml += '<!--' + MAGIC_SPELL;
-    enml += new Buffer(markcontent, 'utf-8').toString('base64');
+    enml += Buffer.from(markcontent, 'utf-8').toString('base64');
     enml += MAGIC_SPELL + '-->';
     enml += html;
     enml += '</en-note>';
