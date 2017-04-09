@@ -1,34 +1,48 @@
 import * as Evernote from 'evernote';
 import * as vscode from 'vscode';
+
 const MAX_NOTE_COUNTS = 200;
+
+const config = vscode.workspace.getConfiguration('evermonkey');
+const RECENT_NOTE_COUNTS = config.recentNotesCount || 10;
 
 //TODO: add some friendly msg.
 export class EvernoteClient {
-  noteStore;
-  constructor(token, noteStoreUrl) {
-    if (!token) {
-      vscode.window.showWarningMessage('missing token in configuration');
+    noteStore;
+    constructor(token, noteStoreUrl) {
+        if (!token) {
+            vscode.window.showWarningMessage('missing token in configuration');
+        }
+        const options = {
+            token
+        };
+        const client = new Evernote.Client(options);
+        this.noteStore = client.getNoteStore(noteStoreUrl);
     }
-    const options = {
-      token
-    };
-    const client = new Evernote.Client(options);
-    this.noteStore = client.getNoteStore(noteStoreUrl);
-  }
-  listNotebooks() {
-    return this.noteStore.listNotebooks();
-  }
 
-  listAllNoteMetadatas(notebookGuid) {
-    return this.noteStore.findNotesMetadata({
-      notebookGuid
-    }, 0, MAX_NOTE_COUNTS, {
-      includeTitle: true,
-      includeNotebookGuid: true,
-      includeTagGuids: true
-    })
-  }
+    listRecentNotes() {
+      return this.noteStore.findNotesMetadata({order : Evernote.Types.NoteSortOrder.UPDATED}, 0, RECENT_NOTE_COUNTS, {
+            includeTitle: true,
+            includeNotebookGuid: true,
+            includeTagGuids: true
+        });
+    }
 
+    listNotebooks() {
+        return this.noteStore.listNotebooks();
+    }
+
+
+    listAllNoteMetadatas(notebookGuid) {
+        return this.noteStore.findNotesMetadata({
+            notebookGuid
+        }, 0, MAX_NOTE_COUNTS, {
+            includeTitle: true,
+            includeNotebookGuid: true,
+            includeTagGuids: true
+        });
+    }
+  
   getNoteContent(noteGuid) {
     return this.noteStore.getNoteContent(noteGuid);
   }
@@ -64,6 +78,7 @@ export class EvernoteClient {
       resources
     });
   }
+
 
   createNotebook(title) {
     return this.noteStore.createNotebook({

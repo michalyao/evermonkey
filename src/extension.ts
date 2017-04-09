@@ -441,7 +441,25 @@ async function searchNote() {
   } catch (err) {
     wrapError(err);
   }
+}
 
+async function openRecentNotes() {
+  try {
+    if (!notebooks || !notesMap) {
+      await syncAccount();
+    }
+    const recentResults = await client.listRecentNotes();
+    const recentNotes = recentResults.notes;
+    const selectedNoteTitle = await vscode.window.showQuickPick(recentNotes.map(note => note.title));
+    if (!selectedNoteTitle) {
+      throw "";
+    }
+    let selectedNote = recentNotes.find(note => note.title === selectedNoteTitle);
+    selectedNotebook = notebooks.find(notebook => notebook.guid === selectedNote.notebookGuid);
+    return openNote(selectedNoteTitle);
+  } catch (err) {
+    wrapError(err);
+  }
 }
 
 // Open search result note. (notebook >> note)
@@ -544,7 +562,6 @@ function activate(context) {
     vscode.commands.executeCommand('workbench.action.openGlobalSettings');
   }
   client = new EvernoteClient(config.token, config.noteStoreUrl);
-
   // quick match for monkey.
   let action = vscode.languages.registerCompletionItemProvider(['plaintext', {
     'scheme': 'untitled',
@@ -576,8 +593,11 @@ function activate(context) {
   let syncCmd = vscode.commands.registerCommand('extension.sync', syncAccount);
   let newNoteCmd = vscode.commands.registerCommand('extension.newNote', newNote);
   let searchNoteCmd = vscode.commands.registerCommand('extension.searchNote', searchNote);
+
+  let openRecentNotesCmd = vscode.commands.registerCommand('extension.openRecentNotes', openRecentNotes);
   let attachToNoteCmd = vscode.commands.registerCommand('extension.attachToNote', attachToNote);
   let listResourcesCmd = vscode.commands.registerCommand('extension.listResouces', listResources);
+
 
   context.subscriptions.push(listAllNotebooksCmd);
   context.subscriptions.push(publishNoteCmd);
@@ -586,9 +606,10 @@ function activate(context) {
   context.subscriptions.push(newNoteCmd);
   context.subscriptions.push(action);
   context.subscriptions.push(searchNoteCmd);
+
+  context.subscriptions.push(openRecentNotesCmd);
   context.subscriptions.push(attachToNoteCmd);
   context.subscriptions.push(listResourcesCmd);
-
 }
 exports.activate = activate;
 

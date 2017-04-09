@@ -23,7 +23,8 @@
     "onCommand:extension.openDevPage",
     "onCommand:extension.sync",
     "onCommand:extension.newNote",
-    "onCommand:extension.searchNote"
+    "onCommand:extension.searchNote",
+    "onCommand:extension.openRecentNotes"
   ],
   "contributes": {
     "commands": [
@@ -52,6 +53,9 @@
         "title": "ever search"
       },
       {
+        "command": "extension.openRecentNotes",
+        "title": "ever recent"
+      },
         "command": "extension.attachToNote",
         "title": "ever attach"
       },
@@ -88,6 +92,11 @@
           "type": "boolean",
           "default": true,
           "description": "Show you friendly tips."
+        },
+        "evermonkey.recentNotesCount": {
+          "type": "integer",
+          "default": 10,
+          "description": "Recent edited notes returned count."
         }
       }
     }
