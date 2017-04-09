@@ -10,8 +10,7 @@ import * as mermaidLib from 'mermaid/lib';
 import * as mermaidCli from 'mermaid/lib/cli';
 import * as svg2png from 'svg2png';
 import * as path from 'path';
-import * as fsn from 'fs';
-import * as bluebird from 'bluebird';
+import fs from './file'
 import * as toMarkdown from 'to-markdown';
 import * as vscode from 'vscode';
 
@@ -21,7 +20,7 @@ const HIGHLIGHT_THEME_PATH = path.join(__dirname, '../../node_modules/highlight.
 const DEFAULT_HIGHLIGHT_THEME = 'github';
 const MAGIC_SPELL = "%EVERMONKEY%";
 
-const fs = bluebird.Promise.promisifyAll(fsn);
+
 const config = vscode.workspace.getConfiguration('evermonkey');
 
 export default class Converter {
