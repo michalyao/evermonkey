@@ -157,59 +157,69 @@ async function attachToNote() {
 
 // list current file attachment.
 async function listResources() {
-  const editor = await vscode.window.activeTextEditor;
-  let doc = editor.document;
-  let localResources;
-  let serverResources = serverResourcesCache[doc.fileName];
-  // open a note from server ,may have resouces
-  if (localNote[doc.fileName]) {
-    const result = await client.getNoteResources(localNote[doc.fileName].guid);
-    serverResources = result.resources;
-    serverResourcesCache[doc.fileName] = serverResources;
-  }
-  // show local cache only.
-  localResources = attachmentsCache[doc.fileName].map(cache => _.values(cache)[0]);
-  let serverResourcesName = [];
-  let localResourcesName = [];
-
-  if (serverResources) {
-    serverResourcesName = serverResources.map(attachment => '(server) ' + attachment.attributes.fileName);
-  }
-
-  if (localResources) {
-    localResourcesName = localResources.map(attachment => '(local) ' + attachment.attributes.fileName);
-  }
-
-  if (serverResourcesName || localResourcesName) {
-    const selected = await vscode.window.showQuickPick(serverResourcesName.concat(localResourcesName));
-    // do not handle now.
-    if (!selected) {
-      throw "";
+  try {
+    const editor = await vscode.window.activeTextEditor;
+    let doc = editor.document;
+    let localResources;
+    let serverResources = serverResourcesCache[doc.fileName];
+    // open a note from server ,may have resouces
+    if (localNote[doc.fileName]) {
+      const result = await client.getNoteResources(localNote[doc.fileName].guid);
+      serverResources = result.resources;
+      serverResourcesCache[doc.fileName] = serverResources;
     }
-    let selectedAttachment;
-    let selectedFileName;
-    let source;
-    let uri;
-    if (selected.startsWith('(server) ')) {
-      selectedFileName = selected.substr(9);
-      selectedAttachment = serverResources.find(resource => resource.attributes.fileName === selectedFileName);
-      source = ATTACHMENT_SOURCE_SERVER;
+    // show local cache only.
+    localResources = attachmentsCache[doc.fileName].map(cache => _.values(cache)[0]);
+    let serverResourcesName = [];
+    let localResourcesName = [];
+
+    if (serverResources) {
+      serverResourcesName = serverResources.map(attachment => '(server) ' + attachment.attributes.fileName);
+    }
+
+    if (localResources) {
+      localResourcesName = localResources.map(attachment => '(local) ' + attachment.attributes.fileName);
+    }
+
+    if (serverResourcesName || localResourcesName) {
+      const selected = await vscode.window.showQuickPick(serverResourcesName.concat(localResourcesName));
+      // do not handle now.
+      if (!selected) {
+        throw "";
+      }
+      let selectedAttachment;
+      let selectedFileName;
+      let source;
+      let uri;
+      if (selected.startsWith('(server) ')) {
+        selectedFileName = selected.substr(9);
+        selectedAttachment = serverResources.find(resource => resource.attributes.fileName === selectedFileName);
+        source = ATTACHMENT_SOURCE_SERVER;
+      } else {
+        selectedFileName = selected.substr(8);
+        selectedAttachment = localResources.find(resource => resource.attributes.fileName === selectedFileName);
+        source = ATTACHMENT_SOURCE_LOCAL;
+        uri = _.findKey(attachmentsCache[doc.fileName], cache => _.values(cache)[0] === selectedAttachment);
+      }
+      openAttachment(selectedAttachment, source, uri);
     } else {
-      selectedFileName = selected.substr(8);
-      selectedAttachment = localResources.find(resource => resource.attributes.fileName === selectedFileName);
-      source = ATTACHMENT_SOURCE_LOCAL;
-      uri = _.findKey(attachmentsCache[doc.fileName], cache => _.values(cache)[0] === selectedAttachment);
+      vscode.window.showInformationMessage("No resouce to show.")
     }
-    openAttachment(selectedAttachment, source, uri);
-  } else {
-    vscode.window.showInformationMessage("No resouce to show.")
+  } catch (err) {
+    wrapError(err);
   }
+
 }
 
+// open an attachment, use default app.
 async function openAttachment(attachment, source, uri) {
   switch (source) {
     case ATTACHMENT_SOURCE_LOCAL:
-
+      try {
+        open(uri);
+      } catch (err) {
+        wrapError(err);
+      }
       break;
     case ATTACHMENT_SOURCE_SERVER:
       const resource = await client.getResource(attachment.guid);
@@ -232,9 +242,8 @@ async function openAttachment(attachment, source, uri) {
 }
 
 
-// attach current file to evernote. maybe a source code file or other, show notebook and note.
 
-// Publish note to Evernote Server.
+// Publish note to Evernote Server. with resources.
 async function publishNote() {
   try {
     if (!notebooks || !notesMap) {
@@ -251,7 +260,7 @@ async function publishNote() {
       // update the note.
       let updatedNote;
       let noteGuid = localNote[doc.fileName].guid;
-      const noteResources= await client.getNoteResources(noteGuid);
+      const noteResources = await client.getNoteResources(noteGuid);
       if (noteResources.resources) {
         resources = noteResources.resources.concat(resources);
         content = appendResourceContent(resources, content);
