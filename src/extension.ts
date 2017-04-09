@@ -150,6 +150,7 @@ async function attachToNote() {
     const cache = {};
     cache[filepath] = attachment;
     attachmentsCache[doc.fileName].push(cache);
+    vscode.window.setStatusBarMessage('Add attachment to current file succeeded', 2000);
   } catch (err) {
     wrapError(err);
   }
@@ -258,6 +259,7 @@ async function publishNote() {
     let resources = attachmentsCache[doc.fileName].map(cache => _.values(cache)[0]);
     if (localNote[doc.fileName]) {
       // update the note.
+      vscode.window.setStatusBarMessage('Updaing the note.', 2000);
       let updatedNote;
       let noteGuid = localNote[doc.fileName].guid;
       const noteResources = await client.getNoteResources(noteGuid);
@@ -275,6 +277,7 @@ async function publishNote() {
       attachmentsCache[doc.fileName] = [];
       return vscode.window.showInformationMessage(`${notebookName}>>${title} updated successfully.`);
     } else {
+      vscode.window.setStatusBarMessage('Creating the note.', 2000);
       content = appendResourceContent(resources, content);
       const createdNote = await createNote(meta, content, resources);
       if (!notesMap[createdNote.notebookGuid]) {
