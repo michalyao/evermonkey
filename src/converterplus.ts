@@ -34,8 +34,7 @@ export default class Converter {
         if (lang && hljs.getLanguage(lang)) {
           try {
             return `<pre class="hljs"><code>${hljs.highlight(lang, code, true).value}</code></pre>`
-          } catch (err) {
-          }
+          } catch (err) {}
         }
         // diagram style
         if (code.match(/^graph/) || code.match(/^sequenceDiagram/) || code.match(/^gantt/)) {
@@ -112,23 +111,23 @@ export default class Converter {
 
   toMd(enml) {
     if (!enml) {
-        return "";
+      return "";
     }
     let beginTagIndex = enml.indexOf('<en-note');
     let startIndex = enml.indexOf('>', beginTagIndex) + 1;
     let endIndex = enml.indexOf('</en-note>');
     let rawContent = enml.substring(startIndex, endIndex);
     if (rawContent.indexOf(MAGIC_SPELL) != -1) {
-        let beginMark = '<!--' + MAGIC_SPELL;
-        let beginMagicIdx = rawContent.indexOf(beginMark) + beginMark.length;
-        let endMagicIdx = rawContent.indexOf(MAGIC_SPELL + '-->');
-        let magicString = rawContent.substring(beginMagicIdx, endMagicIdx);
-        let base64content = new Buffer(magicString, 'base64');
-        return base64content.toString('utf-8');
+      let beginMark = '<!--' + MAGIC_SPELL;
+      let beginMagicIdx = rawContent.indexOf(beginMark) + beginMark.length;
+      let endMagicIdx = rawContent.indexOf(MAGIC_SPELL + '-->');
+      let magicString = rawContent.substring(beginMagicIdx, endMagicIdx);
+      let base64content = new Buffer(magicString, 'base64');
+      return base64content.toString('utf-8');
     } else {
-        let commentRegex = /<!--.*?-->/;
-        let htmlStr = rawContent.replace(commentRegex, '');
-        return toMarkdown(htmlStr);
+      let commentRegex = /<!--.*?-->/;
+      let htmlStr = rawContent.replace(commentRegex, '');
+      return toMarkdown(htmlStr);
     }
   }
 
