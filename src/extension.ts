@@ -264,8 +264,10 @@ async function publishNote() {
       let updatedNote;
       let noteGuid = localNote[doc.fileName].guid;
       const noteResources = await client.getNoteResources(noteGuid);
-      if (noteResources.resources) {
-        resources = resources.concat(noteResources.resources);
+      if (noteResources.resources || resources) {
+        if (noteResources.resources) {
+          resources = resources.concat(noteResources.resources);
+        }
         content = appendResourceContent(resources, content);
         updatedNote = await updateNoteResources(meta, content, noteGuid, resources);
         updatedNote.resources = resources;
