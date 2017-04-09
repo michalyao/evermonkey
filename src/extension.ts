@@ -200,7 +200,7 @@ async function listResources() {
         selectedFileName = selected.substr(8);
         selectedAttachment = localResources.find(resource => resource.attributes.fileName === selectedFileName);
         source = ATTACHMENT_SOURCE_LOCAL;
-        uri = _.findKey(attachmentsCache[doc.fileName], cache => _.values(cache)[0] === selectedAttachment);
+        uri = _.findKey(attachmentsCache[doc.fileName], cache => _.values(cache)[0] === selectedFileName);
       }
       openAttachment(selectedAttachment, source, uri);
     } else {
@@ -264,9 +264,10 @@ async function publishNote() {
       let noteGuid = localNote[doc.fileName].guid;
       const noteResources = await client.getNoteResources(noteGuid);
       if (noteResources.resources) {
-        resources = noteResources.resources.concat(resources);
+        resources = resources.concat(noteResources.resources);
         content = appendResourceContent(resources, content);
         updatedNote = await updateNoteResources(meta, content, noteGuid, resources);
+        updatedNote.resources = resources;
         serverResourcesCache[doc.fileName] = null;
       } else {
         updatedNote = await updateNoteContent(meta, content, noteGuid);
@@ -280,6 +281,7 @@ async function publishNote() {
       vscode.window.setStatusBarMessage('Creating the note.', 2000);
       content = appendResourceContent(resources, content);
       const createdNote = await createNote(meta, content, resources);
+      createdNote.resources = resources;
       if (!notesMap[createdNote.notebookGuid]) {
         notesMap[createdNote.notebookGuid] = [createdNote];
       } else {
