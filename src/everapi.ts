@@ -35,9 +35,13 @@ export class EvernoteClient {
 
   getNoteResources(noteGuid) {
     return this.noteStore.getNoteWithResultSpec(noteGuid, {
-      includeResourcesData: true
+      includeResourceAppDataValues: true
     });
 
+  }
+
+  getResource(guid) {
+    return this.noteStore.getResource(guid, true, false, true, false);
   }
 
   updateNoteContent(guid, title, content, tagNames, notebookGuid, resources) {

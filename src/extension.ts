@@ -5,13 +5,22 @@ import * as _ from 'lodash';
 import * as open from 'open';
 import * as util from 'util';
 import * as path from 'path';
-import { hash, guessMime } from './myutil';
+import {
+  hash,
+  guessMime,
+  guessExtension
+} from './myutil';
 import fs from './file';
 import * as evernote from 'evernote';
 import {
   EvernoteClient
 } from './everapi';
 
+const config = vscode.workspace.getConfiguration('evermonkey');
+
+const ATTACHMENT_FOLDER_PATH =  path.join(__dirname, config.attachmentsFolder || '../../attachments');
+const ATTACHMENT_SOURCE_LOCAL = 0;
+const ATTACHMENT_SOURCE_SERVER = 1;
 const TIP_BACK = 'back...';
 const METADATA_PATTERN = /^---[ \t]*\n((?:[ \t]*[^ \t:]+[ \t]*:[^\n]*\n)+)---[ \t]*\n/;
 
@@ -28,9 +37,12 @@ let notebooks, notesMap, selectedNotebook;
 const localNote = {};
 let showTips;
 let client;
+const serverResourcesCache = {};
 const tagCache = {};
 const converter = new Converter({});
-let attachmentsCache = {};
+
+// doc -> [{filepath: attachment}]
+const attachmentsCache = {};
 
 //  exact text Metadata by convention
 function exactMetadata(text) {
@@ -105,7 +117,7 @@ async function syncAccount() {
     wrapError(err);
   }
 }
-
+// TODO attachment need statusbar tips
 // add attachtment to note.
 async function attachToNote() {
   try {
@@ -136,7 +148,9 @@ async function attachToNote() {
         "attachment": true
       }
     };
-    attachmentsCache[doc.fileName].push(attachment);
+    const cache = {};
+    cache[filepath] = attachment;
+    attachmentsCache[doc.fileName].push(cache);
   } catch (err) {
     wrapError(err);
   }
@@ -146,20 +160,83 @@ async function attachToNote() {
 async function listResources() {
   const editor = await vscode.window.activeTextEditor;
   let doc = editor.document;
+  let localResources;
+  let serverResources = serverResourcesCache[doc.fileName];
+  // open a note from server ,may have resouces
   if (localNote[doc.fileName]) {
     const result = await client.getNoteResources(localNote[doc.fileName].guid);
-    attachmentsCache[doc.fileName] = attachmentsCache[doc.fileName].concat(result.resources);
+    serverResources = result.resources;
+    serverResourcesCache[doc.fileName] = serverResources;
   }
-  // not sync, show local cache only.
-  const resouceList = attachmentsCache[doc.fileName].map(attachment => attachment.attributes.fileName);
-  const selected = await vscode.window.showQuickPick(resouceList);
+  // show local cache only.
+  localResources = attachmentsCache[doc.fileName].map(cache => _.values(cache)[0]);
+  let serverResourcesName = [];
+  let localResourcesName = [];
 
-  // do not handle now.
-  if (selected || !selected) {
-    throw "";
+  if (serverResources) {
+    serverResourcesName = serverResources.map(attachment => '(server) ' + attachment.attributes.fileName);
+  }
+
+  if (localResources) {
+    localResourcesName = localResources.map(attachment => '(local) ' + attachment.attributes.fileName);
+  }
+
+  if (serverResourcesName || localResourcesName) {
+    const selected = await vscode.window.showQuickPick(serverResourcesName.concat(localResourcesName));
+    // do not handle now.
+    if (!selected) {
+      throw "";
+    }
+    let selectedAttachment;
+    let selectedFileName;
+    let source;
+    let uri;
+    if (selected.startsWith('(server) ')) {
+      selectedFileName = selected.substr(9);
+      selectedAttachment = serverResources.find(resource => resource.attributes.fileName === selectedFileName);
+      source = ATTACHMENT_SOURCE_SERVER;
+      uri = selectedAttachment.attributes.sourceURL; // use http.
+    } else {
+      selectedFileName = selected.substr(8);
+      selectedAttachment = localResources.find(resource => resource.attributes.fileName === selectedFileName);
+      source = ATTACHMENT_SOURCE_LOCAL;
+      uri = _.findKey(attachmentsCache[doc.fileName], cache => _.values(cache)[0] === selectedAttachment);
+    }
+    openAttachment(selectedAttachment, source, uri);
+  } else {
+    vscode.window.showInformationMessage("No resouce to show.")
   }
 }
 
+async function openAttachment(attachment, source, uri) {
+
+  switch (source) {
+    case ATTACHMENT_SOURCE_LOCAL:
+
+      break;
+    case ATTACHMENT_SOURCE_SERVER:
+      const resource = await client.getResource(attachment.guid);
+      const fileName = resource.attributes.fileName;
+      const mime = guessExtension(resource.mime);
+      const data = resource.data.body;
+      if (mime === 'png') {
+        try {
+          const isExist = await fs.exsit(ATTACHMENT_FOLDER_PATH);
+          if (!isExist) {
+            await fs.mkdirAsync(ATTACHMENT_FOLDER_PATH);
+          }
+          const tmpDir = await fs.mkdtempAsync(path.join(ATTACHMENT_FOLDER_PATH, './evermonkey-'));
+          const filepath = path.join(tmpDir, fileName);
+          await fs.writeFileAsync(filepath, data);
+          open(filepath);
+        } catch (error) {
+          wrapError(error);
+        }
+
+      }
+      break;
+  }
+}
 
 
 // attach current file to evernote. maybe a source code file or other, show notebook and note.
@@ -176,13 +253,22 @@ async function publishNote() {
     let content = await converter.toEnml(result.content);
     let meta = result.metadata;
     let title = meta['title'];
-    let resources = attachmentsCache[doc.fileName];
+    let resources = attachmentsCache[doc.fileName].map(cache => _.values(cache)[0]);
+    if (resources) {
+      content = content.slice(0, -10);
+      resources.forEach(attachment => {
+        content = content + util.format('<en-media type="%s" hash="%s"/>', attachment.mime, attachment.data.bodyHash);
+      });
+      content = content + '</en-note>';
+    }
     if (localNote[doc.fileName]) {
       // update the note.
       let noteGuid = localNote[doc.fileName].guid;
       const updatedNote = await updateNote(meta, content, noteGuid, resources);
       localNote[doc.fileName] = updatedNote;
       let notebookName = notebooks.find(notebook => notebook.guid === updatedNote.notebookGuid).name;
+      // attachments cache should be removed.
+      attachmentsCache[doc.fileName] = [];
       return vscode.window.showInformationMessage(`${notebookName}>>${title} updated successfully.`);
     } else {
       const createdNote = await createNote(meta, content, resources);
@@ -193,8 +279,11 @@ async function publishNote() {
       }
       localNote[doc.fileName] = createdNote;
       let notebookName = notebooks.find(notebook => notebook.guid === createdNote.notebookGuid).name;
+      attachmentsCache[doc.fileName] = [];
       return vscode.window.showInformationMessage(`${notebookName}>>${title} created successfully.`);
     }
+
+
   } catch (err) {
     wrapError(err);
   }
@@ -207,7 +296,7 @@ async function updateNote(meta, content, noteGuid, resources) {
     let title = meta['title'];
     let notebook = meta['notebook'];
     const notebookGuid = await getNotebookGuid(notebook);
-    return client.updateNoteContent(noteGuid, title, content, tagNames, notebookGuid, resources);
+    return client.updateNoteContent(noteGuid, title, content, tagNames, notebookGuid, resources || void 0);
 
   } catch (err) {
     wrapError(err);
@@ -413,7 +502,7 @@ function wrapError(error) {
 }
 
 function activate(context) {
-  const config = vscode.workspace.getConfiguration('evermonkey');
+
   if (!config.token || !config.noteStoreUrl) {
     vscode.window.showWarningMessage('Please use ever token command to get the token and storeUrl, copy&paste to the settings, and then restart the vscode.');
     vscode.commands.executeCommand('workbench.action.openGlobalSettings');
@@ -471,6 +560,7 @@ exports.activate = activate;
 // remove local cache when closed the editor.
 function removeLocal(event) {
   localNote[event.fileName] = null;
+  serverResourcesCache[event.fileName] = null;
 }
 
 function alertToUpdate() {

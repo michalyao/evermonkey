@@ -79,6 +79,11 @@
           "default": "github",
           "description": "Config your code highlight theme. Use highlight.js lib."
         },
+        "evermonkey.attachmentsFolder": {
+          "type": "string",
+          "default": "../../attachments",
+          "description": "Local folder to save attachments"
+        },
         "evermonkey.showTips": {
           "type": "boolean",
           "default": true,
