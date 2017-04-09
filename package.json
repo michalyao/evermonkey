@@ -92,10 +92,14 @@
     "inline-css": "^2.2.2",
     "lodash": "^4.17.4",
     "markdown-it": "^8.3.1",
+    "markdown-it-emoji": "^1.3.0",
     "markdown-it-enml-todo": "^1.0.2",
     "markdown-it-sub": "^1.0.0",
     "markdown-it-sup": "^1.0.0",
+    "mermaid": "^7.0.0",
     "open": "0.0.5",
+    "phantomjs": "^2.1.7",
+    "svg2png": "^4.1.1",
     "to-markdown": "^3.0.3"
   },
   "devDependencies": {
