@@ -50,6 +50,14 @@
       {
         "command": "extension.searchNote",
         "title": "ever search"
+      },
+      {
+        "command": "extension.attachToNote",
+        "title": "ever attach"
+      },
+      {
+        "command": "extension.listResouces",
+        "title": "ever resources"
       }
     ],
     "configuration": {
@@ -87,6 +95,7 @@
   "dependencies": {
     "bluebird": "^3.5.0",
     "cheerio": "^0.22.0",
+    "crypto": "0.0.3",
     "evernote": "^2.0.1-beta",
     "highlight.js": "^9.10.0",
     "inline-css": "^2.2.2",
@@ -97,6 +106,7 @@
     "markdown-it-sub": "^1.0.0",
     "markdown-it-sup": "^1.0.0",
     "mermaid": "^7.0.0",
+    "mime-types": "^2.1.15",
     "open": "0.0.5",
     "phantomjs": "^2.1.7",
     "svg2png": "^4.1.1",
