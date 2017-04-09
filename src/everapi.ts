@@ -32,6 +32,7 @@ export class EvernoteClient {
         return this.noteStore.listNotebooks();
     }
 
+
     listAllNoteMetadatas(notebookGuid) {
         return this.noteStore.findNotesMetadata({
             notebookGuid
@@ -41,48 +42,75 @@ export class EvernoteClient {
             includeTagGuids: true
         });
     }
+  
+  getNoteContent(noteGuid) {
+    return this.noteStore.getNoteContent(noteGuid);
+  }
 
-    getNoteContent(noteGuid) {
-        return this.noteStore.getNoteContent(noteGuid);
-    }
+  getNoteResources(noteGuid) {
+    return this.noteStore.getNoteWithResultSpec(noteGuid, {
+      includeResourceData: true
+    });
 
-    updateNoteContent(guid, title, content, tagNames, notebookGuid) {
-        return this.noteStore.updateNote({
-            guid,
-            title,
-            content,
-            tagNames,
-            notebookGuid
-        });
-    }
+  }
 
-    createNotebook(title) {
-        return this.noteStore.createNotebook({
-            name: title
-        });
-    }
+  getResource(guid) {
+    return this.noteStore.getResource(guid, true, false, true, false);
+  }
 
-    createNote(title, notebookGuid, content, tagNames) {
-        return this.noteStore.createNote({
-            title,
-            notebookGuid,
-            content,
-            tagNames
-        });
-    }
+  updateNoteContent(guid, title, content, tagNames, notebookGuid) {
+    return this.noteStore.updateNote({
+      guid,
+      title,
+      content,
+      tagNames,
+      notebookGuid
+    });
+  }
 
-    // list all tags, and store it in local. guid -> name (hash by guid)
-    listTags() {
-        return this.noteStore.listTags();
-    }
+  updateNoteResources(guid, title, content, tagNames, notebookGuid, resources) {
+     return this.noteStore.updateNote({
+      guid,
+      title,
+      content,
+      tagNames,
+      notebookGuid,
+      resources
+    });
+  }
 
-    searchNote(words) {
-        return this.noteStore.findNotesMetadata({ words }, 0, MAX_NOTE_COUNTS, {
-            includeNotebookGuid: true, includeTitle: true
-        });
-    }
 
-    getDefaultNotebook() {
-        return this.noteStore.getDefaultNotebook();
-    }
+  createNotebook(title) {
+    return this.noteStore.createNotebook({
+      name: title
+    });
+  }
+
+  createNote(title, notebookGuid, content, tagNames, resources) {
+    return this.noteStore.createNote({
+      title,
+      notebookGuid,
+      content,
+      tagNames,
+      resources
+    });
+  }
+
+  // list all tags, and store it in local. guid -> name (hash by guid)
+  listTags() {
+    return this.noteStore.listTags();
+  }
+
+  searchNote(words) {
+    return this.noteStore.findNotesMetadata({
+      words
+    }, 0, MAX_NOTE_COUNTS, {
+      includeNotebookGuid: true,
+      includeTitle: true
+    });
+  }
+
+  getDefaultNotebook() {
+    return this.noteStore.getDefaultNotebook();
+  }
 }

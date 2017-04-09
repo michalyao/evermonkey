@@ -4,10 +4,13 @@ import * as inlineCss from 'inline-css'
 import * as MarkdownIt from 'markdown-it';
 import * as mdSub from 'markdown-it-sub';
 import * as mdSup from 'markdown-it-sup';
+import * as mdEmoji from 'markdown-it-emoji';
 import * as mdEnmlTodo from 'markdown-it-enml-todo';
+import * as mermaidLib from 'mermaid/lib';
+import * as mermaidCli from 'mermaid/lib/cli';
+import * as svg2png from 'svg2png';
 import * as path from 'path';
-import * as fsn from 'fs';
-import * as bluebird from 'bluebird';
+import fs from './file'
 import * as toMarkdown from 'to-markdown';
 import * as vscode from 'vscode';
 
@@ -17,7 +20,7 @@ const HIGHLIGHT_THEME_PATH = path.join(__dirname, '../../node_modules/highlight.
 const DEFAULT_HIGHLIGHT_THEME = 'github';
 const MAGIC_SPELL = "%EVERMONKEY%";
 
-const fs = bluebird.Promise.promisifyAll(fsn);
+
 const config = vscode.workspace.getConfiguration('evermonkey');
 
 export default class Converter {
@@ -27,12 +30,18 @@ export default class Converter {
       html: true,
       linkify: true,
       highlight(code, lang) {
+        // code highlight
         if (lang && hljs.getLanguage(lang)) {
           try {
             return `<pre class="hljs"><code>${hljs.highlight(lang, code, true).value}</code></pre>`
           } catch (err) {
           }
         }
+        // diagram style
+        if (code.match(/^graph/) || code.match(/^sequenceDiagram/) || code.match(/^gantt/)) {
+          return `<div class="mermaid">${code}</div>`
+        }
+
         return `<pre class="hljs"><code>${md.utils.escapeHtml(code)}</code></pre>`
       },
       ...options,
@@ -41,7 +50,8 @@ export default class Converter {
     // markdown-it plugin
     md.use(mdSub)
       .use(mdSup)
-      .use(mdEnmlTodo);
+      .use(mdEnmlTodo)
+      .use(mdEmoji);
 
     // Inline code class for enml style.
     const inlineCodeRule = md.renderer.rules.code_inline;
@@ -56,15 +66,23 @@ export default class Converter {
     const tokens = this.md.parse(markcontent, {});
     const html = this.md.renderer.render(tokens, this.md.options);
     const $ = cheerio.load(html);
+    await this.processDiagram($);
     await this.processStyle($);
     return $.xml();
+  }
+
+  // get mermaid tokens.
+  async processDiagram($) {
+    const mermaidList = [];
+    const mermaidElements = $('.mermaid');
+    mermaidElements.each((idx, element) => mermaidList.push($(element).text()));
   }
 
   async toEnml(markcontent) {
     const html = await this.toHtml(markcontent);
     let enml = '<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE en-note SYSTEM "http://xml.evernote.com/pub/enml2.dtd"><en-note style=";">';
     enml += '<!--' + MAGIC_SPELL;
-    enml += new Buffer(markcontent, 'utf-8').toString('base64');
+    enml += Buffer.from(markcontent, 'utf-8').toString('base64');
     enml += MAGIC_SPELL + '-->';
     enml += html;
     enml += '</en-note>';
