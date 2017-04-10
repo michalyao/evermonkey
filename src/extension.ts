@@ -31,7 +31,7 @@ notebook: %s
 ---
 `
 
-// notesMap -- notebook - notes.
+// notesMap -- [notebookguid:[notes]].
 let notebooks, notesMap, selectedNotebook;
 const localNote = {};
 let showTips;
@@ -150,10 +150,27 @@ async function attachToNote() {
     const cache = {};
     cache[filepath] = attachment;
     attachmentsCache[doc.fileName].push(cache);
-    vscode.window.setStatusBarMessage("Add attachment to current file succeeded", 2000);
+    vscode.window.showInformationMessage(util.format("%s has been attched to current note.", fileName));
   } catch (err) {
     wrapError(err);
   }
+}
+
+// remove a local attachment.
+async function removeAttachment() {
+    const editor = await vscode.window.activeTextEditor;
+    let doc = editor.document;
+    // Can only remove an attachment from a cache file 
+    if (attachmentsCache[doc.fileName]) {
+      let localAttachments = attachmentsCache[doc.fileName].map(cache => _.values(cache)[0]);
+      const selectedAttachment = await vscode.window.showQuickPick(localAttachments.map(attachment => attachment.attributes.fileName));
+      if (!selectedAttachment) {
+        throw "";
+      }
+      let attachmentToRemove = localAttachments.find(attachment => attachment.attributes.fileName === selectedAttachment);
+      _.remove(attachmentsCache[doc.fileName], cache => _.values(cache)[0].attributes.fileName === selectedAttachment);
+      vscode.window.showInformationMessage(util.format("%s has been removed from current note.", selectedAttachment));
+    }
 }
 
 // list current file attachment.
@@ -614,7 +631,7 @@ function activate(context) {
   let attachToNoteCmd = vscode.commands.registerCommand("extension.attachToNote", attachToNote);
   let listResourcesCmd = vscode.commands.registerCommand("extension.listResouces", listResources);
   let openNoteInBrowserCmd = vscode.commands.registerCommand("extension.openNoteInBrowser", openNoteInBrowser);
-
+  let removeAttachmentCmd = vscode.commands.registerCommand("extension.removeAttachment", removeAttachment);
 
   context.subscriptions.push(listAllNotebooksCmd);
   context.subscriptions.push(publishNoteCmd);
@@ -627,6 +644,7 @@ function activate(context) {
   context.subscriptions.push(attachToNoteCmd);
   context.subscriptions.push(listResourcesCmd);
   context.subscriptions.push(openNoteInBrowserCmd);
+  context.subscriptions.push(removeAttachmentCmd);
   
 }
 exports.activate = activate;

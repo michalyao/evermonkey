@@ -67,6 +67,10 @@
       {
         "command": "extension.openNoteInBrowser",
         "title": "ever browse"
+      },
+      {
+        "command": "extension.removeAttachment",
+        "title": "ever unattach"
       }
     ],
     "configuration": {
