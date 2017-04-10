@@ -1,6 +1,6 @@
 import * as cheerio from "cheerio";
 import * as hljs from "highlight.js";
-import * as inlineCss from "inline-css"
+import * as inlineCss from "inline-css";
 import * as MarkdownIt from "markdown-it";
 import * as mdSub from "markdown-it-sub";
 import * as mdSup from "markdown-it-sup";
@@ -30,15 +30,15 @@ export default class Converter {
         // code highlight
         if (lang && hljs.getLanguage(lang)) {
           try {
-            return `<pre class="hljs"><code>${hljs.highlight(lang, code, true).value}</code></pre>`
+            return `<pre class="hljs"><code>${hljs.highlight(lang, code, true).value}</code></pre>`;
           } catch (err) {}
         }
         // diagram style
         if (code.match(/^graph/) || code.match(/^sequenceDiagram/) || code.match(/^gantt/)) {
-          return `<div class="mermaid">${code}</div>`
+          return `<div class="mermaid">${code}</div>`;
         }
 
-        return `<pre class="hljs"><code>${md.utils.escapeHtml(code)}</code></pre>`
+        return `<pre class="hljs"><code>${md.utils.escapeHtml(code)}</code></pre>`;
       },
       ...options,
     });
@@ -54,7 +54,7 @@ export default class Converter {
     md.renderer.rules.code_inline = (...args) => {
       const result = inlineCodeRule.call(md, ...args);
       return result.replace("<code>", '<code class="inline">');
-    }
+    };
     this.md = md;
   }
 
@@ -106,7 +106,7 @@ export default class Converter {
     let startIndex = enml.indexOf(">", beginTagIndex) + 1;
     let endIndex = enml.indexOf("</en-note>");
     let rawContent = enml.substring(startIndex, endIndex);
-    if (rawContent.indexOf(MAGIC_SPELL) != -1) {
+    if (rawContent.indexOf(MAGIC_SPELL) !== -1) {
       let beginMark = "<!--" + MAGIC_SPELL;
       let beginMagicIdx = rawContent.indexOf(beginMark) + beginMark.length;
       let endMagicIdx = rawContent.indexOf(MAGIC_SPELL + "-->");

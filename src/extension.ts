@@ -29,7 +29,7 @@ title: %s
 tags: %s
 notebook: %s
 ---
-`
+`;
 
 // notesMap -- [notebookguid:[notes]].
 let notebooks, notesMap, selectedNotebook;
@@ -55,7 +55,7 @@ function exactMetadata(text) {
       let metaArray = metadataStr.split("\n");
       metaArray.forEach(value => {
         let entry = value.split(":");
-        metadata[entry[0]] = entry[1].trim()
+        metadata[entry[0]] = entry[1].trim();
       });
       if (metadata["tags"]) {
         let tagStr = metadata["tags"];
@@ -160,7 +160,7 @@ async function attachToNote() {
 async function removeAttachment() {
     const editor = await vscode.window.activeTextEditor;
     let doc = editor.document;
-    // Can only remove an attachment from a cache file 
+    // Can only remove an attachment from a cache file
     if (attachmentsCache[doc.fileName]) {
       let localAttachments = attachmentsCache[doc.fileName].map(cache => _.values(cache)[0]);
       const selectedAttachment = await vscode.window.showQuickPick(localAttachments.map(attachment => attachment.attributes.fileName));
@@ -222,7 +222,7 @@ async function listResources() {
       }
       openAttachment(selectedAttachment, source, uri);
     } else {
-      vscode.window.showInformationMessage("No resouce to show.")
+      vscode.window.showInformationMessage("No resouce to show.");
     }
   } catch (err) {
     wrapError(err);
@@ -452,7 +452,7 @@ async function searchNote() {
     });
     const selectedNote = await vscode.window.showQuickPick(noteWithbook);
     if (!selectedNote) {
-      throw ""; //user dismiss
+      throw ""; // user dismiss
     }
     await openSearchResult(selectedNote, searchResult.notes);
   } catch (err) {
@@ -645,7 +645,7 @@ function activate(context) {
   context.subscriptions.push(listResourcesCmd);
   context.subscriptions.push(openNoteInBrowserCmd);
   context.subscriptions.push(removeAttachmentCmd);
-  
+
 }
 exports.activate = activate;
 
