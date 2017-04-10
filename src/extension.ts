@@ -116,7 +116,7 @@ async function syncAccount() {
     wrapError(err);
   }
 }
-// TODO attachment need statusbar tips
+
 // add attachtment to note.
 async function attachToNote() {
   try {

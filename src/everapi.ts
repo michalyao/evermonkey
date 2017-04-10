@@ -6,7 +6,6 @@ const MAX_NOTE_COUNTS = 200;
 const config = vscode.workspace.getConfiguration('evermonkey');
 const RECENT_NOTE_COUNTS = config.recentNotesCount || 10;
 
-//TODO: add some friendly msg.
 export class EvernoteClient {
   noteStore;
   constructor(token, noteStoreUrl) {
