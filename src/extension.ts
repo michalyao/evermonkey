@@ -1,26 +1,26 @@
-import * as buffer from 'buffer';
-import * as vscode from 'vscode';
-import Converter from './converterplus';
-import * as _ from 'lodash';
-import * as open from 'opener';
-import * as util from 'util';
-import * as path from 'path';
+import * as buffer from "buffer";
+import * as vscode from "vscode";
+import Converter from "./converterplus";
+import * as _ from "lodash";
+import * as open from "opener";
+import * as util from "util";
+import * as path from "path";
 import {
   hash,
   guessMime
-} from './myutil';
-import fs from './file';
-import * as evernote from 'evernote';
+} from "./myutil";
+import fs from "./file";
+import * as evernote from "evernote";
 import {
   EvernoteClient
-} from './everapi';
+} from "./everapi";
 
-const config = vscode.workspace.getConfiguration('evermonkey');
+const config = vscode.workspace.getConfiguration("evermonkey");
 
-const ATTACHMENT_FOLDER_PATH = path.join(__dirname, config.attachmentsFolder || '../../attachments');
+const ATTACHMENT_FOLDER_PATH = path.join(__dirname, config.attachmentsFolder || "../../attachments");
 const ATTACHMENT_SOURCE_LOCAL = 0;
 const ATTACHMENT_SOURCE_SERVER = 1;
-const TIP_BACK = 'back...';
+const TIP_BACK = "back...";
 const METADATA_PATTERN = /^---[ \t]*\n((?:[ \t]*[^ \t:]+[ \t]*:[^\n]*\n)+)---[ \t]*\n/;
 
 const METADATA_HEADER = `\
@@ -47,19 +47,19 @@ const attachmentsCache = {};
 function exactMetadata(text) {
   let metadata = {};
   let content = text;
-  if (_.startsWith(text, '---')) {
+  if (_.startsWith(text, "---")) {
     let match = METADATA_PATTERN.exec(text);
     if (match) {
       content = text.substring(match[0].trim().length);
       let metadataStr = match[1].trim();
-      let metaArray = metadataStr.split('\n');
+      let metaArray = metadataStr.split("\n");
       metaArray.forEach(value => {
-        let entry = value.split(':');
+        let entry = value.split(":");
         metadata[entry[0]] = entry[1].trim()
       });
-      if (metadata['tags']) {
-        let tagStr = metadata['tags'];
-        metadata['tags'] = tagStr.split(',').map(value => value.trim());
+      if (metadata["tags"]) {
+        let tagStr = metadata["tags"];
+        metadata["tags"] = tagStr.split(",").map(value => value.trim());
       }
     }
   }
@@ -70,7 +70,7 @@ function exactMetadata(text) {
 }
 
 function genMetaHeader(title, tags, notebook) {
-  return util.format(METADATA_HEADER, title, tags.join(','), notebook);
+  return util.format(METADATA_HEADER, title, tags.join(","), notebook);
 }
 
 // nav to one Note
@@ -105,13 +105,13 @@ async function syncAccount() {
   try {
     const tags = await client.listTags();
     tags.forEach(tag => tagCache[tag.guid] = tag.name);
-    await vscode.window.setStatusBarMessage('Synchronizing your account...', 1000);
+    await vscode.window.setStatusBarMessage("Synchronizing your account...", 1000);
     notebooks = await client.listNotebooks();
     let promises = notebooks.map(notebook => client.listAllNoteMetadatas(notebook.guid));
     const allMetas = await Promise.all(promises);
     const notes = _.flattenDeep(allMetas.map((meta: evernote.Types.Note) => meta.notes));
-    notesMap = _.groupBy(notes, 'notebookGuid');
-    vscode.window.setStatusBarMessage('Synchronizing succeeded!', 1000);
+    notesMap = _.groupBy(notes, "notebookGuid");
+    vscode.window.setStatusBarMessage("Synchronizing succeeded!", 1000);
   } catch (err) {
     wrapError(err);
   }
@@ -126,7 +126,7 @@ async function attachToNote() {
     const editor = await vscode.window.activeTextEditor;
     let doc = editor.document;
     const filepath = await vscode.window.showInputBox({
-      placeHolder: 'Full path of your attachtment:'
+      placeHolder: "Full path of your attachtment:"
     });
     if (!filepath) {
       throw "";
@@ -150,7 +150,7 @@ async function attachToNote() {
     const cache = {};
     cache[filepath] = attachment;
     attachmentsCache[doc.fileName].push(cache);
-    vscode.window.setStatusBarMessage('Add attachment to current file succeeded', 2000);
+    vscode.window.setStatusBarMessage("Add attachment to current file succeeded", 2000);
   } catch (err) {
     wrapError(err);
   }
@@ -175,11 +175,11 @@ async function listResources() {
     let localResourcesName = [];
 
     if (serverResources) {
-      serverResourcesName = serverResources.map(attachment => '(server) ' + attachment.attributes.fileName);
+      serverResourcesName = serverResources.map(attachment => "(server) " + attachment.attributes.fileName);
     }
 
     if (localResources) {
-      localResourcesName = localResources.map(attachment => '(local) ' + attachment.attributes.fileName);
+      localResourcesName = localResources.map(attachment => "(local) " + attachment.attributes.fileName);
     }
 
     if (serverResourcesName || localResourcesName) {
@@ -192,7 +192,7 @@ async function listResources() {
       let selectedFileName;
       let source;
       let uri;
-      if (selected.startsWith('(server) ')) {
+      if (selected.startsWith("(server) ")) {
         selectedFileName = selected.substr(9);
         selectedAttachment = serverResources.find(resource => resource.attributes.fileName === selectedFileName);
         source = ATTACHMENT_SOURCE_SERVER;
@@ -232,7 +232,7 @@ async function openAttachment(attachment, source, uri) {
         if (!isExist) {
           await fs.mkdirAsync(ATTACHMENT_FOLDER_PATH);
         }
-        const tmpDir = await fs.mkdtempAsync(path.join(ATTACHMENT_FOLDER_PATH, './evermonkey-'));
+        const tmpDir = await fs.mkdtempAsync(path.join(ATTACHMENT_FOLDER_PATH, "./evermonkey-"));
         const filepath = path.join(tmpDir, fileName);
         await fs.writeFileAsync(filepath, data);
         open(filepath);
@@ -256,11 +256,11 @@ async function publishNote() {
     let result = exactMetadata(doc.getText());
     let content = await converter.toEnml(result.content);
     let meta = result.metadata;
-    let title = meta['title'];
+    let title = meta["title"];
     let resources = attachmentsCache[doc.fileName].map(cache => _.values(cache)[0]);
     if (localNote[doc.fileName]) {
       // update the note.
-      vscode.window.setStatusBarMessage('Updaing the note.', 2000);
+      vscode.window.setStatusBarMessage("Updaing the note.", 2000);
       let updatedNote;
       let noteGuid = localNote[doc.fileName].guid;
       const noteResources = await client.getNoteResources(noteGuid);
@@ -281,7 +281,7 @@ async function publishNote() {
       attachmentsCache[doc.fileName] = [];
       return vscode.window.showInformationMessage(`${notebookName}>>${title} updated successfully.`);
     } else {
-      vscode.window.setStatusBarMessage('Creating the note.', 2000);
+      vscode.window.setStatusBarMessage("Creating the note.", 2000);
       content = appendResourceContent(resources, content);
       const createdNote = await createNote(meta, content, resources);
       createdNote.resources = resources;
@@ -305,9 +305,9 @@ function appendResourceContent(resources, content) {
   if (resources) {
     content = content.slice(0, -10);
     resources.forEach(attachment => {
-      content = content + util.format('<en-media type="%s" hash="%s"/>', attachment.mime, Buffer.from(attachment.data.bodyHash).toString('hex'));
+      content = content + util.format('<en-media type="%s" hash="%s"/>', attachment.mime, Buffer.from(attachment.data.bodyHash).toString("hex"));
     });
-    content = content + '</en-note>';
+    content = content + "</en-note>";
   }
   return content;
 }
@@ -315,9 +315,9 @@ function appendResourceContent(resources, content) {
 // Update an exsiting note.
 async function updateNoteResources(meta, content, noteGuid, resources) {
   try {
-    let tagNames = meta['tags'];
-    let title = meta['title'];
-    let notebook = meta['notebook'];
+    let tagNames = meta["tags"];
+    let title = meta["title"];
+    let notebook = meta["notebook"];
     const notebookGuid = await getNotebookGuid(notebook);
     return client.updateNoteResources(noteGuid, title, content, tagNames, notebookGuid, resources || void 0);
 
@@ -328,9 +328,9 @@ async function updateNoteResources(meta, content, noteGuid, resources) {
 
 async function updateNoteContent(meta, content, noteGuid) {
   try {
-    let tagNames = meta['tags'];
-    let title = meta['title'];
-    let notebook = meta['notebook'];
+    let tagNames = meta["tags"];
+    let title = meta["title"];
+    let notebook = meta["notebook"];
     const notebookGuid = await getNotebookGuid(notebook);
     return client.updateNoteContent(noteGuid, title, content, tagNames, notebookGuid);
 
@@ -365,9 +365,9 @@ async function getNotebookGuid(notebook) {
 // Create an new note.
 async function createNote(meta, content, resources) {
   try {
-    let tagNames = meta['tags'];
-    let title = meta['title'];
-    let notebook = meta['notebook'];
+    let tagNames = meta["tags"];
+    let title = meta["title"];
+    let notebook = meta["notebook"];
     const notebookGuid = await getNotebookGuid(notebook);
     return client.createNote(title, notebookGuid, content, tagNames, resources);
   } catch (err) {
@@ -402,14 +402,14 @@ async function newNote() {
       await syncAccount();
     }
     const doc = await vscode.workspace.openTextDocument({
-      language: 'markdown'
+      language: "markdown"
     });
     // init attachment cache
     attachmentsCache[doc.fileName] = [];
     const editor = await vscode.window.showTextDocument(doc);
     let startPos = new vscode.Position(1, 0);
     editor.edit(edit => {
-      let metaHeader = util.format(METADATA_HEADER, '', '', '');
+      let metaHeader = util.format(METADATA_HEADER, "", "", "");
       edit.insert(startPos, metaHeader);
     });
   } catch (err) {
@@ -429,7 +429,7 @@ async function searchNote() {
     });
     const searchResult = await client.searchNote(query);
     const noteWithbook = searchResult.notes.map(note => {
-      let title = note['title'];
+      let title = note["title"];
       selectedNotebook = notebooks.find(notebook => notebook.guid === note.notebookGuid);
       return selectedNotebook.name + ">>" + title;
     });
@@ -470,7 +470,7 @@ async function openSearchResult(noteWithbook, notes) {
     let chooseNote = notes.find(note => note.title === searchNoteResult);
     const content = await client.getNoteContent(chooseNote.guid);
     const doc = await vscode.workspace.openTextDocument({
-      language: 'markdown'
+      language: "markdown"
     });
     await cacheAndOpenNote(chooseNote, doc, content);
   } catch (err) {
@@ -488,7 +488,7 @@ async function openNote(noteTitle) {
     let selectedNote = notesMap[selectedNotebook.guid].find(note => note.title === noteTitle);
     const content = await client.getNoteContent(selectedNote.guid);
     const doc = await vscode.workspace.openTextDocument({
-      language: 'markdown'
+      language: "markdown"
     });
     // attachtment cache init.
     attachmentsCache[doc.fileName] = [];
@@ -558,14 +558,14 @@ function wrapError(error) {
 function activate(context) {
 
   if (!config.token || !config.noteStoreUrl) {
-    vscode.window.showWarningMessage('Please use ever token command to get the token and storeUrl, copy&paste to the settings, and then restart the vscode.');
-    vscode.commands.executeCommand('workbench.action.openGlobalSettings');
+    vscode.window.showWarningMessage("Please use ever token command to get the token and storeUrl, copy&paste to the settings, and then restart the vscode.");
+    vscode.commands.executeCommand("workbench.action.openGlobalSettings");
   }
   client = new EvernoteClient(config.token, config.noteStoreUrl);
   // quick match for monkey.
-  let action = vscode.languages.registerCompletionItemProvider(['plaintext', {
-    'scheme': 'untitled',
-    'language': 'markdown'
+  let action = vscode.languages.registerCompletionItemProvider(["plaintext", {
+    "scheme": "untitled",
+    "language": "markdown"
   }], {
     provideCompletionItems(doc, position) {
       // simple but enough validation for title, tags, notebook
@@ -587,16 +587,16 @@ function activate(context) {
   });
   vscode.workspace.onDidCloseTextDocument(removeLocal);
   vscode.workspace.onDidSaveTextDocument(alertToUpdate);
-  let listAllNotebooksCmd = vscode.commands.registerCommand('extension.navToNote', navToNote);
-  let publishNoteCmd = vscode.commands.registerCommand('extension.publishNote', publishNote);
-  let openDevPageCmd = vscode.commands.registerCommand('extension.openDevPage', openDevPage);
-  let syncCmd = vscode.commands.registerCommand('extension.sync', syncAccount);
-  let newNoteCmd = vscode.commands.registerCommand('extension.newNote', newNote);
-  let searchNoteCmd = vscode.commands.registerCommand('extension.searchNote', searchNote);
+  let listAllNotebooksCmd = vscode.commands.registerCommand("extension.navToNote", navToNote);
+  let publishNoteCmd = vscode.commands.registerCommand("extension.publishNote", publishNote);
+  let openDevPageCmd = vscode.commands.registerCommand("extension.openDevPage", openDevPage);
+  let syncCmd = vscode.commands.registerCommand("extension.sync", syncAccount);
+  let newNoteCmd = vscode.commands.registerCommand("extension.newNote", newNote);
+  let searchNoteCmd = vscode.commands.registerCommand("extension.searchNote", searchNote);
 
-  let openRecentNotesCmd = vscode.commands.registerCommand('extension.openRecentNotes', openRecentNotes);
-  let attachToNoteCmd = vscode.commands.registerCommand('extension.attachToNote', attachToNote);
-  let listResourcesCmd = vscode.commands.registerCommand('extension.listResouces', listResources);
+  let openRecentNotesCmd = vscode.commands.registerCommand("extension.openRecentNotes", openRecentNotes);
+  let attachToNoteCmd = vscode.commands.registerCommand("extension.attachToNote", attachToNote);
+  let listResourcesCmd = vscode.commands.registerCommand("extension.listResouces", listResources);
 
 
   context.subscriptions.push(listAllNotebooksCmd);

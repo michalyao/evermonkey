@@ -1,16 +1,16 @@
-import * as Evernote from 'evernote';
-import * as vscode from 'vscode';
+import * as Evernote from "evernote";
+import * as vscode from "vscode";
 
 const MAX_NOTE_COUNTS = 200;
 
-const config = vscode.workspace.getConfiguration('evermonkey');
+const config = vscode.workspace.getConfiguration("evermonkey");
 const RECENT_NOTE_COUNTS = config.recentNotesCount || 10;
 
 export class EvernoteClient {
   noteStore;
   constructor(token, noteStoreUrl) {
     if (!token) {
-      vscode.window.showWarningMessage('missing token in configuration');
+      vscode.window.showWarningMessage("missing token in configuration");
     }
     const options = {
       token
