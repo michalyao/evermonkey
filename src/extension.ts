@@ -498,6 +498,23 @@ async function openNote(noteTitle) {
   }
 }
 
+async function openNoteInBrowser() {
+  const editor = await vscode.window.activeTextEditor;
+  let doc = editor.document;
+  if (localNote[doc.fileName]) {
+    let noteGuid = localNote[doc.fileName].guid;
+    if (noteGuid) {
+      const idx = config.noteStoreUrl.indexOf("/shard");
+      const domain = config.noteStoreUrl.substring(0, idx);
+      const url = util.format(domain + "/Home.action#n=%s&ses=4&sh=2&sds=5&", noteGuid);
+      open(url);
+    }
+    else {
+      vscode.window.showWarningMessage("Can not open the note, maybe not on the server");
+    }
+  }
+}
+
 
 // Open note in vscode and cache to memory.
 async function cacheAndOpenNote(note, doc, content) {
@@ -567,24 +584,24 @@ function activate(context) {
     "scheme": "untitled",
     "language": "markdown"
   }], {
-    provideCompletionItems(doc, position) {
-      // simple but enough validation for title, tags, notebook
-      // title dont show tips.
-      if (position.line === 1) {
-        return [];
-      } else if (position.line === 2) {
-        // tags
-        if (tagCache) {
-          return _.values(tagCache).map(tag => new vscode.CompletionItem(tag));
+      provideCompletionItems(doc, position) {
+        // simple but enough validation for title, tags, notebook
+        // title dont show tips.
+        if (position.line === 1) {
+          return [];
+        } else if (position.line === 2) {
+          // tags
+          if (tagCache) {
+            return _.values(tagCache).map(tag => new vscode.CompletionItem(tag));
+          }
+        } else if (position.line === 3) {
+          if (notebooks) {
+            return notebooks.map(notebook => new vscode.CompletionItem(notebook.name));
+          }
         }
-      } else if (position.line === 3) {
-        if (notebooks) {
-          return notebooks.map(notebook => new vscode.CompletionItem(notebook.name));
-        }
-      }
 
-    }
-  });
+      }
+    });
   vscode.workspace.onDidCloseTextDocument(removeLocal);
   vscode.workspace.onDidSaveTextDocument(alertToUpdate);
   let listAllNotebooksCmd = vscode.commands.registerCommand("extension.navToNote", navToNote);
@@ -593,10 +610,10 @@ function activate(context) {
   let syncCmd = vscode.commands.registerCommand("extension.sync", syncAccount);
   let newNoteCmd = vscode.commands.registerCommand("extension.newNote", newNote);
   let searchNoteCmd = vscode.commands.registerCommand("extension.searchNote", searchNote);
-
   let openRecentNotesCmd = vscode.commands.registerCommand("extension.openRecentNotes", openRecentNotes);
   let attachToNoteCmd = vscode.commands.registerCommand("extension.attachToNote", attachToNote);
   let listResourcesCmd = vscode.commands.registerCommand("extension.listResouces", listResources);
+  let openNoteInBrowserCmd = vscode.commands.registerCommand("extension.openNoteInBrowser", openNoteInBrowser);
 
 
   context.subscriptions.push(listAllNotebooksCmd);
@@ -606,10 +623,11 @@ function activate(context) {
   context.subscriptions.push(newNoteCmd);
   context.subscriptions.push(action);
   context.subscriptions.push(searchNoteCmd);
-
   context.subscriptions.push(openRecentNotesCmd);
   context.subscriptions.push(attachToNoteCmd);
   context.subscriptions.push(listResourcesCmd);
+  context.subscriptions.push(openNoteInBrowserCmd);
+  
 }
 exports.activate = activate;
 
@@ -634,5 +652,5 @@ function alertToUpdate() {
 }
 
 // this method is called when your extension is deactivated
-function deactivate() {}
+function deactivate() { }
 exports.deactivate = deactivate;

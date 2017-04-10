@@ -10,5 +10,5 @@ export function hash(data) {
 
 // guess mime type by filename, if not detected, use as text.
 export function guessMime(filename) {
-  return mime.lookup(filename);
+  return mime.lookup(filename) || "text/plain";
 }

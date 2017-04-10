@@ -63,6 +63,10 @@
       {
         "command": "extension.listResouces",
         "title": "ever resources"
+      },
+      {
+        "command": "extension.openNoteInBrowser",
+        "title": "ever browse"
       }
     ],
     "configuration": {
