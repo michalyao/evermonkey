@@ -118,18 +118,18 @@
     "markdown-it": "^8.3.1",
     "markdown-it-emoji": "^1.3.0",
     "markdown-it-enml-todo": "^1.0.2",
-    "markdown-it-sub": "^1.0.0",
-    "markdown-it-sup": "^1.0.0",
+    "markdown-it-sub": "1.0.0",
+    "markdown-it-sup": "1.0.0",
     "mime": "^1.3.4",
     "opener": "^1.4.3",
-    "to-markdown": "^3.0.3"
+    "to-markdown": "3.0.4"
   },
   "devDependencies": {
     "typescript": "^2.0.3",
     "vscode": "^1.0.0",
     "mocha": "^3.2.0",
     "eslint": "^3.6.0",
-    "@types/node": "^6.0.40",
+    "@types/node": "7.0.12",
     "@types/mocha": "^2.2.32"
   }
 }
