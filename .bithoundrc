@@ -1,3 +1,4 @@
+{
   "dependencies": {
     "unused-ignores": [
       "to-markdown",
@@ -5,3 +6,4 @@
       "markdown-it-sup"
     ]
   }
+}
