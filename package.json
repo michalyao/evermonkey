@@ -30,47 +30,47 @@
     "commands": [
       {
         "command": "extension.navToNote",
-        "title": "ever open"
+        "title": "Ever open: Open note in a tree-like structure."
       },
       {
         "command": "extension.publishNote",
-        "title": "ever publish"
+        "title": "Ever publish: Publish current editting note to Evernote server."
       },
       {
         "command": "extension.openDevPage",
-        "title": "ever token"
+        "title": "Ever token: Open developer page to get API token."
       },
       {
         "command": "extension.sync",
-        "title": "ever sync"
+        "title": "Ever sync: Synchronizing your Evernote Account."
       },
       {
         "command": "extension.newNote",
-        "title": "ever new"
+        "title": "Ever new: Create a new empty note with markdown supported and metadata inited."
       },
       {
         "command": "extension.searchNote",
-        "title": "ever search"
+        "title": "Ever search: Search note using Evernote Search Grammar."
       },
       {
         "command": "extension.openRecentNotes",
-        "title": "ever recent"
+        "title": "Ever recent: Open recently edited notes."
       },
       {
         "command": "extension.attachToNote",
-        "title": "ever attach"
+        "title": "Ever attach: Insert an attachment to current note."
       },
       {
         "command": "extension.listResouces",
-        "title": "ever resources"
+        "title": "Ever resources: List attachments of current note."
       },
       {
         "command": "extension.openNoteInBrowser",
-        "title": "ever browse"
+        "title": "Ever browse: Open current note in the web browser."
       },
       {
         "command": "extension.removeAttachment",
-        "title": "ever unattach"
+        "title": "Ever unattach: Remove a local attachment from current note."
       }
     ],
     "configuration": {
