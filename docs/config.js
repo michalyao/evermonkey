@@ -24,11 +24,6 @@ docute.init({
         path: '/zh-Hans/'
       },
       {
-        title: '版本变更',
-        path: '/changelog',
-        source: 'https://raw.githubusercontent.com/michalyao/evermonkey/master/CHANGELOG.md'
-      },
-      {
         title: '语言',
         type: 'dropdown',
         items: langs
