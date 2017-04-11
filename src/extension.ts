@@ -83,7 +83,7 @@ async function navToNote() {
     }
     const noteLists = await listNotes(selectedNotebook);
     if (!noteLists) {
-      await vscode.window.showInformationMessage("can not open an empty notebook.");
+      await vscode.window.showInformationMessage("Can not open an empty notebook.");
       return navToNote();
     } else {
       let noteTitles = noteLists.map(note => note.title);
@@ -126,11 +126,19 @@ async function attachToNote() {
     }
     const editor = await vscode.window.activeTextEditor;
     let doc = editor.document;
-    const filepath = await vscode.window.showInputBox({
+    let filepath = await vscode.window.showInputBox({
       placeHolder: "Full path of your attachtment:"
     });
     if (!filepath) {
       throw "";
+    }
+    if (config.uploadFolder) {
+      const folderExsit = await fs.exsit(config.uploadFolder);
+      if (folderExsit) {
+        filepath = path.join(config.uploadFolder, filepath);
+      }
+    } else {
+      vscode.window.showWarningMessage("Attachments upload folder not setted, you may have to use absolute file path.")
     }
     const fileName = path.basename(filepath);
     const mime: string = guessMime(fileName);
