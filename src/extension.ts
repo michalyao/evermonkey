@@ -535,9 +535,8 @@ async function openNoteInBrowser() {
       const url = util.format(domain + "/Home.action#n=%s&ses=4&sh=2&sds=5&", noteGuid);
       open(url);
     }
-    else {
+  } else {
       vscode.window.showWarningMessage("Can not open the note, maybe not on the server");
-    }
   }
 }
 
