@@ -9,7 +9,7 @@ search: zh-Hans
 
 ## 特点
 
-Markdown 的轻量编辑体验由 VS Code 的强力驱动。
+Markdown 的轻量编辑体验由 VS Code 强力驱动。
 
 ## 安装
 
