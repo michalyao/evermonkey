@@ -73,6 +73,49 @@
         "title": "Ever unattach: Remove a local attachment from current note."
       }
     ],
+    "keybindings":[
+      {
+        "command": "extension.navToNote",
+        "key": "alt+o"
+      },
+      {
+        "command": "extension.publishNote",
+        "key": "alt+p",
+        "when": "editorTextFocus && editorLangId == 'markdown'"
+      },
+      {
+        "command": "extension.newNote",
+        "key": "alt+n"
+      },
+      {
+        "command": "extension.searchNote",
+        "key": "alt+s"
+      },
+      {
+        "command": "extension.openRecentNotes",
+        "key": "alt+r"
+      },
+      {
+        "command": "extension.attachToNote",
+        "key": "alt+a",
+        "when": "editorTextFocus && editorLangId == 'markdown'"
+      },
+      {
+        "command": "extension.listResouces",
+        "key": "alt+l",
+        "when": "editorTextFocus && editorLangId == 'markdown'"
+      },
+      {
+        "command": "extension.openNoteInBrowser",
+        "key": "alt+b",
+        "when": "editorTextFocus && editorLangId == 'markdown'"
+      },
+      {
+        "command": "extension.removeAttachment",
+        "key": "alt+x",
+        "when": "editorTextFocus && editorLangId == 'markdown'"
+      }
+    ],
     "configuration": {
       "title": "EverMonkey Configuration",
       "type": "object",
