@@ -97,6 +97,11 @@
           "default": "../../attachments",
           "description": "Local folder to save attachments"
         },
+        "evermonkey.uploadFolder": {
+          "type": "string",
+          "default": "",
+          "description": "Local folder to upload attachment, as relative path."
+        },
         "evermonkey.showTips": {
           "type": "boolean",
           "default": true,
