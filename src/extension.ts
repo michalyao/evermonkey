@@ -103,6 +103,7 @@ async function navToNote() {
 // Synchronize evernote account. For metadata.
 async function syncAccount() {
   try {
+    client = new EvernoteClient(config.token, config.noteStoreUrl);
     const tags = await client.listTags();
     tags.forEach(tag => tagCache[tag.guid] = tag.name);
     await vscode.window.setStatusBarMessage("Synchronizing your account...", 1000);
@@ -595,7 +596,6 @@ function activate(context) {
     vscode.window.showWarningMessage("Please use ever token command to get the token and storeUrl, copy&paste to the settings, and then restart the vscode.");
     vscode.commands.executeCommand("workbench.action.openGlobalSettings");
   }
-  client = new EvernoteClient(config.token, config.noteStoreUrl);
   // quick match for monkey.
   let action = vscode.languages.registerCompletionItemProvider(["plaintext", {
     "scheme": "untitled",
