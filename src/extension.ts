@@ -636,7 +636,7 @@ function activate(context) {
   let searchNoteCmd = vscode.commands.registerCommand("extension.searchNote", searchNote);
   let openRecentNotesCmd = vscode.commands.registerCommand("extension.openRecentNotes", openRecentNotes);
   let attachToNoteCmd = vscode.commands.registerCommand("extension.attachToNote", attachToNote);
-  let listResourcesCmd = vscode.commands.registerCommand("extension.listResouces", listResources);
+  let listResourcesCmd = vscode.commands.registerCommand("extension.listResources", listResources);
   let openNoteInBrowserCmd = vscode.commands.registerCommand("extension.openNoteInBrowser", openNoteInBrowser);
   let removeAttachmentCmd = vscode.commands.registerCommand("extension.removeAttachment", removeAttachment);
 

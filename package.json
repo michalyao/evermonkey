@@ -61,7 +61,7 @@
         "title": "Ever attach: Insert an attachment to current note."
       },
       {
-        "command": "extension.listResouces",
+        "command": "extension.listResources",
         "title": "Ever resources: List attachments of current note."
       },
       {
