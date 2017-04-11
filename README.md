@@ -11,7 +11,8 @@
 
 Evernoting in vscode with *Markdown* Support!
 
-[中文版说明](README_zh-CN.md)
+
+[Get Doc](http://monkey.yoryor.me)
 
 ## Features
 
@@ -31,14 +32,6 @@ notebook: notebook
 ---
 ```
 
-Commands:
-
-* `ever open` -- open note much like a tree structure.
-* `ever publish` -- update or create a new note. (use this whenver you want to publish your note to Evernote.)
-* `ever sync` -- sync account (**Maybe you use evernote concurrently in multi endpoints, most of time I wish you dont do this**)
-* `ever new` -- create a new file with markdown language and metadata init.
-* `ever token` -- Open dev page to help you configure.
-* `ever search` -- Use evernote query to search note. More details about [Evernote Search Grammar](https://dev.evernote.com/doc/articles/search_grammar.php)
 
 ![example](assets/monkey.gif)
 
@@ -56,25 +49,12 @@ Then open your user setting by `Preferences: Open User Settings`, and copy&paste
 
 * `evermonkey.token`: your developer token
 * `evermonkey.noteStoreUrl`: your API url
-* `evermonkey.highlightTheme`: code highlight theme. Use [highlight.js](https://highlightjs.org) as the lib.
 
-**If you get an Unexpected error, then you may have to check the configuration and restart the vscode.**
-
-## Markdown syntax
-
-* support code highlight.
-* support todolist.
 
 ## Known Issues
 
 * Open note in notebook may cause a mess, because unsupported transfer from enml to markdown.
 * You can report issues here [Github issues](https://github.com/michalyao/evermonkey/issues)
-
-TODOs:
-
-* More markdown syntax support.
-* Much better experience.
-
 
 -----------------------------------------------------------------------------------------------------------
 

@@ -1,38 +1,33 @@
-# EverMonkey
+---
+search: english
+---
 
-重新定义，印象笔记编辑体验。
+# EverMoneky
 
-## 特点
+Evernote Editing. Redefined.
 
-Markdown 的轻量编辑体验由 VS Code 的强力驱动。
+## Features
+Edit your evernote with markdown support, with full power of VS Code.
 
-## 安装
+## Configuration
 
-[VS Code](https://code.visualstudio.com/) v1.10+
+### Extension Settings
 
-在扩展商店处搜索 evermonkey 并安装。
+Open VS Code Command Platte(F1), input `Preferences: Open User Settings`.
 
-## 配置
+The full Configuration properties list here:
 
-### 插件配置
+- evermonkey.token: Evernote API token.
+- evermonkey.noteStoreUrl: Evernote noteStoreUrl.
+- evermonkey.highlightTheme: Code highlight Theme. The full languages and themes support see [highlight.js](https://highlightjs.org/static/demo/)
+- evermonkey.recentNotesCount: The count of the notes returned when you enter `ever recent`.
+- evermonkey.attachmentsFolder: Local directory to save server attachments.
+- evermonkey.uploadFolder: Local directory to upload attachments.
+- evermonkey.showTips: Whether to show you some friendly tips.
 
-打开命令面板(F1), 输入首选项: 打开用户配置(Preferences: Open User Settings) 即可进入 VS Code 的配置页面.
+### VS Code Settings
 
-EverMonkey 配置参数如下:
-
-- evermonkey.token: 印象笔记开发者令牌。
-- evermonkey.noteStoreUrl: 印象笔记 noteStore 地址。
-- evermonkey.highlightTheme: 代码高亮主题。支持的主题及编程语言见 [highlight.js](https://highlightjs.org/static/demo/).
-- evermonkey.recentNotesCount: 执行 `ever recent` 命令返回的最近编辑过的笔记数量。
-- evermonkey.attachmentsFolder: 打开印象笔记附件的临时下载文件夹。
-- evermonkey.uploadFolder: 上传印象笔记附件的文件夹。
-- evermonkey.showTips: 是否开启操作提示。
-
-关于 token 和 noteStoreUrl 的获取可以使用 `ever token` 命令。 其中国内印象笔记用户点击 [China](https://app.yinxiang.com/api/DeveloperToken.action), 国际版用户点击 [Other](https://www.evernote.com/api/DeveloperToken.action).
-
-### VS Code 配置
-
-- 开启 Markdown 代码补全, 这样在输入笔记元数据(标签，笔记本)的时候会有补全提示。配置方法如下:
+- To enable completion for tags and notebook, you may have to open the markdown quick suggestion manually, as show below:
 
 ``` json
 "[markdown]": {
@@ -40,69 +35,65 @@ EverMonkey 配置参数如下:
 }
 ```
 
-- Windows 用户需要注意，默认 Windows 下的换行符是 CRLF. 需要设置为 LF, 见 [issue2957](https://github.com/Microsoft/vscode/issues/2957)。配置方法如下:
+- For Windows user, you may have to force VS Code use LF as line seperator. See [issue2957](https://github.com/Microsoft/vscode/issues/2957).
 
 ``` json
- "files.eol": "\n"
+"files.eol": "\n"
 ```
 
-## 开始使用
+## Commands
 
-打开命令面板(F1 或者 ctrl+shift+p), 输入以下命令即可操作印象笔记。
+### `ever new`
 
-### 新建笔记 -- `ever new`
+Create a new empty file with markdown language support and metadata init.
 
-新建一个空白笔记, 文档顶部是笔记元数据，包括笔记的标题，标签，所属笔记本等(不支持分级)。
-当输入笔记本和标签时，如果是已经存在的，则会有代码补全提示，否则将会在印象笔记中新建。标签需要用**半角**逗号分隔。
+### `ever open`
 
-### 打开笔记 -- `ever open`
+Open a note much like a tree structure.
 
-以树形结构打开印象笔记。选中笔记后，默认会将笔记的内容转换为 markdown 格式，如果有不支持的媒体格式，那么转换后可能会影响笔记的内容。如果在多端进行编辑也会出现 html 标签的情况。
+### `ever search`
 
-### 搜索笔记 -- `ever search`
+Use evernote query to search note. More details about [Evernote Search Grammar](https://dev.evernote.com/doc/articles/search_grammar.php)
 
-根据输入的搜索条件返回印象笔记。返回的形式是 `notebook>>note`, 搜索使用的是印象笔记官方的搜索语言，比如 `tag:java` 等。更多使用方法可以查看官方文档 [Evernote Search Grammar](https://dev.evernote.com/doc/articles/search_grammar.php)
+### `ever publish`
 
-### 发布笔记 -- `ever publish`
+Update editing note or create a new one. (Use this whenever you want to publish your note to Evernote.)
 
-当编辑或者更新笔记后，可以使用 `ever publish` 命令将笔记发布到印象笔记服务器上，实现笔记的同步。monkey 会根据缓存信息判断是需要新建还是更新笔记, 更新成功后会弹出消息。
+### `ever recent`
 
-### 打开最近编辑的笔记 -- `ever recent`
+Open recently edited notes.
 
-打开最近编辑过的笔记。选中笔记后，默认会将笔记的内容转换为 markdown 格式，如果有不支持的媒体格式，那么转换后可能会影响笔记的内容。如果在多端进行编辑也会出现 html 标签的情况。
+### `ever browse`
 
-### 在浏览器中打开编辑的笔记 -- `ever browse`
+Open editing note in Evernote Web. Be sure the server has it, I mean you have already published.
 
-在印象笔记网页端打开当前编辑的笔记，如果还未发布，则无法打开。
+### `ever attach`
 
-### 上传附件到当前编辑的笔记 -- `ever attach`
+Insert a attachment to currently editing file. If you have configured uploadFolder and put your file into the folder, you can specify by the file name. Otherwise, the full path for the file is needed. **Note, this operation only attach the file to local cache, you may have to use `ever publish` to update to the server.**
 
-上传附件到当前编辑的笔记中。如果已经配置了 uploadFolder, 可以将附件放到对应的文件夹下，输入文件名即可实现上传。否则，需要输入文件的绝对路径。上传后的附件是缓存在本地的，需要使用 `ever publish` 命令将附件上传。
+### `ever unattach`
 
-### 取消上传附件到当前编辑的笔记 -- `ever unattach`
+Once you want to delete a local attachment, you can use this command, only cache removed.
 
-如果附件上传后还没有 publish, 此时可以使用 `ever unattach` 命令进行取消。
-**注: monkey 中不提供任何删除服务器端笔记的命令！**
+### `ever resources`
 
-### 浏览当前编辑笔记的附件 -- `ever resources`
+List attachments of the currently editing note. You may see some magic here, attachments are marked as (local) or (server). The server one will be downloaded to the attachmentsFolder and opened by the default app, the local one will be opened directly.
 
-浏览当前编辑的笔记。其中会以 (server), (local) 的形式区分本地附件和服务器附件。如果是服务器端的附件，选中后会临时下载到 attachmentsFolder 中, 并使用默认应用打开附件。 如果是本地附件，则会直接使用默认应用打开。
+### `ever sync`
 
-### 同步笔记账户 -- `ever sync`
+Synchronize your Evernote account. (**Maybe you use evernote concurrently in multi endpoints, most of time I wish you dont do this**)
 
-同步笔记账户，这个命令会在第一次使用 monkey 的时候调用，并将结果缓存到内存中。如果没有缓存报错(通常是由于网络原因导致请求失败，本地缓存失效), 或者在多端使用印象笔记，不建议使用此命令。可能会由于印象笔记限流导致，账户暂时无法调用 API。
+### `ever token`
 
-### 打开印象笔记开发者网页 -- `ever token`
+Help you get your token & noteStoreUrl.
 
-获取 token 和 noteStoreUrl。
+## Shortcut
 
-## 快捷键
+The default keybindings for monkey is alt plus the command verb's first word. For example, `alt+n` is for `ever new`. And of course, you can customize it as you like.
 
-v2.2.0 版本加入快捷键设置，默认的快捷键形式是 alt + 命令动词的首字母。比如 `ever new` 的快捷键就是 `alt+n`. 也可以自己绑定快捷键。
+## Markdown Syntax
 
-## Markdown 语法
-
-### 标题
+### Headers
 
 ```
 # H1
@@ -113,7 +104,7 @@ v2.2.0 版本加入快捷键设置，默认的快捷键形式是 alt + 命令动
 ###### H6
 ```
 
-### 强调
+### Emphasis
 
 ```
 *This text will be italic*
@@ -127,27 +118,27 @@ __This will also be bold__
 _You **can** combine ~~them~~_
 ```
 
-### 上标和下标
+### Sup and Sub
 
 ```
 19^th^
 H~2~O
 ```
 
-### 表情符
+### Emoji
 
 ```
 :smile: :heart: :sunny: :watermelon: :cn:
 ```
 
-### 链接
+### Link
 
 ```
 http://github.com - automatic!
 [GitHub](http://github.com)
 ```
 
-### 引用
+### Blockquotes
 
 ```
 As Kanye West said:
@@ -156,9 +147,9 @@ As Kanye West said:
 > the present is our past.
 ```
 
-### 列表
+### List
 
-#### 无序列表
+#### unordered
 
 ```
 - Item 1
@@ -167,7 +158,7 @@ As Kanye West said:
   - Item 2b
 ```
 
-#### 有序列表
+#### ordered
 
 ```
 1. Item 1
@@ -177,7 +168,7 @@ As Kanye West said:
    - Item 3b
 ```
 
-### 任务列表
+### Todo
 
 ```
 - [x] Write blog post with :heart:
@@ -185,7 +176,7 @@ As Kanye West said:
 - [ ] Take screenshots for blog post
 ```
 
-### 表格
+### Table
 
 ```
 First Header | Second Header
@@ -194,27 +185,27 @@ Content from cell 1 | Content from cell 2
 Content in the first column | Content in the second column
 ```
 
-### 图片
+### Images
 
 ```
 ![Image of Test](img/test.png "Image of Test")
 ![GitHub Logo](https://assets-cdn.github.com/images/modules/logos_page/Octocat.png "GitHub Logo")
 ```
 
-### 行内代码
+### Inline code
 
 ```
 This is an inline code: `var example = true`
 ```
 
-### 代码块
+### Code Highlight
 
 ``` js
 console.log("Hello Monkey!");
 ```
 
 
-### 原始 HTML
+### Raw HTML
 
 ```
 <div style="color: red;">This is a <strong>html</strong> code.</div>
