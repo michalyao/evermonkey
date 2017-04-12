@@ -494,11 +494,12 @@ async function openSearchResult(noteWithbook, notes) {
     let index = noteWithbook.indexOf(">>");
     let searchNoteResult = noteWithbook.substring(index + 2);
     let chooseNote = notes.find(note => note.title === searchNoteResult);
-    const content = await client.getNoteContent(chooseNote.guid);
+    const note = await client.getNoteContent(chooseNote.guid);
+    const content = note.content;
     const doc = await vscode.workspace.openTextDocument({
       language: "markdown"
     });
-    await cacheAndOpenNote(chooseNote, doc, content);
+    await cacheAndOpenNote(note, doc, content);
   } catch (err) {
     wrapError(err);
   }
