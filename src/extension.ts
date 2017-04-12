@@ -17,7 +17,7 @@ import {
 
 const config = vscode.workspace.getConfiguration("evermonkey");
 
-const ATTACHMENT_FOLDER_PATH = path.join(__dirname, config.attachmentsFolder || "../../attachments");
+const ATTACHMENT_FOLDER_PATH = config.attachmentsFolder || path.join(__dirname, "../../attachments");
 const ATTACHMENT_SOURCE_LOCAL = 0;
 const ATTACHMENT_SOURCE_SERVER = 1;
 const TIP_BACK = "back...";
