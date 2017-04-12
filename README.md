@@ -12,7 +12,7 @@
 Evernoting in vscode with *Markdown* Support!
 
 
-[Get Doc](http://monkey.yoryor.me)
+[Get Doc And Star Me](http://monkey.yoryor.me)
 
 ## Features
 

@@ -1,6 +1,10 @@
 # Change Log
 
 ## [Released]
+
+- v2.3.1
+    - fixed tag cache.
+
 - v2.2.0
     - Support markdown emoji
     - Support open note in Evernote Web.
