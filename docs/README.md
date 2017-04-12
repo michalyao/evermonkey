@@ -7,7 +7,16 @@ search: english
 Evernote Editing. Redefined.
 
 ## Features
+
 Edit your evernote with markdown support, with full power of VS Code.
+
+## Principle
+
+Monkey focuses on the currently editing untitle file. Make cache to avoid making request each time. Once you finish or abort editing you should use `ever publish` to save it on the server. Use `ever recent` to open and continue your work. If you really want to save ti on the disk (this operation means revoming it from cache so you can not publish it), you can then copy & paste to a new untitle file (I mean open or create.) and publish it. Here is some best practice for using Monkey.
+
+Here is my working directory. ![example](./workspace.png)
+
+You can attach your image or other files into the upload folder. Make your download folder here too.
 
 ## Configuration
 
