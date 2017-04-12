@@ -283,7 +283,10 @@ async function publishNote() {
     let content = await converter.toEnml(result.content);
     let meta = result.metadata;
     let title = meta["title"];
-    let resources = attachmentsCache[doc.fileName].map(cache => _.values(cache)[0]);
+    let resources;
+    if (attachmentsCache[doc.fileName]) {
+      resources = attachmentsCache[doc.fileName].map(cache => _.values(cache)[0]);
+    }
     if (localNote[doc.fileName]) {
       // update the note.
       vscode.window.setStatusBarMessage("Updaing the note.", 2000);
