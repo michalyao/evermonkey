@@ -167,19 +167,19 @@ async function attachToNote() {
 
 // remove a local attachment.
 async function removeAttachment() {
-    const editor = await vscode.window.activeTextEditor;
-    let doc = editor.document;
-    // Can only remove an attachment from a cache file
-    if (attachmentsCache[doc.fileName]) {
-      let localAttachments = attachmentsCache[doc.fileName].map(cache => _.values(cache)[0]);
-      const selectedAttachment = await vscode.window.showQuickPick(localAttachments.map(attachment => attachment.attributes.fileName));
-      if (!selectedAttachment) {
-        throw "";
-      }
-      let attachmentToRemove = localAttachments.find(attachment => attachment.attributes.fileName === selectedAttachment);
-      _.remove(attachmentsCache[doc.fileName], cache => _.values(cache)[0].attributes.fileName === selectedAttachment);
-      vscode.window.showInformationMessage(util.format("%s has been removed from current note.", selectedAttachment));
+  const editor = await vscode.window.activeTextEditor;
+  let doc = editor.document;
+  // Can only remove an attachment from a cache file
+  if (attachmentsCache[doc.fileName]) {
+    let localAttachments = attachmentsCache[doc.fileName].map(cache => _.values(cache)[0]);
+    const selectedAttachment = await vscode.window.showQuickPick(localAttachments.map(attachment => attachment.attributes.fileName));
+    if (!selectedAttachment) {
+      throw "";
     }
+    let attachmentToRemove = localAttachments.find(attachment => attachment.attributes.fileName === selectedAttachment);
+    _.remove(attachmentsCache[doc.fileName], cache => _.values(cache)[0].attributes.fileName === selectedAttachment);
+    vscode.window.showInformationMessage(util.format("%s has been removed from current note.", selectedAttachment));
+  }
 }
 
 // list current file attachment.
@@ -512,13 +512,14 @@ async function openNote(noteTitle) {
       return navToNote();
     }
     let selectedNote = notesMap[selectedNotebook.guid].find(note => note.title === noteTitle);
-    const content = await client.getNoteContent(selectedNote.guid);
+    const note = await client.getNoteContent(selectedNote.guid);
+    const content = note.content;
     const doc = await vscode.workspace.openTextDocument({
       language: "markdown"
     });
     // attachtment cache init.
     attachmentsCache[doc.fileName] = [];
-    await cacheAndOpenNote(selectedNote, doc, content);
+    await cacheAndOpenNote(note, doc, content);
   } catch (err) {
     wrapError(err);
   }
@@ -536,7 +537,7 @@ async function openNoteInBrowser() {
       open(url);
     }
   } else {
-      vscode.window.showWarningMessage("Can not open the note, maybe not on the server");
+    vscode.window.showWarningMessage("Can not open the note, maybe not on the server");
   }
 }
 
@@ -547,15 +548,25 @@ async function cacheAndOpenNote(note, doc, content) {
     const editor = await vscode.window.showTextDocument(doc);
     localNote[doc.fileName] = note;
     let startPos = new vscode.Position(1, 0);
+    let tagGuids = note.tagGuids;
+    let tags;
+    if (tagGuids) {
+      let newTags = _.filter(tagGuids, guid => !tagCache[guid]);
+      let promises = newTags.map(guid => {
+        if (guid) {
+          return client.getTag(guid);
+        }
+      });
+      const newTagObj = await Promise.all(promises);
+      // update tag cache.
+      newTagObj.forEach((tag: evernote.Types.Tag) => tagCache[tag.guid] = tag.name);
+      tags = tagGuids.map(guid => tagCache[guid]);
+    } else {
+      tags = [];
+    }
     editor.edit(edit => {
       let mdContent = converter.toMd(content);
-      let tagGuids = note.tagGuids;
-      let tags;
-      if (tagGuids) {
-        tags = tagGuids.map(guid => tagCache[guid]);
-      } else {
-        tags = [];
-      }
+
       let metaHeader = genMetaHeader(note.title, tags,
         notebooks.find(notebook => notebook.guid === note.notebookGuid).name);
       edit.insert(startPos, metaHeader + mdContent);
@@ -608,24 +619,24 @@ function activate(context) {
     "scheme": "untitled",
     "language": "markdown"
   }], {
-      provideCompletionItems(doc, position) {
-        // simple but enough validation for title, tags, notebook
-        // title dont show tips.
-        if (position.line === 1) {
-          return [];
-        } else if (position.line === 2) {
-          // tags
-          if (tagCache) {
-            return _.values(tagCache).map(tag => new vscode.CompletionItem(tag));
-          }
-        } else if (position.line === 3) {
-          if (notebooks) {
-            return notebooks.map(notebook => new vscode.CompletionItem(notebook.name));
-          }
+    provideCompletionItems(doc, position) {
+      // simple but enough validation for title, tags, notebook
+      // title dont show tips.
+      if (position.line === 1) {
+        return [];
+      } else if (position.line === 2) {
+        // tags
+        if (tagCache) {
+          return _.values(tagCache).map(tag => new vscode.CompletionItem(tag));
         }
-
+      } else if (position.line === 3) {
+        if (notebooks) {
+          return notebooks.map(notebook => new vscode.CompletionItem(notebook.name));
+        }
       }
-    });
+
+    }
+  });
   vscode.workspace.onDidCloseTextDocument(removeLocal);
   vscode.workspace.onDidSaveTextDocument(alertToUpdate);
   let listAllNotebooksCmd = vscode.commands.registerCommand("extension.navToNote", navToNote);
@@ -677,5 +688,5 @@ function alertToUpdate() {
 }
 
 // this method is called when your extension is deactivated
-function deactivate() { }
+function deactivate() {}
 exports.deactivate = deactivate;

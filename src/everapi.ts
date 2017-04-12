@@ -45,7 +45,9 @@ export class EvernoteClient {
   }
 
   getNoteContent(noteGuid) {
-    return this.noteStore.getNoteContent(noteGuid);
+    return this.noteStore.getNoteWithResultSpec(noteGuid, {
+      includeContent: true
+    });
   }
 
   getNoteResources(noteGuid) {
@@ -109,6 +111,10 @@ export class EvernoteClient {
       includeNotebookGuid: true,
       includeTitle: true
     });
+  }
+
+  getTag(guid) {
+    return this.noteStore.getTag(guid);
   }
 
   getDefaultNotebook() {
