@@ -104,7 +104,10 @@ async function navToNote() {
 // Synchronize evernote account. For metadata.
 async function syncAccount() {
   try {
-    client = new EvernoteClient(config.token, config.noteStoreUrl);
+    // lazy initilation.
+    if (!client) {
+      client = new EvernoteClient(config.token, config.noteStoreUrl);
+    }
     const tags = await client.listTags();
     tags.forEach(tag => tagCache[tag.guid] = tag.name);
     await vscode.window.setStatusBarMessage("Synchronizing your account...", 1000);
