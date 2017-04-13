@@ -1,191 +1,192 @@
 {
-    "name": "evermonkey",
-    "displayName": "evermonkey",
-    "description": "Markdown support for Evernote.",
-    "version": "2.3.5",
-    "publisher": "michalyao",
-    "engines": {
-        "vscode": "^1.10.0"
-    },
-    "categories": [
-        "Other"
+  "name": "evermonkey",
+  "displayName": "evermonkey",
+  "description": "Markdown support for Evernote.",
+  "version": "2.3.5",
+  "publisher": "michalyao",
+  "engines": {
+    "vscode": "^1.10.0"
+  },
+  "categories": [
+    "Other"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/michalyao/evermonkey.git"
+  },
+  "icon": "assets/icon.png",
+  "homepage": "http://monkey.yoryor.me",
+  "main": "./out/src/extension",
+  "activationEvents": [
+    "onCommand:extension.navToNote",
+    "onCommand:extension.publishNote",
+    "onCommand:extension.openDevPage",
+    "onCommand:extension.sync",
+    "onCommand:extension.newNote",
+    "onCommand:extension.searchNote",
+    "onCommand:extension.openRecentNotes"
+  ],
+  "contributes": {
+    "commands": [
+      {
+        "command": "extension.navToNote",
+        "title": "Ever open: Open note in a tree-like structure."
+      },
+      {
+        "command": "extension.publishNote",
+        "title": "Ever publish: Publish current editting note to Evernote server."
+      },
+      {
+        "command": "extension.openDevPage",
+        "title": "Ever token: Open developer page to get API token."
+      },
+      {
+        "command": "extension.sync",
+        "title": "Ever sync: Synchronizing your Evernote Account."
+      },
+      {
+        "command": "extension.newNote",
+        "title": "Ever new: Create a new empty note with markdown supported and metadata inited."
+      },
+      {
+        "command": "extension.searchNote",
+        "title": "Ever search: Search note using Evernote Search Grammar."
+      },
+      {
+        "command": "extension.openRecentNotes",
+        "title": "Ever recent: Open recently edited notes."
+      },
+      {
+        "command": "extension.attachToNote",
+        "title": "Ever attach: Insert an attachment to current note."
+      },
+      {
+        "command": "extension.listResources",
+        "title": "Ever resources: List attachments of current note."
+      },
+      {
+        "command": "extension.openNoteInBrowser",
+        "title": "Ever browse: Open current note in the web browser."
+      },
+      {
+        "command": "extension.removeAttachment",
+        "title": "Ever unattach: Remove a local attachment from current note."
+      }
     ],
-    "repository": {
-        "type": "git",
-        "url": "https://github.com/michalyao/evermonkey.git"
-    },
-    "icon": "assets/icon.png",
-    "homepage": "http://monkey.yoryor.me",
-    "main": "./out/src/extension",
-    "activationEvents": [
-        "onCommand:extension.navToNote",
-        "onCommand:extension.publishNote",
-        "onCommand:extension.openDevPage",
-        "onCommand:extension.sync",
-        "onCommand:extension.newNote",
-        "onCommand:extension.searchNote",
-        "onCommand:extension.openRecentNotes"
+    "keybindings": [
+      {
+        "command": "extension.navToNote",
+        "key": "alt+o"
+      },
+      {
+        "command": "extension.publishNote",
+        "key": "alt+p",
+        "when": "editorTextFocus && editorLangId == 'markdown'"
+      },
+      {
+        "command": "extension.newNote",
+        "key": "alt+n"
+      },
+      {
+        "command": "extension.searchNote",
+        "key": "alt+s"
+      },
+      {
+        "command": "extension.openRecentNotes",
+        "key": "alt+r"
+      },
+      {
+        "command": "extension.attachToNote",
+        "key": "alt+a",
+        "when": "editorTextFocus && editorLangId == 'markdown'"
+      },
+      {
+        "command": "extension.listResouces",
+        "key": "alt+l",
+        "when": "editorTextFocus && editorLangId == 'markdown'"
+      },
+      {
+        "command": "extension.openNoteInBrowser",
+        "key": "alt+b",
+        "when": "editorTextFocus && editorLangId == 'markdown'"
+      },
+      {
+        "command": "extension.removeAttachment",
+        "key": "alt+x",
+        "when": "editorTextFocus && editorLangId == 'markdown'"
+      }
     ],
-    "contributes": {
-        "commands": [
-            {
-                "command": "extension.navToNote",
-                "title": "Ever open: Open note in a tree-like structure."
-            },
-            {
-                "command": "extension.publishNote",
-                "title": "Ever publish: Publish current editting note to Evernote server."
-            },
-            {
-                "command": "extension.openDevPage",
-                "title": "Ever token: Open developer page to get API token."
-            },
-            {
-                "command": "extension.sync",
-                "title": "Ever sync: Synchronizing your Evernote Account."
-            },
-            {
-                "command": "extension.newNote",
-                "title": "Ever new: Create a new empty note with markdown supported and metadata inited."
-            },
-            {
-                "command": "extension.searchNote",
-                "title": "Ever search: Search note using Evernote Search Grammar."
-            },
-            {
-                "command": "extension.openRecentNotes",
-                "title": "Ever recent: Open recently edited notes."
-            },
-            {
-                "command": "extension.attachToNote",
-                "title": "Ever attach: Insert an attachment to current note."
-            },
-            {
-                "command": "extension.listResources",
-                "title": "Ever resources: List attachments of current note."
-            },
-            {
-                "command": "extension.openNoteInBrowser",
-                "title": "Ever browse: Open current note in the web browser."
-            },
-            {
-                "command": "extension.removeAttachment",
-                "title": "Ever unattach: Remove a local attachment from current note."
-            }
-        ],
-        "keybindings": [
-            {
-                "command": "extension.navToNote",
-                "key": "alt+o"
-            },
-            {
-                "command": "extension.publishNote",
-                "key": "alt+p",
-                "when": "editorTextFocus && editorLangId == 'markdown'"
-            },
-            {
-                "command": "extension.newNote",
-                "key": "alt+n"
-            },
-            {
-                "command": "extension.searchNote",
-                "key": "alt+s"
-            },
-            {
-                "command": "extension.openRecentNotes",
-                "key": "alt+r"
-            },
-            {
-                "command": "extension.attachToNote",
-                "key": "alt+a",
-                "when": "editorTextFocus && editorLangId == 'markdown'"
-            },
-            {
-                "command": "extension.listResouces",
-                "key": "alt+l",
-                "when": "editorTextFocus && editorLangId == 'markdown'"
-            },
-            {
-                "command": "extension.openNoteInBrowser",
-                "key": "alt+b",
-                "when": "editorTextFocus && editorLangId == 'markdown'"
-            },
-            {
-                "command": "extension.removeAttachment",
-                "key": "alt+x",
-                "when": "editorTextFocus && editorLangId == 'markdown'"
-            }
-        ],
-        "configuration": {
-            "title": "EverMonkey Configuration",
-            "type": "object",
-            "properties": {
-                "evermonkey.token": {
-                    "type": "string",
-                    "default": "",
-                    "description": "Copy your Developer Token from the website. (ever token: Open Developer Page)"
-                },
-                "evermonkey.noteStoreUrl": {
-                    "type": "string",
-                    "default": "",
-                    "description": "Copy your NoteStore URL from the website. (ever token: Open Developer Page)"
-                },
-                "evermonkey.highlightTheme": {
-                    "type": "string",
-                    "default": "github",
-                    "description": "Config your code highlight theme. Use highlight.js lib."
-                },
-                "evermonkey.attachmentsFolder": {
-                    "type": "string",
-                    "default": "../../attachments",
-                    "description": "Local folder to save attachments"
-                },
-                "evermonkey.uploadFolder": {
-                    "type": "string",
-                    "default": "",
-                    "description": "Local folder to upload attachment, as relative path."
-                },
-                "evermonkey.showTips": {
-                    "type": "boolean",
-                    "default": true,
-                    "description": "Show you friendly tips."
-                },
-                "evermonkey.recentNotesCount": {
-                    "type": "integer",
-                    "default": 10,
-                    "description": "Recent edited notes returned count."
-                }
-            }
+    "configuration": {
+      "title": "EverMonkey Configuration",
+      "type": "object",
+      "properties": {
+        "evermonkey.token": {
+          "type": "string",
+          "default": "",
+          "description": "Copy your Developer Token from the website. (ever token: Open Developer Page)"
+        },
+        "evermonkey.noteStoreUrl": {
+          "type": "string",
+          "default": "",
+          "description": "Copy your NoteStore URL from the website. (ever token: Open Developer Page)"
+        },
+        "evermonkey.highlightTheme": {
+          "type": "string",
+          "default": "github",
+          "description": "Config your code highlight theme. Use highlight.js lib."
+        },
+        "evermonkey.attachmentsFolder": {
+          "type": "string",
+          "default": "../../attachments",
+          "description": "Local folder to save attachments"
+        },
+        "evermonkey.uploadFolder": {
+          "type": "string",
+          "default": "",
+          "description": "Local folder to upload attachment, as relative path."
+        },
+        "evermonkey.showTips": {
+          "type": "boolean",
+          "default": true,
+          "description": "Show you friendly tips."
+        },
+        "evermonkey.recentNotesCount": {
+          "type": "integer",
+          "default": 10,
+          "description": "Recent edited notes returned count."
         }
-    },
-    "scripts": {
-        "vscode:prepublish": "tsc -p ./",
-        "compile": "tsc -watch -p ./",
-        "postinstall": "node ./node_modules/vscode/bin/install"
-    },
-    "dependencies": {
-        "bluebird": "^3.5.0",
-        "cheerio": "^0.22.0",
-        "crypto": "0.0.3",
-        "evernote": "^2.0.1-beta",
-        "highlight.js": "^9.10.0",
-        "inline-css": "^2.2.2",
-        "lodash": "^4.17.4",
-        "markdown-it": "^8.3.1",
-        "markdown-it-emoji": "^1.3.0",
-        "markdown-it-enml-todo": "^1.0.2",
-        "markdown-it-sub": "1.0.0",
-        "markdown-it-sup": "1.0.0",
-        "mime": "^1.3.4",
-        "opener": "^1.4.3",
-        "to-markdown": "3.0.4"
-    },
-    "devDependencies": {
-        "typescript": "^2.0.3",
-        "vscode": "^1.0.0",
-        "mocha": "^3.2.0",
-        "eslint": "^3.6.0",
-        "@types/node": "7.0.12",
-        "@types/mocha": "^2.2.32"
+      }
     }
+  },
+  "scripts": {
+    "vscode:prepublish": "tsc -p ./",
+    "compile": "tsc -watch -p ./",
+    "postinstall": "node ./node_modules/vscode/bin/install"
+  },
+  "dependencies": {
+    "bluebird": "^3.5.0",
+    "cheerio": "^0.22.0",
+    "crypto": "0.0.3",
+    "evernote": "^2.0.1-beta",
+    "highlight.js": "^9.10.0",
+    "inline-css": "^2.2.2",
+    "lodash": "^4.17.4",
+    "markdown-it": "^8.3.1",
+    "markdown-it-emoji": "^1.3.0",
+    "markdown-it-enml-todo": "^1.0.2",
+    "markdown-it-github-toc": "3.2.4",
+    "markdown-it-sub": "1.0.0",
+    "markdown-it-sup": "1.0.0",
+    "mime": "^1.3.4",
+    "opener": "^1.4.3",
+    "to-markdown": "3.0.4"
+  },
+  "devDependencies": {
+    "typescript": "^2.0.3",
+    "vscode": "^1.0.0",
+    "mocha": "^3.2.0",
+    "eslint": "^3.6.0",
+    "@types/node": "7.0.12",
+    "@types/mocha": "^2.2.32"
+  }
 }

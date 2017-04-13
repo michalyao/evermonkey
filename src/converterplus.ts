@@ -10,6 +10,7 @@ import * as path from "path";
 import fs from "./file";
 import * as toMarkdown from "to-markdown";
 import * as vscode from "vscode";
+import markdownItGithubToc from "markdown-it-github-toc";
 
 // Make this configurable
 const MARKDOWN_THEME_PATH = path.join(__dirname, "../../themes");
@@ -47,7 +48,8 @@ export default class Converter {
     md.use(mdSub)
       .use(mdSup)
       .use(mdEnmlTodo)
-      .use(mdEmoji);
+      .use(mdEmoji)
+      .use(markdownItGithubToc, { anchorLink: false });
 
     // Inline code class for enml style.
     const inlineCodeRule = md.renderer.rules.code_inline;
