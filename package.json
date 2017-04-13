@@ -2,7 +2,7 @@
     "name": "evermonkey",
     "displayName": "evermonkey",
     "description": "Markdown support for Evernote.",
-    "version": "2.3.2",
+    "version": "2.3.5",
     "publisher": "michalyao",
     "engines": {
         "vscode": "^1.10.0"
@@ -15,7 +15,7 @@
         "url": "https://github.com/michalyao/evermonkey.git"
     },
     "icon": "assets/icon.png",
-    "homepage": "https://github.com/michalyao/evermonkey",
+    "homepage": "http://monkey.yoryor.me",
     "main": "./out/src/extension",
     "activationEvents": [
         "onCommand:extension.navToNote",
