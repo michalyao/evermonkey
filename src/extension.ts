@@ -525,8 +525,6 @@ async function openNote(noteTitle) {
     const doc = await vscode.workspace.openTextDocument({
       language: "markdown"
     });
-    // attachtment cache init.
-    attachmentsCache[doc.fileName] = [];
     await cacheAndOpenNote(note, doc, content);
   } catch (err) {
     wrapError(err);
@@ -555,6 +553,8 @@ async function cacheAndOpenNote(note, doc, content) {
   try {
     const editor = await vscode.window.showTextDocument(doc);
     localNote[doc.fileName] = note;
+     // attachtment cache init.
+    attachmentsCache[doc.fileName] = [];
     let startPos = new vscode.Position(1, 0);
     let tagGuids = note.tagGuids;
     let tags;
