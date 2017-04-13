@@ -2,6 +2,9 @@
 
 ## [Released]
 
+- v2.3.5
+    - Bug fixed. #30, #35, #36, #37
+
 - v2.3.1
     - fixed tag cache.
 
