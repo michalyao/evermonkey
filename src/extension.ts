@@ -607,8 +607,12 @@ async function openDevPage() {
       ignoreFocusOut: true
     });
     config.update("noteStoreUrl", noteStoreUrl, true);
-    await vscode.window.showInformationMessage("Monkey is ready to work. Get the full documents here http://monkey.yoryor.me." +
-      "If you get an error, just check the configuration and restart the vscode. Enjoy it and give me star on the github!")
+    if (config.token && config.noteStoreUrl) {
+      vscode.window.showInformationMessage("Monkey is ready to work. Get the full documents here http://monkey.yoryor.me." +
+        "If you get an error, just check the configuration and restart the vscode. Enjoy it and give me star on the github!")
+    } else {
+      vscode.window.showWarningMessage("Token or noteStoreUrl not setted, please check it.");
+    }
 
   } catch (err) {
     wrapError(err)
