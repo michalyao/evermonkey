@@ -2,6 +2,9 @@
 
 ## [Released]
 
+- v2.3.6
+    - add support for markdown TOC. **Note: Navigation not supported in Evernote.**
+
 - v2.3.5
     - Bug fixed. #30, #35, #36, #37
 
