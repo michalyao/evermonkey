@@ -29,6 +29,7 @@ title: %s
 tags: %s
 notebook: %s
 ---
+
 `;
 
 // notesMap -- [notebookguid:[notes]].
@@ -50,7 +51,7 @@ function exactMetadata(text) {
   if (_.startsWith(text, "---")) {
     let match = METADATA_PATTERN.exec(text);
     if (match) {
-      content = text.substring(match[0].trim().length);
+      content = text.substring(match[0].trim().length).replace(/^\s+/,"");
       let metadataStr = match[1].trim();
       let metaArray = metadataStr.split("\n");
       metaArray.forEach(value => {
