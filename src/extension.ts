@@ -51,7 +51,7 @@ function exactMetadata(text) {
   if (_.startsWith(text, "---")) {
     let match = METADATA_PATTERN.exec(text);
     if (match) {
-      content = text.substring(match[0].trim().length).replace(/^\s+/,"");
+      content = text.substring(match[0].trim().length).replace(/^\s+/, "");
       let metadataStr = match[1].trim();
       let metaArray = metadataStr.split("\n");
       metaArray.forEach(value => {
@@ -105,9 +105,8 @@ async function navToNote() {
 async function syncAccount() {
   try {
     // lazy initilation.
-    if (!client) {
-      client = new EvernoteClient(config.token, config.noteStoreUrl);
-    }
+    const config = vscode.workspace.getConfiguration("evermonkey");
+    client = new EvernoteClient(config.token, config.noteStoreUrl);
     const tags = await client.listTags();
     tags.forEach(tag => tagCache[tag.guid] = tag.name);
     await vscode.window.setStatusBarMessage("Synchronizing your account...", 1000);
@@ -131,7 +130,8 @@ async function attachToNote() {
     const editor = await vscode.window.activeTextEditor;
     let doc = editor.document;
     let filepath = await vscode.window.showInputBox({
-      placeHolder: "Full path of your attachtment:"
+      placeHolder: "Full path of your attachtment:",
+      ignoreFocusOut: true
     });
     if (!filepath) {
       throw "";
@@ -553,7 +553,7 @@ async function cacheAndOpenNote(note, doc, content) {
   try {
     const editor = await vscode.window.showTextDocument(doc);
     localNote[doc.fileName] = note;
-     // attachtment cache init.
+    // attachtment cache init.
     attachmentsCache[doc.fileName] = [];
     let startPos = new vscode.Position(1, 0);
     let tagGuids = note.tagGuids;
@@ -584,9 +584,10 @@ async function cacheAndOpenNote(note, doc, content) {
   }
 }
 
-// open evernote dev page.
-function openDevPage() {
-  vscode.window.showQuickPick(["China", "Other"]).then(choice => {
+// open evernote dev page to help you configure.
+async function openDevPage() {
+  try {
+    const choice = await vscode.window.showQuickPick(["China", "International"]);
     if (!choice) {
       return;
     }
@@ -595,7 +596,23 @@ function openDevPage() {
     } else {
       open("https://www.evernote.com/api/DeveloperToken.action");
     }
-  });
+    // input help configure.
+    const token = await vscode.window.showInputBox({
+      placeHolder: "Copy & paste your token here.",
+      ignoreFocusOut: true
+    });
+    config.update("token", token, true);
+    const noteStoreUrl = await vscode.window.showInputBox({
+      placeHolder: "Copy & paste your noteStoreUrl here.",
+      ignoreFocusOut: true
+    });
+    config.update("noteStoreUrl", noteStoreUrl, true);
+    await vscode.window.showInformationMessage("Monkey is ready to work. Get the full documents here http://monkey.yoryor.me." +
+      "If you get an error, just check the configuration and restart the vscode. Enjoy it and give me star on the github!")
+
+  } catch (err) {
+    wrapError(err)
+  }
 }
 
 function wrapError(error) {
@@ -619,8 +636,7 @@ function wrapError(error) {
 function activate(context) {
 
   if (!config.token || !config.noteStoreUrl) {
-    vscode.window.showWarningMessage("Please use ever token command to get the token and storeUrl, copy&paste to the settings, and then restart the vscode.");
-    vscode.commands.executeCommand("workbench.action.openGlobalSettings");
+    vscode.window.showInformationMessage("Evernote token not setted, please enter ever token command to help you configure.");
   }
   // quick match for monkey.
   let action = vscode.languages.registerCompletionItemProvider(["plaintext", {
