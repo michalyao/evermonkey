@@ -2,6 +2,11 @@
 
 ## [Released]
 
+- v2.3.7
+    - Performance improved.
+    - Update `ever token` command to be friendly to the new user. -- fixed #39
+    - Much better experience to use Monkey!
+
 - v2.3.6
     - add support for markdown TOC. **Note: Navigation not supported in Evernote.**
 
