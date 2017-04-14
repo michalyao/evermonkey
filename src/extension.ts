@@ -105,6 +105,7 @@ async function navToNote() {
 async function syncAccount() {
   try {
     // lazy initilation.
+    // TODO: configuration update event should be awared, so that a token can be reconfigured.
     const config = vscode.workspace.getConfiguration("evermonkey");
     client = new EvernoteClient(config.token, config.noteStoreUrl);
     const tags = await client.listTags();
@@ -445,6 +446,9 @@ async function newNote() {
       let metaHeader = util.format(METADATA_HEADER, "", "", "");
       edit.insert(startPos, metaHeader);
     });
+    // start at the title.
+    const titlePosition = startPos.with(1, 8);
+    editor.selection = new vscode.Selection(titlePosition, titlePosition); 
   } catch (err) {
     wrapError(err);
   }
