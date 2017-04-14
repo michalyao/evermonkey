@@ -43,6 +43,10 @@ docute.init({
         title: 'choose language',
         type: 'dropdown',
         items: langs
+      },
+      {
+        title: 'Magic',
+        path: '/magic'
       }
     ]
 
