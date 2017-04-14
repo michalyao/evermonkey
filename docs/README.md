@@ -117,7 +117,7 @@ You can get the markdown theme file in the folder where the extension is located
 
 ### Edit directly
 
-If you are familiar with CSS, you can edit the theme file directly to change the html render in Evernote. After change the file, you have to save it and restart the vscode to enable it.
+If you are familiar with CSS, you can edit the theme file `github.css` directly to change the html render in Evernote. After change the file, you have to save it and restart the vscode to enable it.
 
 ### DIY
 
