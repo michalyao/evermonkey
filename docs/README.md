@@ -12,7 +12,7 @@ Edit your evernote with markdown support, with full power of VS Code.
 
 ## Principle
 
-Monkey focuses on the currently editing untitle file. Make cache to avoid making request each time. Once you finish or abort editing you should use `ever publish` to save it on the server. Use `ever recent` to open and continue your work. If you really want to save ti on the disk (this operation means revoming it from cache so you can not publish it), you can then copy & paste to a new untitle file (I mean open or create.) and publish it. Here is some best practice for using Monkey.
+Monkey focuses on the currently editing untitle file. Make cache to avoid making request each time. Once you finish or abort editing you should use `ever publish` to save it on the server. Use `ever recent` to open and continue your work. If you really want to save it on the disk (this operation means revoming it from cache so you can not publish it), you can then copy & paste to a new untitle file (I mean open or create.) and publish it. Here is some best practice for using Monkey.
 
 Here is my working directory. ![example](./workspace.png)
 
@@ -33,6 +33,9 @@ The full Configuration properties list here:
 - evermonkey.attachmentsFolder: Local directory to save server attachments.
 - evermonkey.uploadFolder: Local directory to upload attachments.
 - evermonkey.showTips: Whether to show you some friendly tips.
+- evermonkey.fontFamily: Font family render for evernote. (What you will see in Evernote, not in vscode.)
+- evermonkey.fontSize: Font size render for evernote. (What you will see in Evernote, not in vscode.)
+- evermonkey.markdownTheme: Custom your own CSS theme. More details see CSS customize.(Beta) 
 
 ### VS Code Settings
 
@@ -72,9 +75,13 @@ Update editing note or create a new one. (Use this whenever you want to publish 
 
 Open recently edited notes.
 
+### `ever everclient`
+
+View note in Evernote Client. (Note: If you edit note in client as well, the note converted to the markdown will render `<div>` or other html.)
+
 ### `ever browse`
 
-Open editing note in Evernote Web. Be sure the server has it, I mean you have already published.
+View editing note in Evernote Web. Be sure the server has it, I mean you have already published. (Note: If you edit note in Web as well, the note converted to the markdown will render `<div>` or other html.)
 
 ### `ever attach`
 
@@ -94,15 +101,35 @@ Synchronize your Evernote account. (**Maybe you use evernote concurrently in mul
 
 ### `ever token`
 
-Help you get your token & noteStoreUrl.
+Help you get your token & noteStoreUrl and configure.
 
 ## Shortcut
 
 The default keybindings for monkey is alt plus the command verb's first word. For example, `alt+n` is for `ever new`. And of course, you can customize it as you like.
 
+## Customize CSS
+
+You can get the markdown theme file in the folder where the extension is located.
+
+- Windows %USERPROFILE%\.vscode\extensions\michalyao.evermonkey\themes
+- Mac ~/.vscode/extensions\michalyao.evermonkey/themes
+- Linux ~/.vscode/extensions/michalyao.evermonkey/themes
+
+### Edit directly
+
+If you are familiar with CSS, you can edit the theme file `github.css` directly to change the html render in Evernote. After change the file, you have to save it and restart the vscode to enable it.
+
+### DIY
+
+If you have put a theme into the folder, for example `mytheme.css`, you have to configure the settings `evermonkey.markdownTheme: "mytheme.css"`. Restart the vscode, and try whether it works well. **The class must specfic as markdown-body.**
+
+### Share
+
+If you want to share your theme with others, feel free to make a pull request. You may have to make a clear introduction about the theme. The demo included is better and more likely to be accepted.
+
 ## Markdown Syntax
 
-### TOC 
+### TOC
 
 ```
 [TOC]
