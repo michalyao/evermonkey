@@ -6,11 +6,12 @@ import * as mdSub from "markdown-it-sub";
 import * as mdSup from "markdown-it-sup";
 import * as mdEmoji from "markdown-it-emoji";
 import * as mdEnmlTodo from "markdown-it-enml-todo";
+import markdownItGithubToc from "markdown-it-github-toc";
 import * as path from "path";
 import fs from "./file";
 import * as toMarkdown from "to-markdown";
 import * as vscode from "vscode";
-import markdownItGithubToc from "markdown-it-github-toc";
+import * as util from "util";
 
 // Make this configurable
 const MARKDOWN_THEME_PATH = path.join(__dirname, "../../themes");
@@ -66,9 +67,11 @@ export default class Converter {
 
   initStyles() {
     const highlightTheme = config.highlightTheme || DEFAULT_HIGHLIGHT_THEME;
+    // TODO: customize Mevernote rendering by input markdown theme.
+    const markdownTheme = config.markdownTheme || "github.css"
     return Promise.all([
       // TODO: read to the memory, instead of IO each time.
-      fs.readFileAsync(path.join(MARKDOWN_THEME_PATH, "github.css")),
+      fs.readFileAsync(path.join(MARKDOWN_THEME_PATH, markdownTheme)),
       // TODO: read config css here and cover the default one.
       fs.readFileAsync(path.join(HIGHLIGHT_THEME_PATH, `${highlightTheme}.css`))
     ])
@@ -94,7 +97,25 @@ export default class Converter {
   }
 
   async processStyle($) {
-    const styleHtml = `<style>${this.styles.join("")}</style>` +
+    const config = vscode.workspace.getConfiguration("evermonkey");
+    // Custom font override.
+    const overrideFontFamily = `
+.markdown-body {
+  font-family: %s !important;
+}`;
+    const overrideFontSize = `
+.markdown-body {
+  font-size: %s !important;
+}`;
+  let fontFamily;
+  let fontSize;
+    if (config.fontFamily) {
+      fontFamily = util.format(overrideFontFamily, config.fontFamily.join(","));
+    }
+    if (config.fontSize) {
+      fontSize = util.format(overrideFontSize, config.fontSize);
+    }
+    const styleHtml = `<style>${this.styles.join("")}${fontFamily}${fontSize}</style>` +
       `<div class="markdown-body">${$.html()}</div>`;
     $.root().html(styleHtml);
 
