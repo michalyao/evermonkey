@@ -23,6 +23,7 @@ const config = vscode.workspace.getConfiguration("evermonkey");
 
 export default class Converter {
   md;
+  styles;
   constructor(options = {}) {
     const md = new MarkdownIt({
       html: true,
@@ -49,7 +50,9 @@ export default class Converter {
       .use(mdSup)
       .use(mdEnmlTodo)
       .use(mdEmoji)
-      .use(markdownItGithubToc, { anchorLink: false });
+      .use(markdownItGithubToc, {
+        anchorLink: false
+      });
 
     // Inline code class for enml style.
     const inlineCodeRule = md.renderer.rules.code_inline;
@@ -58,6 +61,17 @@ export default class Converter {
       return result.replace("<code>", '<code class="inline">');
     };
     this.md = md;
+    this.initStyles().then(data => this.styles = data).catch(e => console.log(e));
+  }
+
+  initStyles() {
+    const highlightTheme = config.highlightTheme || DEFAULT_HIGHLIGHT_THEME;
+    return Promise.all([
+      // TODO: read to the memory, instead of IO each time.
+      fs.readFileAsync(path.join(MARKDOWN_THEME_PATH, "github.css")),
+      // TODO: read config css here and cover the default one.
+      fs.readFileAsync(path.join(HIGHLIGHT_THEME_PATH, `${highlightTheme}.css`))
+    ])
   }
 
   async toHtml(markcontent) {
@@ -70,7 +84,7 @@ export default class Converter {
 
   async toEnml(markcontent) {
     const html = await this.toHtml(markcontent);
-    let enml = '<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE en-note SYSTEM "http://xml.evernote.com/pub/enml2.dtd"><en-note style=";">';
+    let enml = '<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE en-note SYSTEM "http://xml.evernote.com/pub/enml2.dtd"><en-note>';
     enml += "<!--" + MAGIC_SPELL;
     enml += Buffer.from(markcontent, "utf-8").toString("base64");
     enml += MAGIC_SPELL + "-->";
@@ -80,13 +94,7 @@ export default class Converter {
   }
 
   async processStyle($) {
-    // make configurable
-    const highlightTheme = config.highlightTheme || DEFAULT_HIGHLIGHT_THEME;
-    const styles = await Promise.all([
-      fs.readFileAsync(path.join(MARKDOWN_THEME_PATH, "github.css")),
-      fs.readFileAsync(path.join(HIGHLIGHT_THEME_PATH, `${highlightTheme}.css`))
-    ]);
-    const styleHtml = `<style>${styles.join("")}</style>` +
+    const styleHtml = `<style>${this.styles.join("")}</style>` +
       `<div class="markdown-body">${$.html()}</div>`;
     $.root().html(styleHtml);
 
