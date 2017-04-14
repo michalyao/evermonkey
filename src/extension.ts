@@ -535,6 +535,30 @@ async function openNote(noteTitle) {
   }
 }
 
+async function openNoteInClient() {
+  const editor = await vscode.window.activeTextEditor;
+  let doc = editor.document;
+  if (localNote[doc.fileName]) {
+    let noteGuid = localNote[doc.fileName].guid;
+    if (noteGuid) {
+      open(getNoteLink(noteGuid));
+    }
+  } else {
+    vscode.window.showWarningMessage("Can not open the note, maybe not on the server");
+  }
+}
+
+function getNoteLink(noteGuid) {
+  const token = config.token;
+  if (token && noteGuid) {
+    let userInfo = token.split(":");
+    let shardId = userInfo[0].substring(2);
+    let userId = parseInt(userInfo[1].substring(2), 16);
+    return `evernote:///view/${userId}/${shardId}/${noteGuid}/${noteGuid}/`;
+  }
+  return "";
+}
+
 async function openNoteInBrowser() {
   const editor = await vscode.window.activeTextEditor;
   let doc = editor.document;
@@ -550,7 +574,6 @@ async function openNoteInBrowser() {
     vscode.window.showWarningMessage("Can not open the note, maybe not on the server");
   }
 }
-
 
 // Open note in vscode and cache to memory.
 async function cacheAndOpenNote(note, doc, content) {
@@ -682,6 +705,7 @@ function activate(context) {
   let listResourcesCmd = vscode.commands.registerCommand("extension.listResources", listResources);
   let openNoteInBrowserCmd = vscode.commands.registerCommand("extension.openNoteInBrowser", openNoteInBrowser);
   let removeAttachmentCmd = vscode.commands.registerCommand("extension.removeAttachment", removeAttachment);
+  let openNoteInClientCmd = vscode.commands.registerCommand("extension.viewInEverClient", openNoteInClient);
 
   context.subscriptions.push(listAllNotebooksCmd);
   context.subscriptions.push(publishNoteCmd);
@@ -695,6 +719,8 @@ function activate(context) {
   context.subscriptions.push(listResourcesCmd);
   context.subscriptions.push(openNoteInBrowserCmd);
   context.subscriptions.push(removeAttachmentCmd);
+  context.subscriptions.push(openNoteInClientCmd);
+  
 
 }
 exports.activate = activate;

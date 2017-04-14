@@ -71,6 +71,10 @@
       {
         "command": "extension.removeAttachment",
         "title": "Ever unattach: Remove a local attachment from current note."
+      },
+      {
+        "command": "extension.viewInEverClient",
+        "title": "Ever everclient: View note in evernote client."
       }
     ],
     "keybindings": [
@@ -114,6 +118,10 @@
         "command": "extension.removeAttachment",
         "key": "alt+x",
         "when": "editorTextFocus && editorLangId == 'markdown'"
+      },
+      {
+        "command": "extension.viewInEverClient",
+        "key": "alt+e"
       }
     ],
     "configuration": {
@@ -154,6 +162,21 @@
           "type": "integer",
           "default": 10,
           "description": "Recent edited notes returned count."
+        },
+        "evermonkey.markdownTheme": {
+          "type": "string",
+          "default": "github.css",
+          "description": "Customize your markdown renderer theme by provide your own css. More details about customize theme: http://monkey.yoryor.me"
+        },
+        "evermonkey.fontFamily": {
+          "type": "array",
+          "default": ["Helvetica Neue", "Helvetica", "Segoe UI", "Arial", "freesans, sans-serif", "微软雅黑", "Heiti SC Light", "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol"],
+          "description": "Evernote custom render. Will override the markdown theme."
+        },
+        "evermonkey.fontSize": {
+          "type": "string",
+          "default": "16px",
+          "description": "Evernote custom render. Will override the markdown theme."
         }
       }
     }
