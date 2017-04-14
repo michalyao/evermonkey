@@ -32,6 +32,9 @@ EverMonkey 配置参数如下:
 - evermonkey.attachmentsFolder: 打开印象笔记附件的临时下载文件夹。
 - evermonkey.uploadFolder: 上传印象笔记附件的文件夹。
 - evermonkey.showTips: 是否开启操作提示。
+- evermonkey.fontFamily: 印象笔记中渲染的字体。(不是在vscode中编辑显示的字体)
+- evermonkey.fontSize: 印象笔记中渲染的字体大小。(不是在vscode中编辑显示的字体大小)
+- evermonkey.markdownTheme: 自定义 CSS 渲染 Markdown. 详情见 自定义渲染。
 
 关于 token 和 noteStoreUrl 的获取可以使用 `ever token` 命令。 其中国内印象笔记用户点击 [China](https://app.yinxiang.com/api/DeveloperToken.action), 国际版用户点击 [Other](https://www.evernote.com/api/DeveloperToken.action).
 
@@ -78,7 +81,11 @@ EverMonkey 配置参数如下:
 
 ### 在浏览器中打开编辑的笔记 -- `ever browse`
 
-在印象笔记网页端打开当前编辑的笔记，如果还未发布，则无法打开。
+在印象笔记网页端打开当前编辑的笔记，如果还未发布，则无法打开。**如果在网页端中编辑文档内容，再次在vscode中打开笔记时，渲染markdown会导致一些原生html被渲染。**
+
+### 在客户端中浏览编辑的笔记 -- `ever everclient`
+
+在印象笔记客户端中打开编辑的笔记，如果还未发布，则无法打开。**如果在客户端中编辑文档内容，再次在vscode中打开笔记时，渲染markdown会导致一些原生html被渲染。**
 
 ### 上传附件到当前编辑的笔记 -- `ever attach`
 
@@ -104,6 +111,26 @@ EverMonkey 配置参数如下:
 ## 快捷键
 
 v2.2.0 版本加入快捷键设置，默认的快捷键形式是 alt + 命令动词的首字母。比如 `ever new` 的快捷键就是 `alt+n`. 也可以自己绑定快捷键。
+
+## 自定义渲染
+
+你可以在插件安装目录找到默认的Markdown渲染主题。
+
+- Windows %USERPROFILE%\.vscode\extensions\michalyao.evermonkey\themes
+- Mac ~/.vscode/extensions\michalyao.evermonkey/themes
+- Linux ~/.vscode/extensions/michalyao.evermonkey/themes
+
+### 直接编辑
+
+如果你熟悉 CSS， 你可以直接编辑 github.css 来定制印象笔记的渲染效果。修改文件后，需要保存并重启vscode。
+
+### 自定义
+
+你可以自己新建一个主题，比如 `mytheme.css`, 放置在 themes 目录下，你必须修改扩展设置 `evermonkey.markdownTheme: "mytheme.css"`。 **注意: css的类名必须是 `markdown-body`**
+
+### 分享主题
+
+如果你想把自己的主题分享给他人，请提交 pull request。需要给出一个简明的主题介绍，最好是有网页或者图片简介。这样才更容易被接收。
 
 ## Markdown 语法
 
