@@ -71,6 +71,10 @@
       {
         "command": "extension.removeAttachment",
         "title": "Ever unattach: Remove a local attachment from current note."
+      },
+      {
+        "command": "extension.viewInEverClient",
+        "title": "Ever everclient: View note in evernote client."
       }
     ],
     "keybindings": [
@@ -114,6 +118,10 @@
         "command": "extension.removeAttachment",
         "key": "alt+x",
         "when": "editorTextFocus && editorLangId == 'markdown'"
+      },
+      {
+        "command": "extension.viewInEverClient",
+        "key": "alt+e"
       }
     ],
     "configuration": {
