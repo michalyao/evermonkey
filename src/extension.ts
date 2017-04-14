@@ -560,6 +560,7 @@ function getNoteLink(noteGuid) {
 }
 
 async function openNoteInBrowser() {
+  const config = vscode.workspace.getConfiguration("evermonkey");
   const editor = await vscode.window.activeTextEditor;
   let doc = editor.document;
   if (localNote[doc.fileName]) {
