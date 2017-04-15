@@ -33,6 +33,7 @@ notebook: notebook
 ```
 
 
+
 ![example](assets/monkey.gif)
 
 Result:
@@ -53,7 +54,7 @@ Then open your user setting by `Preferences: Open User Settings`, and copy&paste
 
 ## Known Issues
 
-* Open note in notebook may cause a mess, because unsupported transfer from enml to markdown.
+* If you edit your note content in other client. For example, in the Evernote client. Then when you open note in the vscode again, you will see some extra html in the markdown text. So try to edit your note only in evermonkey, this way the markdown text will stay clean.
 * You can report issues here [Github issues](https://github.com/michalyao/evermonkey/issues)
 
 -----------------------------------------------------------------------------------------------------------
