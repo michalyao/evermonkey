@@ -566,9 +566,8 @@ async function openNoteInBrowser() {
   if (localNote[doc.fileName]) {
     let noteGuid = localNote[doc.fileName].guid;
     if (noteGuid) {
-      const idx = config.noteStoreUrl.indexOf("/shard");
-      const domain = config.noteStoreUrl.substring(0, idx);
-      const url = util.format(domain + "/Home.action#n=%s&ses=4&sh=2&sds=5&", noteGuid);
+      const domain = config.noteStoreUrl.slice(0, -9);
+      const url = util.format(domain + "view/%s", noteGuid);
       open(url);
     }
   } else {
