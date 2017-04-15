@@ -107,8 +107,8 @@ export default class Converter {
 .markdown-body {
   font-size: %s !important;
 }`;
-  let fontFamily;
-  let fontSize;
+    let fontFamily;
+    let fontSize;
     if (config.fontFamily) {
       fontFamily = util.format(overrideFontFamily, config.fontFamily.join(","));
     }
@@ -147,8 +147,16 @@ export default class Converter {
     } else {
       let commentRegex = /<!--.*?-->/;
       let htmlStr = rawContent.replace(commentRegex, "");
-      return toMarkdown(htmlStr);
+      let mdtxt = toMarkdown(htmlStr);
+      return this.todoFix(mdtxt);
     }
+  }
+
+  todoFix(markdown) {
+    return markdown.replace(/<en-todo\s+checked="true"\s*\/?>/g, '[x] ')
+      .replace(/<en-todo\s+checked="false"\s*\/?>/g, '[ ] ')
+      .replace(/<en-todo\s*\/?>/g, '[ ] ')
+      .replace(/<\/en-todo>/g, '');
   }
 
 }
