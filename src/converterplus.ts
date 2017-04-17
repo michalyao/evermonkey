@@ -117,9 +117,21 @@ export default class Converter {
   }
 
   async processStyle($) {
-    const config = vscode.workspace.getConfiguration("evermonkey");
-    // Custom font override.
+    const styleHtml = this.customizeCss($);
+    $.root().html(styleHtml);
 
+    // Change html classes to inline styles
+    const inlineStyleHtml = await inlineCss($.html(), {
+      url: "/",
+      removeStyleTags: true,
+      removeHtmlSelectors: true,
+    });
+    $.root().html(inlineStyleHtml);
+    $("en-todo").removeAttr("style");
+  }
+
+  customizeCss($) {
+    const config = vscode.workspace.getConfiguration("evermonkey");
     let fontFamily;
     let fontSize;
     let codeFontFamily;
@@ -136,18 +148,8 @@ export default class Converter {
     if (config.codeFontSize) {
       codeFontSize = util.format(OVERRIDE_CODE_FONT_SIZE, config.codeFontSize);
     }
-    const styleHtml = `<style>${this.styles.join("")}${fontFamily}${fontSize}${codeFontFamily}${codeFontSize}</style>` +
+    return `<style>${this.styles.join("")}${fontFamily}${fontSize}${codeFontFamily}${codeFontSize}</style>` +
       `<div class="markdown-body">${$.html()}</div>`;
-    $.root().html(styleHtml);
-
-    // Change html classes to inline styles
-    const inlineStyleHtml = await inlineCss($.html(), {
-      url: "/",
-      removeStyleTags: true,
-      removeHtmlSelectors: true,
-    });
-    $.root().html(inlineStyleHtml);
-    $("en-todo").removeAttr("style");
   }
 
   toMd(enml) {
