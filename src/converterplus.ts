@@ -19,6 +19,26 @@ const HIGHLIGHT_THEME_PATH = path.join(__dirname, "../../node_modules/highlight.
 const DEFAULT_HIGHLIGHT_THEME = "github";
 const MAGIC_SPELL = "%EVERMONKEY%";
 
+const OVERRIDE_FONT_FAMILY = `
+.markdown-body {
+  font-family: %s !important;
+}`;
+
+const OVERRIDE_FONT_SIZE = `
+.markdown-body {
+  font-size: %s !important;
+}`;
+
+const OVERRIDE_CODE_FONT_FAMILY = `
+.hljs {
+  font-family: %s !important;
+}`;
+
+const OVERRIDE_CODE_FONT_SIZE = `
+.hljs {
+  font-size: %s !important;
+}`;
+
 
 const config = vscode.workspace.getConfiguration("evermonkey");
 
@@ -99,23 +119,24 @@ export default class Converter {
   async processStyle($) {
     const config = vscode.workspace.getConfiguration("evermonkey");
     // Custom font override.
-    const overrideFontFamily = `
-.markdown-body {
-  font-family: %s !important;
-}`;
-    const overrideFontSize = `
-.markdown-body {
-  font-size: %s !important;
-}`;
+
     let fontFamily;
     let fontSize;
+    let codeFontFamily;
+    let codeFontSize;
     if (config.fontFamily) {
-      fontFamily = util.format(overrideFontFamily, config.fontFamily.join(","));
+      fontFamily = util.format(OVERRIDE_FONT_FAMILY, config.fontFamily.join(","));
     }
     if (config.fontSize) {
-      fontSize = util.format(overrideFontSize, config.fontSize);
+      fontSize = util.format(OVERRIDE_FONT_SIZE, config.fontSize);
     }
-    const styleHtml = `<style>${this.styles.join("")}${fontFamily}${fontSize}</style>` +
+    if (config.codeFontFamily) {
+      codeFontFamily = util.format(OVERRIDE_CODE_FONT_FAMILY, config.codeFontFamily.join(","));
+    }
+    if (config.codeFontSize) {
+      codeFontSize = util.format(OVERRIDE_CODE_FONT_SIZE, config.codeFontSize);
+    }
+    const styleHtml = `<style>${this.styles.join("")}${fontFamily}${fontSize}${codeFontFamily}${codeFontSize}</style>` +
       `<div class="markdown-body">${$.html()}</div>`;
     $.root().html(styleHtml);
 

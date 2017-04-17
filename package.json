@@ -188,6 +188,21 @@
                     "type": "string",
                     "default": "16px",
                     "description": "Evernote custom render. Will override the markdown theme."
+                },
+                "evermonkey.codeFontFamily": {
+                    "type": "array",
+                    "default": [
+                        "Helvetica Neue",
+                        "Helvetica",
+                        "Segoe UI",
+                        "Arial"
+                    ],
+                    "description": "Code highlight font family."
+                },
+                "evermonkey.codeFontSize": {
+                    "type": "string",
+                    "default": "10px",
+                    "description": "Code highlight font size."
                 }
             }
         }
