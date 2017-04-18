@@ -35,7 +35,9 @@ The full Configuration properties list here:
 - evermonkey.showTips: Whether to show you some friendly tips.
 - evermonkey.fontFamily: Font family render for evernote. (What you will see in Evernote, not in vscode.)
 - evermonkey.fontSize: Font size render for evernote. (What you will see in Evernote, not in vscode.)
-- evermonkey.markdownTheme: Custom your own CSS theme. More details see CSS customize.(Beta) 
+- evermonkey.markdownTheme: Customize your own CSS theme. More details see CSS customize.(Beta)
+- evermonkey.codeFontFamily: Customize your code higtlight font family.
+- evermonkey.codeFontSize: Customize your code highlight font size.
 
 ### VS Code Settings
 

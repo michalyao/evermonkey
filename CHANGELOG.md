@@ -2,6 +2,11 @@
 
 ## [Released]
 
+- 2.3.11
+    - Fixed enml-todo got error when transformed to markdown.
+    - Add support for configuring code highlight font. See configuration.
+    - Support insert attachment to current cursor. This is usually used when you want to upload local image.
+
 - v2.3.8
     - New created note's editor cursor now starts after the title.
     - Add `ever everclient` command to support view note in client. (**Note: Editing note in multiple clients may cause a mess when converting the html to markdown, you will see <div>...</div> in vscode, and in result, you may get an error when you publish again. So try to edit in vscode only.**)
