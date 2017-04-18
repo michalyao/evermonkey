@@ -164,6 +164,11 @@ async function attachToNote() {
     const cache = {};
     cache[filepath] = attachment;
     attachmentsCache[doc.fileName].push(cache);
+    // insert attachment to current position.
+    const position = editor.selection.active;
+    editor.edit(edit => {
+      edit.insert(position, util.format('<en-media type="%s" hash="%s"></en-media>', attachment.mime, Buffer.from(attachment.data.bodyHash).toString("hex")));
+    });
     vscode.window.showInformationMessage(util.format("%s has been attched to current note.", fileName));
   } catch (err) {
     wrapError(err);
@@ -302,7 +307,6 @@ async function publishNote() {
         if (noteResources.resources) {
           resources = resources.concat(noteResources.resources);
         }
-        content = appendResourceContent(resources, content);
         updatedNote = await updateNoteResources(meta, content, noteGuid, resources);
         updatedNote.resources = resources;
         serverResourcesCache[doc.fileName] = null;
@@ -316,7 +320,6 @@ async function publishNote() {
       return vscode.window.showInformationMessage(`${notebookName}>>${title} updated successfully.`);
     } else {
       vscode.window.setStatusBarMessage("Creating the note.", 2000);
-      content = appendResourceContent(resources, content);
       const createdNote = await createNote(meta, content, resources);
       createdNote.resources = resources;
       if (!notesMap[createdNote.notebookGuid]) {
