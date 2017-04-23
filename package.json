@@ -217,7 +217,7 @@
         "cheerio": "^0.22.0",
         "crypto": "0.0.3",
         "evernote": "^2.0.1-beta",
-        "highlight.js": "^9.10.0",
+        "highlight.js": "^9.11.0",
         "inline-css": "^2.2.2",
         "lodash": "^4.17.4",
         "markdown-it": "^8.3.1",
