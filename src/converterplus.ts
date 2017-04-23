@@ -56,11 +56,6 @@ export default class Converter {
             return `<pre class="hljs"><code>${hljs.highlight(lang, code, true).value}</code></pre>`;
           } catch (err) {}
         }
-        // diagram style
-        if (code.match(/^graph/) || code.match(/^sequenceDiagram/) || code.match(/^gantt/)) {
-          return `<div class="mermaid">${code}</div>`;
-        }
-
         return `<pre class="hljs"><code>${md.utils.escapeHtml(code)}</code></pre>`;
       },
       ...options,
