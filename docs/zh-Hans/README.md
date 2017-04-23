@@ -35,6 +35,8 @@ EverMonkey 配置参数如下:
 - evermonkey.fontFamily: 印象笔记中渲染的字体。(不是在vscode中编辑显示的字体)
 - evermonkey.fontSize: 印象笔记中渲染的字体大小。(不是在vscode中编辑显示的字体大小)
 - evermonkey.markdownTheme: 自定义 CSS 渲染 Markdown. 详情见 自定义渲染。
+- evermonkey.codeFontFamily: 代码高亮字体设置。
+- evermonkey.codeFontSize: 代码高亮字体大小设置。
 
 关于 token 和 noteStoreUrl 的获取可以使用 `ever token` 命令。 其中国内印象笔记用户点击 [China](https://app.yinxiang.com/api/DeveloperToken.action), 国际版用户点击 [Other](https://www.evernote.com/api/DeveloperToken.action).
 
@@ -133,6 +135,16 @@ v2.2.0 版本加入快捷键设置，默认的快捷键形式是 alt + 命令动
 如果你想把自己的主题分享给他人，请提交 pull request。需要给出一个简明的主题介绍，最好是有网页或者图片简介。这样才更容易被接收。
 
 ## Markdown 语法
+
+### TOC
+
+```
+[TOC]
+
+# H1
+
+## H2
+```
 
 ### 标题
 
