@@ -668,6 +668,8 @@ function wrapError(error) {
 }
 
 function activate(context) {
+  const filesSettings = vscode.workspace.getConfiguration("files");
+  filesSettings.update("eol", "\n", true);
 
   if (!config.token || !config.noteStoreUrl) {
     vscode.window.showInformationMessage("Evernote token not setted, please enter ever token command to help you configure.");
