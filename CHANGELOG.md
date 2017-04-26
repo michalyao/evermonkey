@@ -2,6 +2,10 @@
 
 ## [Released]
 
+- 2.3.12
+    - Use "\n" as the default line seperator for windows user.
+    - Performance improved.
+
 - 2.3.11
     - Fixed enml-todo got error when transformed to markdown.
     - Add support for configuring code highlight font. See configuration.
