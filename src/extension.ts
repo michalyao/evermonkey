@@ -107,10 +107,10 @@ async function syncAccount() {
     // lazy initilation.
     // TODO: configuration update event should be awared, so that a token can be reconfigured.
     const config = vscode.workspace.getConfiguration("evermonkey");
+    await vscode.window.setStatusBarMessage("Synchronizing your account...", 1000);
     client = new EvernoteClient(config.token, config.noteStoreUrl);
     const tags = await client.listTags();
     tags.forEach(tag => tagCache[tag.guid] = tag.name);
-    await vscode.window.setStatusBarMessage("Synchronizing your account...", 1000);
     notebooks = await client.listNotebooks();
     let promises = notebooks.map(notebook => client.listAllNoteMetadatas(notebook.guid));
     const allMetas = await Promise.all(promises);
