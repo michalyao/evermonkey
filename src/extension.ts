@@ -143,7 +143,7 @@ async function attachToNote() {
         filepath = path.join(config.uploadFolder, filepath);
       }
     } else {
-      vscode.window.showWarningMessage("Attachments upload folder not setted, you may have to use absolute file path.")
+      vscode.window.showWarningMessage("Attachments upload folder not set, you may have to use absolute file path.")
     }
     const fileName = path.basename(filepath);
     const mime: string = guessMime(fileName);
@@ -641,7 +641,12 @@ async function openDevPage() {
       vscode.window.showInformationMessage("Monkey is ready to work. Get the full documents here http://monkey.yoryor.me." +
         "If you get an error, just check the configuration and restart the vscode. Enjoy it and give me star on the github!")
     } else {
-      vscode.window.showWarningMessage("Token or noteStoreUrl not setted, please check it.");
+      if (!config.token) {
+        vscode.window.showWarningMessage("It seems like no token has been entered, try again: ever token");
+      }
+      if (!config.noteStoreUrl) {
+        vscode.window.showWarningMessage("It seems like no noteStoreUrl has been entered, try again: ever token");
+      }
     }
 
   } catch (err) {
@@ -672,7 +677,7 @@ function activate(context) {
   filesSettings.update("eol", "\n", true);
 
   if (!config.token || !config.noteStoreUrl) {
-    vscode.window.showInformationMessage("Evernote token not setted, please enter ever token command to help you configure.");
+    vscode.window.showInformationMessage("Evernote token not set, please enter ever token command to help you configure.");
   }
   // quick match for monkey.
   let action = vscode.languages.registerCompletionItemProvider(["plaintext", {
