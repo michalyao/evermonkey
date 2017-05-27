@@ -81,14 +81,15 @@ export default class Converter {
   }
 
   initStyles() {
-    const highlightTheme = config.highlightTheme || DEFAULT_HIGHLIGHT_THEME;
+    let highlightTheme = config.highlightTheme || DEFAULT_HIGHLIGHT_THEME;
     // TODO: customize Mevernote rendering by input markdown theme.
-    const markdownTheme = config.markdownTheme || "github.css"
+    const markdownTheme = config.markdownTheme || "github.css";
+    let formatTheme = highlightTheme.replace(/\s+/g, "-");
     return Promise.all([
       // TODO: read to the memory, instead of IO each time.
       fs.readFileAsync(path.join(MARKDOWN_THEME_PATH, markdownTheme)),
       // TODO: read config css here and cover the default one.
-      fs.readFileAsync(path.join(HIGHLIGHT_THEME_PATH, `${highlightTheme}.css`))
+      fs.readFileAsync(path.join(HIGHLIGHT_THEME_PATH, `${formatTheme}.css`))
     ])
   }
 
