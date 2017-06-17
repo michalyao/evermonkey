@@ -666,7 +666,7 @@ function wrapError(error) {
   } else if (error.errorCode && error.parameter) {
     errMsg = `Evernote Error: ${error.errorCode} - ${error.parameter}`;
   } else {
-    errMsg = "Unexpected Error: " + error;
+    errMsg = "Unexpected Error: " + JSON.stringify(error);
   }
 
   vscode.window.showErrorMessage(errMsg);
