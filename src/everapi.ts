@@ -3,8 +3,8 @@ import * as vscode from "vscode";
 
 
 const config = vscode.workspace.getConfiguration("evermonkey");
-const RECENT_NOTE_COUNTS = config.recentNotesCount || 10;
-const MAX_NOTE_COUNTS = config.maxNoteCount || 50;
+const RECENT_NOTE_COUNT = config.recentNotesCount || 10;
+const MAX_NOTE_COUNT = config.maxNoteCount || 50;
 
 export class EvernoteClient {
   noteStore;
@@ -22,7 +22,7 @@ export class EvernoteClient {
   listRecentNotes() {
     return this.noteStore.findNotesMetadata({
       order: Evernote.Types.NoteSortOrder.UPDATED
-    }, 0, RECENT_NOTE_COUNTS, {
+    }, 0, RECENT_NOTE_COUNT, {
       includeTitle: true,
       includeNotebookGuid: true,
       includeTagGuids: true
@@ -37,7 +37,7 @@ export class EvernoteClient {
   listAllNoteMetadatas(notebookGuid) {
     return this.noteStore.findNotesMetadata({
       notebookGuid
-    }, 0, MAX_NOTE_COUNTS, {
+    }, 0, MAX_NOTE_COUNT, {
       includeTitle: true,
       includeNotebookGuid: true,
       includeTagGuids: true
@@ -107,7 +107,7 @@ export class EvernoteClient {
   searchNote(words) {
     return this.noteStore.findNotesMetadata({
       words
-    }, 0, MAX_NOTE_COUNTS, {
+    }, 0, MAX_NOTE_COUNT, {
       includeNotebookGuid: true,
       includeTitle: true
     });
