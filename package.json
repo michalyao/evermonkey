@@ -203,6 +203,11 @@
                     "type": "string",
                     "default": "14px",
                     "description": "Code highlight font size."
+                },
+                 "evermonkey.maxNoteCounts": {
+                    "type": "integer",
+                    "default": 50,
+                    "description": "The number of notes returned when you synchronized."
                 }
             }
         }
