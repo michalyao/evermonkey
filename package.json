@@ -2,7 +2,7 @@
     "name": "evermonkey",
     "displayName": "evermonkey",
     "description": "Markdown support for Evernote.",
-    "version": "2.3.12",
+    "version": "2.3.14",
     "publisher": "michalyao",
     "engines": {
         "vscode": "^1.10.0"
@@ -204,7 +204,7 @@
                     "default": "14px",
                     "description": "Code highlight font size."
                 },
-                 "evermonkey.maxNoteCounts": {
+                 "evermonkey.maxNoteCount": {
                     "type": "integer",
                     "default": 50,
                     "description": "The number of notes returned when you synchronized."
