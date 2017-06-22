@@ -1,6 +1,8 @@
 # Change Log
 
 ## [Released]
+- 2.3.14
+    - Fix bug. Note count returned by evernote configurable via "evermonkey.maxNotesCount"
 
 - 2.3.12
     - Use "\n" as the default line seperator for windows user.
