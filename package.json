@@ -8,7 +8,15 @@
         "vscode": "^1.10.0"
     },
     "categories": [
-        "Other"
+        "Other",
+        "Languages"
+    ],
+
+    "keywords": [
+        "evernote",
+        "markdown",
+        "note",
+        "productivity"
     ],
     "repository": {
         "type": "git",
@@ -237,7 +245,7 @@
     },
     "devDependencies": {
         "typescript": "^2.0.3",
-        "vscode": "^1.0.0",
+        "vscode": "^1.1.0",
         "mocha": "^3.2.0",
         "eslint": "^3.6.0",
         "@types/node": "7.0.12",

@@ -1,6 +1,10 @@
 # Change Log
 
 ## [Released]
+- 2.3.15
+    - Enable markdown quickSuggestion as default.
+    - Minor improve.
+
 - 2.3.14
     - Fix bug. Note count returned by evernote configurable via "evermonkey.maxNotesCount"
 

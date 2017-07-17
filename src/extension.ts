@@ -676,6 +676,8 @@ function activate(context) {
   const filesSettings = vscode.workspace.getConfiguration("files");
   filesSettings.update("eol", "\n", true);
 
+  const markdownSettings = vscode.workspace.getConfiguration();
+  markdownSettings.update("[markdown]", {"editor.quickSuggestions": true}, true);
   if (!config.token || !config.noteStoreUrl) {
     vscode.window.showInformationMessage("Evernote token not set, please enter ever token command to help you configure.");
   }
