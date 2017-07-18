@@ -137,10 +137,11 @@ async function attachToNote() {
     if (!filepath) {
       throw "";
     }
-    if (config.uploadFolder) {
-      const folderExsit = await fs.exsit(config.uploadFolder);
+    const extConfig = vscode.workspace.getConfiguration("evermonkey");
+    if (extConfig.uploadFolder) {
+      const folderExsit = await fs.exsit(extConfig.uploadFolder);
       if (folderExsit) {
-        filepath = path.join(config.uploadFolder, filepath);
+        filepath = path.join(extConfig.uploadFolder, filepath);
       }
     } else {
       vscode.window.showWarningMessage("Attachments upload folder not set, you may have to use absolute file path.")
