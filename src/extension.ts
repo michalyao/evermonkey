@@ -158,7 +158,8 @@ async function attachToNote() {
       },
       "attributes": {
         "fileName": fileName,
-        "attachment": true
+        "attachment": true,
+        "timestamp": Date.now()
       }
     };
     const cache = {};
@@ -211,11 +212,11 @@ async function listResources() {
     let localResourcesName = [];
 
     if (serverResources) {
-      serverResourcesName = serverResources.map(attachment => "(server) " + attachment.attributes.fileName);
+      serverResourcesName = serverResources.map(attachment => "(server) " + attachment.attributes.fileName + " -- At " + new Date(attachment.attributes.timestamp).toLocaleString());
     }
 
     if (localResources) {
-      localResourcesName = localResources.map(attachment => "(local) " + attachment.attributes.fileName);
+      localResourcesName = localResources.map(attachment => "(local) " + attachment.attributes.fileName + " -- At " + new Date(attachment.attributes.timestamp).toLocaleString());
     }
 
     if (serverResourcesName || localResourcesName) {
