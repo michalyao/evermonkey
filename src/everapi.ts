@@ -90,12 +90,16 @@ export class EvernoteClient {
   }
 
   createNote(title, notebookGuid, content, tagNames, resources) {
+    const attributes = {
+      contentClass: "michalyao.vscode.evermonkey"
+    }
     return this.noteStore.createNote({
       title,
       notebookGuid,
       content,
       tagNames,
-      resources
+      resources,
+      attributes
     });
   }
 
