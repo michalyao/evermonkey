@@ -5,6 +5,9 @@ import * as vscode from "vscode";
 const config = vscode.workspace.getConfiguration("evermonkey");
 const RECENT_NOTE_COUNT = config.recentNotesCount || 10;
 const MAX_NOTE_COUNT = config.maxNoteCount || 50;
+const attributes = {
+  contentClass: "michalyao.vscode.evermonkey"
+}
 
 export class EvernoteClient {
   noteStore;
@@ -67,7 +70,8 @@ export class EvernoteClient {
       title,
       content,
       tagNames,
-      notebookGuid
+      notebookGuid,
+      attributes
     });
   }
 
@@ -78,7 +82,8 @@ export class EvernoteClient {
       content,
       tagNames,
       notebookGuid,
-      resources
+      resources,
+      attributes
     });
   }
 
@@ -90,9 +95,6 @@ export class EvernoteClient {
   }
 
   createNote(title, notebookGuid, content, tagNames, resources) {
-    const attributes = {
-      contentClass: "michalyao.vscode.evermonkey"
-    }
     return this.noteStore.createNote({
       title,
       notebookGuid,
