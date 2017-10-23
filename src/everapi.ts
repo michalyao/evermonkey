@@ -5,9 +5,13 @@ import * as vscode from "vscode";
 const config = vscode.workspace.getConfiguration("evermonkey");
 const RECENT_NOTE_COUNT = config.recentNotesCount || 10;
 const MAX_NOTE_COUNT = config.maxNoteCount || 50;
-const attributes = {
-  contentClass: "michalyao.vscode.evermonkey"
-}
+let attributes = {};
+if (config.noteReadonly) {
+  attributes = {
+    contentClass: "michalyao.vscode.evermonkey"
+  }
+} 
+
 
 export class EvernoteClient {
   noteStore;

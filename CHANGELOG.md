@@ -1,6 +1,11 @@
 # Change Log
 
 ## [Released]
+
+- 2.4.0
+    - Readonly notes support. 
+    - CSS sytle tuned.
+
 - 2.3.15
     - Enable markdown quickSuggestion as default.
     - Minor improve.

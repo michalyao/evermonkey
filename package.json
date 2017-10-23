@@ -215,6 +215,11 @@
                     "type": "integer",
                     "default": 50,
                     "description": "The number of notes returned when you synchronized."
+                },
+                "evermonkey.noteReadonly": {
+                    "type": "boolean",
+                    "default": "true",
+                    "description": "Enable readonly notes feature."
                 }
             }
         }
