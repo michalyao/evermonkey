@@ -12,7 +12,7 @@
 Evernoting in vscode with *Markdown* Support!
 
 
-[Get Doc And Star Me](http://monkey.yoryor.me)
+[Get Full Doc And Star Me](http://monkey.yoryor.top)
 
 ## Features
 
@@ -33,8 +33,9 @@ notebook: notebook
 ```
 
 
-
-![example](assets/monkey.gif)
+## Example
+![editnote](assets/editnote.gif)
+![veiwnote](assets/viewnote.gif)
 
 Result:
 
@@ -52,11 +53,6 @@ Then open your user setting by `Preferences: Open User Settings`, and copy&paste
 * `evermonkey.noteStoreUrl`: your API url
 
 
-## Known Issues
-
-* If you edit your note content in other client. For example, in the Evernote client. Then when you open note in the vscode again, you will see some extra html in the markdown text. So try to edit your note only in evermonkey, this way the markdown text will stay clean.
-* You can report issues here [Github issues](https://github.com/michalyao/evermonkey/issues)
-
 -----------------------------------------------------------------------------------------------------------
 
 ## Buy me a coffee
@@ -67,7 +63,7 @@ If you really like evermonkey, what about buying me a coffee? :smile:
 
 ![支付宝](assets/alipay.png)
 
-![微信](assets/wechatpay.jpg)
+![微信](assets/wechatpay.jpeg)
 
 **Have fun!**
 
