@@ -37,9 +37,6 @@ notebook: notebook
 ![editnote](assets/editnote.gif)
 ![veiwnote](assets/viewnote.gif)
 
-Result:
-
-![result](assets/result.jpg)
 
 ## Extension Settings
 
