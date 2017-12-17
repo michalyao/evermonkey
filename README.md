@@ -1,17 +1,25 @@
 # EverMonkey
 
 [![Build Status](https://travis-ci.org/michalyao/evermonkey.svg?branch=master)](https://travis-ci.org/michalyao/evermonkey)
+[![bitHound Overall Score](https://www.bithound.io/github/michalyao/evermonkey/badges/score.svg)](https://www.bithound.io/github/michalyao/evermonkey)
+[![bitHound Code](https://www.bithound.io/github/michalyao/evermonkey/badges/code.svg)](https://www.bithound.io/github/michalyao/evermonkey)
+[![bitHound Dependencies](https://www.bithound.io/github/michalyao/evermonkey/badges/dependencies.svg)](https://www.bithound.io/github/michalyao/evermonkey/master/dependencies/npm)
+[![bitHound Dev Dependencies](https://www.bithound.io/github/michalyao/evermonkey/badges/devDependencies.svg)](https://www.bithound.io/github/michalyao/evermonkey/master/dependencies/npm)
+[![Average time to resolve an issue](http://isitmaintained.com/badge/resolution/michalyao/evermonkey.svg)](http://isitmaintained.com/project/michalyao/evermonkey "Average time to resolve an issue")
+[![Percentage of issues still open](http://isitmaintained.com/badge/open/michalyao/evermonkey.svg)](http://isitmaintained.com/project/michalyao/evermonkey "Percentage of issues still open")
 
-Evernoting in vscode. [中文版说明](README_zh-CN.md)
+
+Evernoting in vscode with *Markdown* Support!
+
+
+[Get Full Doc And Star Me](http://monkey.yoryor.top)
 
 ## Features
 
 You can use `ever new` to create an untitle file with metadata support, edit it and use `ever publish` to publish it to evernote. And of course more than that.
 
-Why EverMonkey is better? EverMonkey is inspired by the Sublime Text one, make local caches to avoid making net request everytime and in result
+Why EverMonkey is better? EverMonkey is inspired by the Sublime Text one, make local cache to avoid making net request everytime and in result
 you got a faster experience.
-
-Although nowadays it looks simple or maybe ugly, but I am going to make it better.
 
 
 **For tags use: you may have to use comma "," to split tags**. You can get tips if you insert tags already exsist. Otherwise a new tag will be created.
@@ -24,20 +32,11 @@ notebook: notebook
 ---
 ```
 
-Commands:
 
-* `ever open` -- open note much like a tree structure. 
-* `ever publish` -- update or create a new note. (use this whenver you want to publish your note to Evernote.)
-* `ever sync` -- sync account (**Maybe you use evernote concurrently in multi endpoints, most of time I wish you dont do this**)
-* `ever new` -- create a new file with markdown language and metadata init.
-* `ever token` -- Open dev page to help you configure.
-* `ever search` -- Use evernote query to search note. More details about [Evernote Search Grammar](https://dev.evernote.com/doc/articles/search_grammar.php)
+## Example
+![editnote](assets/editnote.gif)
+![veiwnote](assets/viewnote.gif)
 
-![example](assets/monkey.gif)
-
-Result:
-
-![result](assets/result.jpg)
 
 ## Extension Settings
 
@@ -50,6 +49,7 @@ Then open your user setting by `Preferences: Open User Settings`, and copy&paste
 * `evermonkey.token`: your developer token
 * `evermonkey.noteStoreUrl`: your API url
 
+<<<<<<< HEAD
 If you get **Evernote Error: 2 - Note.title** on Windows, when trying to publish, you may also need to include the following:
 
 ```
@@ -57,20 +57,20 @@ If you get **Evernote Error: 2 - Note.title** on Windows, when trying to publish
 ```
 
 **If you get an Unexpected error, then you may have to check the configuration and restart the vscode.**
-
-## Known Issues
-
-* Open note in notebook may cause a mess, because unsupported transfer from enml to markdown.
-* Code Highlight and media-type not supported currently.
-* You can report issues here [Github issues](https://github.com/michalyao/evermonkey/issues)
-
-TODOs:
-
-* More markdown syntax support.
-* Much better experience.
-
+=======
+>>>>>>> upstream/master
 
 -----------------------------------------------------------------------------------------------------------
+
+## Buy me a coffee
+
+If you really like evermonkey, what about buying me a coffee? :smile:
+
+[paypal](https://paypal.me/Michalyao)
+
+![支付宝](assets/alipay.png)
+
+![微信](assets/wechatpay.jpeg)
 
 **Have fun!**
 
