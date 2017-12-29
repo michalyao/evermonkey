@@ -11,6 +11,10 @@
 
 Evernoting in vscode with *Markdown* Support!
 
+##
+
+**中国的朋友可以加我的公众号，自在极客，有问题可以通过公众号反馈**
+
 
 [Get Full Doc And Star Me](http://monkey.yoryor.top)
 

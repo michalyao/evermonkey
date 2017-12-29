@@ -636,11 +636,14 @@ async function openDevPage() {
     if (!token) {
       return;
     }
-    config.update("token", token, true);
     const noteStoreUrl = await vscode.window.showInputBox({
       placeHolder: "Copy & paste your noteStoreUrl here.",
       ignoreFocusOut: true
     });
+    if (!noteStoreUrl) {
+      return;
+    }
+    config.update("token", token, true);    
     config.update("noteStoreUrl", noteStoreUrl, true);
     if (config.token && config.noteStoreUrl) {
       vscode.window.showInformationMessage("Monkey is ready to work. Get the full documents here http://monkey.yoryor.me." +

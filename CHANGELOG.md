@@ -1,6 +1,8 @@
 # Change Log
 
 ## [Released]
+- 2.4.2
+    - handle user token dismiss.
 
 - 2.4.0
     - Readonly notes support. 
