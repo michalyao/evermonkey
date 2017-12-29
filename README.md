@@ -9,9 +9,7 @@
 
 Evernoting in vscode with *Markdown* Support!
 
-##
-
-**中国的朋友可以加我的公众号，自在极客，有问题可以通过公众号反馈**
+### 中国的朋友可以加我的微信公众号，**自在极客(微信号:javadev_)**。我会分享一些编程以及工作生活经验。有evermonkey 的使用问题也可以通过公众号反馈。
 
 
 [Get Full Doc And Star Me](http://monkey.yoryor.top)
