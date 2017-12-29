@@ -633,6 +633,9 @@ async function openDevPage() {
       placeHolder: "Copy & paste your token here.",
       ignoreFocusOut: true
     });
+    if (!token) {
+      return;
+    }
     config.update("token", token, true);
     const noteStoreUrl = await vscode.window.showInputBox({
       placeHolder: "Copy & paste your noteStoreUrl here.",
