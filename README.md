@@ -5,8 +5,6 @@
 [![bitHound Code](https://www.bithound.io/github/michalyao/evermonkey/badges/code.svg)](https://www.bithound.io/github/michalyao/evermonkey)
 [![bitHound Dependencies](https://www.bithound.io/github/michalyao/evermonkey/badges/dependencies.svg)](https://www.bithound.io/github/michalyao/evermonkey/master/dependencies/npm)
 [![bitHound Dev Dependencies](https://www.bithound.io/github/michalyao/evermonkey/badges/devDependencies.svg)](https://www.bithound.io/github/michalyao/evermonkey/master/dependencies/npm)
-[![Average time to resolve an issue](http://isitmaintained.com/badge/resolution/michalyao/evermonkey.svg)](http://isitmaintained.com/project/michalyao/evermonkey "Average time to resolve an issue")
-[![Percentage of issues still open](http://isitmaintained.com/badge/open/michalyao/evermonkey.svg)](http://isitmaintained.com/project/michalyao/evermonkey "Percentage of issues still open")
 
 
 Evernoting in vscode with *Markdown* Support!
