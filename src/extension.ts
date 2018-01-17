@@ -408,7 +408,19 @@ async function createNote(meta, content, resources) {
     let title = meta["title"];
     let notebook = meta["notebook"];
     const notebookGuid = await getNotebookGuid(notebook);
-    return client.createNote(title, notebookGuid, content, tagNames, resources);
+    var intitle = 'intitle:' + '"' + title + '"';
+    var nguid = null;
+    var re = await client.listMyNotes(intitle);
+    var resul = re.notes;
+    var arrayLength = resul.length;
+    var i;
+    for (i = 0; i < arrayLength; i ++) {
+        if (resul[i].title == title) nguid = resul[i].guid;
+    }
+    if (nguid != null) {
+        return client.updateNoteResources(nguid, title, content, tagNames, notebookGuid, resources || void 0);
+    } else
+        return client.createNote(title, notebookGuid, content, tagNames, resources);
   } catch (err) {
     wrapError(err);
   }
@@ -453,7 +465,7 @@ async function newNote() {
     });
     // start at the title.
     const titlePosition = startPos.with(1, 8);
-    editor.selection = new vscode.Selection(titlePosition, titlePosition); 
+    editor.selection = new vscode.Selection(titlePosition, titlePosition);
   } catch (err) {
     wrapError(err);
   }
@@ -643,7 +655,7 @@ async function openDevPage() {
     if (!noteStoreUrl) {
       return;
     }
-    config.update("token", token, true);    
+    config.update("token", token, true);
     config.update("noteStoreUrl", noteStoreUrl, true);
     if (config.token && config.noteStoreUrl) {
       vscode.window.showInformationMessage("Monkey is ready to work. Get the full documents here http://monkey.yoryor.me." +
@@ -740,7 +752,7 @@ function activate(context) {
   context.subscriptions.push(openNoteInBrowserCmd);
   context.subscriptions.push(removeAttachmentCmd);
   context.subscriptions.push(openNoteInClientCmd);
-  
+
 
 }
 exports.activate = activate;
