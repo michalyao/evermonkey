@@ -56,7 +56,7 @@ function exactMetadata(text) {
       let metaArray = metadataStr.split("\n");
       metaArray.forEach(value => {
         let sep = value.indexOf(":");
-        metadata[value.substring(0, sep)] = value.substring(sep+1).trim();
+        metadata[value.substring(0, sep).trim()] = value.substring(sep+1).trim();
       });
       if (metadata["tags"]) {
         let tagStr = metadata["tags"];
