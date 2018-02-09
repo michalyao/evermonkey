@@ -37,7 +37,7 @@ export class EvernoteClient {
   }
 
   listMyNotes(intitle) {
-    var filter = new Evernote.NoteStore.NoteFilter({
+    let filter = new Evernote.NoteStore.NoteFilter({
       words: intitle,
       ascending: true
     });

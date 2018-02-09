@@ -408,12 +408,12 @@ async function createNote(meta, content, resources) {
     let title = meta["title"];
     let notebook = meta["notebook"];
     const notebookGuid = await getNotebookGuid(notebook);
-    var intitle = 'intitle:' + '"' + title + '"';
-    var nguid = null;
-    var re = await client.listMyNotes(intitle);
-    var resul = re.notes;
-    var arrayLength = resul.length;
-    var i;
+    let intitle = 'intitle:' + '"' + title + '"';
+    let nguid = null;
+    let re = await client.listMyNotes(intitle);
+    let resul = re.notes;
+    let arrayLength = resul.length;
+    let i;
     for (i = 0; i < arrayLength; i ++) {
         if (resul[i].title == title) nguid = resul[i].guid;
     }
