@@ -224,7 +224,7 @@
                 "evermonkey.readonlyInMeta": {
                     "type": "boolean",
                     "default": false,
-                    "description": "Show and allow readonly setting in metadata."
+                    "description": "Always show readonly attribute in metadata."
                 }
             }
         }
