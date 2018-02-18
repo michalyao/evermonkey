@@ -72,16 +72,17 @@ function exactMetadata(text) {
 }
 
 function genMetaHeader(title, tags, notebook, readonly) {
+  let showReadonly : boolean = (config.readonlyInMeta || readonly != config.noteReadonly);
   const metaHeaderTemplate = `\
 ---
 title: %s
 tags: %s
 notebook: %s\
-${config.readonlyInMeta ? "\nreadonly: %s" : ""}
+${showReadonly ? "\nreadonly: %s" : ""}
 ---
 
 `;
-  if (config.readonlyInMeta) {
+  if (showReadonly) {
     return util.format(metaHeaderTemplate, title, tags.join(","), notebook, String(readonly));
   } else {
     return util.format(metaHeaderTemplate, title, tags.join(","), notebook);
@@ -465,7 +466,7 @@ async function newNote() {
     const editor = await vscode.window.showTextDocument(doc);
     let startPos = new vscode.Position(1, 0);
     editor.edit(edit => {
-      let metaHeader = genMetaHeader("", [], "", String(config.noteReadonly));
+      let metaHeader = genMetaHeader("", [], "", config.noteReadonly);
       edit.insert(startPos, metaHeader);
     });
     // start at the title.
