@@ -321,19 +321,35 @@ async function publishNote() {
       attachmentsCache[doc.fileName] = [];
       return vscode.window.showInformationMessage(`${notebookName}>>${title} updated successfully.`);
     } else {
-      vscode.window.setStatusBarMessage("Creating the note.", 2000);
-      const createdNote = await createNote(meta, content, resources);
-      createdNote.resources = resources;
-      if (!notesMap[createdNote.notebookGuid]) {
-        notesMap[createdNote.notebookGuid] = [createdNote];
+      const nguid = await getNoteGuid(meta);
+      if (nguid) {
+        vscode.window.setStatusBarMessage("Updating to server.", 2000);
+        const updateNote = await updateNoteOnServer(meta, content, resources, nguid);
+        updateNote.resources = resources;
+        if (!notesMap[updateNote.notebookGuid]) {
+          notesMap[updateNote.notebookGuid] = [updateNote];
+        } else {
+          notesMap[updateNote.notebookGuid].push(updateNote);
+        }
+        localNote[doc.fileName] = updateNote;
+        let notebookName = notebooks.find(notebook => notebook.guid === updateNote.notebookGuid).name;
+        attachmentsCache[doc.fileName] = [];
+        return vscode.window.showInformationMessage(`${notebookName}>>${title} update to server successfully.`);
       } else {
-        notesMap[createdNote.notebookGuid].push(createdNote);
+        vscode.window.setStatusBarMessage("Creating the note.", 2000);
+        const createdNote = await createNote(meta, content, resources);
+        createdNote.resources = resources;
+        if (!notesMap[createdNote.notebookGuid]) {
+          notesMap[createdNote.notebookGuid] = [createdNote];
+        } else {
+          notesMap[createdNote.notebookGuid].push(createdNote);
+        }
+        localNote[doc.fileName] = createdNote;
+        let notebookName = notebooks.find(notebook => notebook.guid === createdNote.notebookGuid).name;
+        attachmentsCache[doc.fileName] = [];
+        return vscode.window.showInformationMessage(`${notebookName}>>${title} created successfully.`);
       }
-      localNote[doc.fileName] = createdNote;
-      let notebookName = notebooks.find(notebook => notebook.guid === createdNote.notebookGuid).name;
-      attachmentsCache[doc.fileName] = [];
-      return vscode.window.showInformationMessage(`${notebookName}>>${title} created successfully.`);
-    }
+   }
   } catch (err) {
     wrapError(err);
   }
@@ -401,13 +417,8 @@ async function getNotebookGuid(notebook) {
   }
 }
 
-// Create an new note.
-async function createNote(meta, content, resources) {
-  try {
-    let tagNames = meta["tags"];
+async function getNoteGuid(meta) {
     let title = meta["title"];
-    let notebook = meta["notebook"];
-    const notebookGuid = await getNotebookGuid(notebook);
     let intitle = 'intitle:' + '"' + title + '"';
     let nguid = null;
     let re = await client.listMyNotes(intitle);
@@ -417,10 +428,29 @@ async function createNote(meta, content, resources) {
     for (i = 0; i < arrayLength; i ++) {
         if (resul[i].title == title) nguid = resul[i].guid;
     }
-    if (nguid != null) {
-        return client.updateNoteResources(nguid, title, content, tagNames, notebookGuid, resources || void 0);
-    } else
-        return client.createNote(title, notebookGuid, content, tagNames, resources);
+    return nguid;
+}
+
+async function updateNoteOnServer(meta, content, resources, nguid) {
+  try {
+    let title = meta["title"];
+    let tagNames = meta["tags"];
+    let notebook = meta["notebook"];
+    const notebookGuid = await getNotebookGuid(notebook);
+    return client.updateNoteResources(nguid, title, content, tagNames, notebookGuid, resources || void 0);
+  } catch (err) {
+    wrapError(err);
+  }
+}
+
+// Create an new note.
+async function createNote(meta, content, resources) {
+  try {
+    let tagNames = meta["tags"];
+    let title = meta["title"];
+    let notebook = meta["notebook"];
+    const notebookGuid = await getNotebookGuid(notebook);
+    return client.createNote(title, notebookGuid, content, tagNames, resources);
   } catch (err) {
     wrapError(err);
   }
