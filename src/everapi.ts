@@ -36,6 +36,19 @@ export class EvernoteClient {
     });
   }
 
+  listMyNotes(intitle) {
+    let filter = new Evernote.NoteStore.NoteFilter({
+      words: intitle,
+      ascending: true
+    });
+    return this.noteStore.findNotesMetadata(
+      filter,
+      0, 500, {
+        includeTitle: true,
+        includeNotebookGuid: true,
+        includeTagGuids: true
+      });
+  }
   listNotebooks() {
     return this.noteStore.listNotebooks();
   }
