@@ -1,11 +1,14 @@
 # Change Log
 
 ## [Released]
+- 2.4.5
+    - fixed #97 update note failed when local cache crashed.
+
 - 2.4.2
     - handle user token dismiss.
 
 - 2.4.0
-    - Readonly notes support. 
+    - Readonly notes support.
     - CSS sytle tuned.
 
 - 2.3.15
@@ -30,7 +33,7 @@
     - Add support for changing evernote font rendering in the extension settings.
     - Add support for customizing theme file.
     - Performance and experience improved.
-    
+
     For more details, check the full documents [here](http://monkey.yoryor.me)
 
 - v2.3.7
@@ -100,7 +103,7 @@
 
 - v1.0.1
     - Fixed local cache crashed.
-    
+
 - v1.0.0 Initial release.
 
 
