@@ -220,6 +220,11 @@
                     "type": "boolean",
                     "default": "true",
                     "description": "Enable readonly notes feature."
+                },
+                "evermonkey.readonlyInMeta": {
+                    "type": "boolean",
+                    "default": false,
+                    "description": "Always show readonly attribute in metadata."
                 }
             }
         }

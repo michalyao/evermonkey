@@ -5,12 +5,7 @@ import * as vscode from "vscode";
 const config = vscode.workspace.getConfiguration("evermonkey");
 const RECENT_NOTE_COUNT = config.recentNotesCount || 10;
 const MAX_NOTE_COUNT = config.maxNoteCount || 50;
-let attributes = {};
-if (config.noteReadonly) {
-  attributes = {
-    contentClass: "michalyao.vscode.evermonkey"
-  }
-} 
+export const CONTENT_CLASS = "michalyao.vscode.evermonkey"
 
 
 export class EvernoteClient {
@@ -81,7 +76,11 @@ export class EvernoteClient {
     return this.noteStore.getResource(guid, true, false, true, false);
   }
 
-  updateNoteContent(guid, title, content, tagNames, notebookGuid) {
+  updateNoteContent(guid, title, content, tagNames, notebookGuid, readonly) {
+    let attributes = {contentClass: null};
+    if (readonly) {
+      attributes.contentClass = CONTENT_CLASS;
+    }
     return this.noteStore.updateNote({
       guid,
       title,
@@ -92,7 +91,11 @@ export class EvernoteClient {
     });
   }
 
-  updateNoteResources(guid, title, content, tagNames, notebookGuid, resources) {
+  updateNoteResources(guid, title, content, tagNames, notebookGuid, resources, readonly) {
+    let attributes = {contentClass: null};
+    if (readonly) {
+      attributes.contentClass = CONTENT_CLASS;
+    }
     return this.noteStore.updateNote({
       guid,
       title,
@@ -111,7 +114,11 @@ export class EvernoteClient {
     });
   }
 
-  createNote(title, notebookGuid, content, tagNames, resources) {
+  createNote(title, notebookGuid, content, tagNames, resources, readonly) {
+    let attributes = {contentClass: null};
+    if (readonly) {
+      attributes.contentClass = CONTENT_CLASS;
+    }
     return this.noteStore.createNote({
       title,
       notebookGuid,

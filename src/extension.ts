@@ -11,9 +11,7 @@ import {
 } from "./myutil";
 import fs from "./file";
 import * as evernote from "evernote";
-import {
-  EvernoteClient
-} from "./everapi";
+import * as everapi from "./everapi"
 
 const config = vscode.workspace.getConfiguration("evermonkey");
 
@@ -22,15 +20,6 @@ const ATTACHMENT_SOURCE_LOCAL = 0;
 const ATTACHMENT_SOURCE_SERVER = 1;
 const TIP_BACK = "back...";
 const METADATA_PATTERN = /^---[ \t]*\n((?:[ \t]*[^ \t:]+[ \t]*:[^\n]*\n)+)---[ \t]*\n/;
-
-const METADATA_HEADER = `\
----
-title: %s
-tags: %s
-notebook: %s
----
-
-`;
 
 // notesMap -- [notebookguid:[notes]].
 let notebooks, notesMap, selectedNotebook;
@@ -62,6 +51,18 @@ function exactMetadata(text) {
         let tagStr = metadata["tags"];
         metadata["tags"] = tagStr.split(",").map(value => value.trim());
       }
+      if (typeof metadata["readonly"] !== "undefined") {
+        if (metadata["readonly"] == "true") {
+          metadata["readonly"] = true;
+        } else if (metadata["readonly"] == "false") {
+          metadata["readonly"] = false;
+        } else {
+          vscode.window.showWarningMessage("Illegal 'readonly' metadata");
+          metadata["readonly"] = config.noteReadonly;
+        }
+      } else {
+        metadata["readonly"] = config.noteReadonly;
+      }
     }
   }
   return {
@@ -70,8 +71,22 @@ function exactMetadata(text) {
   };
 }
 
-function genMetaHeader(title, tags, notebook) {
-  return util.format(METADATA_HEADER, title, tags.join(","), notebook);
+function genMetaHeader(title, tags, notebook, readonly) {
+  let showReadonly : boolean = (config.readonlyInMeta || readonly != config.noteReadonly);
+  const metaHeaderTemplate = `\
+---
+title: %s
+tags: %s
+notebook: %s\
+${showReadonly ? "\nreadonly: %s" : ""}
+---
+
+`;
+  if (showReadonly) {
+    return util.format(metaHeaderTemplate, title, tags.join(","), notebook, String(readonly));
+  } else {
+    return util.format(metaHeaderTemplate, title, tags.join(","), notebook);
+  }
 }
 
 // nav to one Note
@@ -108,7 +123,7 @@ async function syncAccount() {
     // TODO: configuration update event should be awared, so that a token can be reconfigured.
     const config = vscode.workspace.getConfiguration("evermonkey");
     await vscode.window.setStatusBarMessage("Synchronizing your account...", 1000);
-    client = new EvernoteClient(config.token, config.noteStoreUrl);
+    client = new everapi.EvernoteClient(config.token, config.noteStoreUrl);
     const tags = await client.listTags();
     tags.forEach(tag => tagCache[tag.guid] = tag.name);
     notebooks = await client.listNotebooks();
@@ -373,8 +388,9 @@ async function updateNoteResources(meta, content, noteGuid, resources) {
     let tagNames = meta["tags"];
     let title = meta["title"];
     let notebook = meta["notebook"];
+    let readonly = meta["readonly"];
     const notebookGuid = await getNotebookGuid(notebook);
-    return client.updateNoteResources(noteGuid, title, content, tagNames, notebookGuid, resources || void 0);
+    return client.updateNoteResources(noteGuid, title, content, tagNames, notebookGuid, resources || void 0, readonly);
 
   } catch (err) {
     wrapError(err);
@@ -386,8 +402,9 @@ async function updateNoteContent(meta, content, noteGuid) {
     let tagNames = meta["tags"];
     let title = meta["title"];
     let notebook = meta["notebook"];
+    let readonly = meta["readonly"];
     const notebookGuid = await getNotebookGuid(notebook);
-    return client.updateNoteContent(noteGuid, title, content, tagNames, notebookGuid);
+    return client.updateNoteContent(noteGuid, title, content, tagNames, notebookGuid, readonly);
 
   } catch (err) {
     wrapError(err);
@@ -449,8 +466,9 @@ async function createNote(meta, content, resources) {
     let tagNames = meta["tags"];
     let title = meta["title"];
     let notebook = meta["notebook"];
+    let readonly = meta["readonly"];
     const notebookGuid = await getNotebookGuid(notebook);
-    return client.createNote(title, notebookGuid, content, tagNames, resources);
+    return client.createNote(title, notebookGuid, content, tagNames, resources, readonly);
   } catch (err) {
     wrapError(err);
   }
@@ -490,7 +508,7 @@ async function newNote() {
     const editor = await vscode.window.showTextDocument(doc);
     let startPos = new vscode.Position(1, 0);
     editor.edit(edit => {
-      let metaHeader = util.format(METADATA_HEADER, "", "", "");
+      let metaHeader = genMetaHeader("", [], "", config.noteReadonly);
       edit.insert(startPos, metaHeader);
     });
     // start at the title.
@@ -650,7 +668,8 @@ async function cacheAndOpenNote(note, doc, content) {
       let mdContent = converter.toMd(content);
 
       let metaHeader = genMetaHeader(note.title, tags,
-        notebooks.find(notebook => notebook.guid === note.notebookGuid).name);
+        notebooks.find(notebook => notebook.guid === note.notebookGuid).name,
+        note.attributes.contentClass === everapi.CONTENT_CLASS);
       edit.insert(startPos, metaHeader + mdContent);
     });
   } catch (err) {
