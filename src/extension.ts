@@ -12,8 +12,9 @@ import {
 import fs from "./file";
 import * as evernote from "evernote";
 import {
-  EvernoteClient
-} from "./everapi";
+  IEvernoteService
+} from "./evernote/common/evernote";
+import { EvernoteService } from "./evernote/evermonkey/evernote";
 
 const config = vscode.workspace.getConfiguration("evermonkey");
 
@@ -36,7 +37,7 @@ notebook: %s
 let notebooks, notesMap, selectedNotebook;
 const localNote = {};
 let showTips;
-let client;
+let client: IEvernoteService;
 const serverResourcesCache = {};
 const tagCache = {};
 const converter = new Converter({});
@@ -108,11 +109,11 @@ async function syncAccount() {
     // TODO: configuration update event should be awared, so that a token can be reconfigured.
     const config = vscode.workspace.getConfiguration("evermonkey");
     await vscode.window.setStatusBarMessage("Synchronizing your account...", 1000);
-    client = new EvernoteClient(config.token, config.noteStoreUrl);
+    client = new EvernoteService(config.token, config.noteStoreUrl);
     const tags = await client.listTags();
     tags.forEach(tag => tagCache[tag.guid] = tag.name);
     notebooks = await client.listNotebooks();
-    let promises = notebooks.map(notebook => client.listAllNoteMetadatas(notebook.guid));
+    let promises = notebooks.map(notebook => client.listNotebookMetas(notebook.guid));
     const allMetas = await Promise.all(promises);
     const notes = _.flattenDeep(allMetas.map((meta: evernote.Types.Note) => meta.notes));
     notesMap = _.groupBy(notes, "notebookGuid");
@@ -181,7 +182,7 @@ async function attachToNote() {
 async function removeAttachment() {
   const editor = await vscode.window.activeTextEditor;
   let doc = editor.document;
-  // Can only remove an attachment from a cache file
+  // Can only remove an attachment from a sync file
   if (attachmentsCache[doc.fileName]) {
     let localAttachments = attachmentsCache[doc.fileName].map(cache => _.values(cache)[0]);
     const selectedAttachment = await vscode.window.showQuickPick(localAttachments.map(attachment => attachment.attributes.fileName));
@@ -203,11 +204,11 @@ async function listResources() {
     let serverResources = serverResourcesCache[doc.fileName];
     // open a note from server ,may have resouces
     if (localNote[doc.fileName]) {
-      const result = await client.getNoteResources(localNote[doc.fileName].guid);
+      const result = await client.getNoteWithResources(localNote[doc.fileName].guid);
       serverResources = result.resources;
       serverResourcesCache[doc.fileName] = serverResources;
     }
-    // show local cache only.
+    // show local sync only.
     localResources = attachmentsCache[doc.fileName].map(cache => _.values(cache)[0]);
     let serverResourcesName = [];
     let localResourcesName = [];
@@ -304,7 +305,7 @@ async function publishNote() {
       vscode.window.setStatusBarMessage("Updaing the note.", 2000);
       let updatedNote;
       let noteGuid = localNote[doc.fileName].guid;
-      const noteResources = await client.getNoteResources(noteGuid);
+      const noteResources = await client.getNoteWithResources(noteGuid);
       if (noteResources.resources || resources) {
         if (noteResources.resources) {
           resources = resources.concat(noteResources.resources);
@@ -317,7 +318,7 @@ async function publishNote() {
       }
       localNote[doc.fileName] = updatedNote;
       let notebookName = notebooks.find(notebook => notebook.guid === updatedNote.notebookGuid).name;
-      // attachments cache should be removed.
+      // attachments sync should be removed.
       attachmentsCache[doc.fileName] = [];
       return vscode.window.showInformationMessage(`${notebookName}>>${title} updated successfully.`);
     } else {
@@ -374,7 +375,7 @@ async function updateNoteResources(meta, content, noteGuid, resources) {
     let title = meta["title"];
     let notebook = meta["notebook"];
     const notebookGuid = await getNotebookGuid(notebook);
-    return client.updateNoteResources(noteGuid, title, content, tagNames, notebookGuid, resources || void 0);
+    return client.updateNote({noteGuid, title, content, tagNames, notebookGuid, resources});
 
   } catch (err) {
     wrapError(err);
@@ -387,7 +388,7 @@ async function updateNoteContent(meta, content, noteGuid) {
     let title = meta["title"];
     let notebook = meta["notebook"];
     const notebookGuid = await getNotebookGuid(notebook);
-    return client.updateNoteContent(noteGuid, title, content, tagNames, notebookGuid);
+    return client.updateNote({noteGuid, title, content, tagNames, notebookGuid});
 
   } catch (err) {
     wrapError(err);
@@ -403,7 +404,7 @@ async function getNotebookGuid(notebook) {
       if (notebookLocal) {
         notebookGuid = notebookLocal.guid;
       } else {
-        const createdNotebook = await client.createNotebook(notebook);
+        const createdNotebook = await client.createNoteBookWithTitle(notebook);
         notebooks.push(createdNotebook);
         notebookGuid = createdNotebook.guid;
       }
@@ -421,7 +422,7 @@ async function getNoteGuid(meta) {
     let title = meta["title"];
     let intitle = 'intitle:' + '"' + title + '"';
     let nguid = null;
-    let re = await client.listMyNotes(intitle);
+    let re = await client.listUserNotesInTile(intitle);
     let resul = re.notes;
     let arrayLength = resul.length;
     let i;
@@ -431,13 +432,13 @@ async function getNoteGuid(meta) {
     return nguid;
 }
 
-async function updateNoteOnServer(meta, content, resources, nguid) {
+async function updateNoteOnServer(meta, content, resources, noteGuid) {
   try {
     let title = meta["title"];
     let tagNames = meta["tags"];
     let notebook = meta["notebook"];
     const notebookGuid = await getNotebookGuid(notebook);
-    return client.updateNoteResources(nguid, title, content, tagNames, notebookGuid, resources || void 0);
+    return client.updateNote({noteGuid, title, content, tagNames, notebookGuid, resources});
   } catch (err) {
     wrapError(err);
   }
@@ -450,7 +451,7 @@ async function createNote(meta, content, resources) {
     let title = meta["title"];
     let notebook = meta["notebook"];
     const notebookGuid = await getNotebookGuid(notebook);
-    return client.createNote(title, notebookGuid, content, tagNames, resources);
+    return client.createNote({title, notebookGuid, content, tagNames, resources});
   } catch (err) {
     wrapError(err);
   }
@@ -485,7 +486,7 @@ async function newNote() {
     const doc = await vscode.workspace.openTextDocument({
       language: "markdown"
     });
-    // init attachment cache
+    // init attachment sync
     attachmentsCache[doc.fileName] = [];
     const editor = await vscode.window.showTextDocument(doc);
     let startPos = new vscode.Position(1, 0);
@@ -511,7 +512,7 @@ async function searchNote() {
     const query = await vscode.window.showInputBox({
       placeHolder: "Use Evernote Search Grammar to search notes."
     });
-    const searchResult = await client.searchNote(query);
+    const searchResult = await client.listNotesByKeyword(query);
     const noteWithbook = searchResult.notes.map(note => {
       let title = note["title"];
       selectedNotebook = notebooks.find(notebook => notebook.guid === note.notebookGuid);
@@ -552,7 +553,7 @@ async function openSearchResult(noteWithbook, notes) {
     let index = noteWithbook.indexOf(">>");
     let searchNoteResult = noteWithbook.substring(index + 2);
     let chooseNote = notes.find(note => note.title === searchNoteResult);
-    const note = await client.getNoteContent(chooseNote.guid);
+    const note = await client.getNoteWithContent(chooseNote.guid);
     const content = note.content;
     const doc = await vscode.workspace.openTextDocument({
       language: "markdown"
@@ -571,7 +572,7 @@ async function openNote(noteTitle) {
       return navToNote();
     }
     let selectedNote = notesMap[selectedNotebook.guid].find(note => note.title === noteTitle);
-    const note = await client.getNoteContent(selectedNote.guid);
+    const note = await client.getNoteWithContent(selectedNote.guid);
     const content = note.content;
     const doc = await vscode.workspace.openTextDocument({
       language: "markdown"
@@ -622,12 +623,12 @@ async function openNoteInBrowser() {
   }
 }
 
-// Open note in vscode and cache to memory.
+// Open note in vscode and sync to memory.
 async function cacheAndOpenNote(note, doc, content) {
   try {
     const editor = await vscode.window.showTextDocument(doc);
     localNote[doc.fileName] = note;
-    // attachtment cache init.
+    // attachtment sync init.
     attachmentsCache[doc.fileName] = [];
     let startPos = new vscode.Position(1, 0);
     let tagGuids = note.tagGuids;
@@ -640,7 +641,7 @@ async function cacheAndOpenNote(note, doc, content) {
         }
       });
       const newTagObj = await Promise.all(promises);
-      // update tag cache.
+      // update tag sync.
       newTagObj.forEach((tag: evernote.Types.Tag) => tagCache[tag.guid] = tag.name);
       tags = tagGuids.map(guid => tagCache[guid]);
     } else {
@@ -787,7 +788,7 @@ function activate(context) {
 }
 exports.activate = activate;
 
-// remove local cache when closed the editor.
+// remove local sync when closed the editor.
 function removeLocal(event) {
   localNote[event.fileName] = null;
   serverResourcesCache[event.fileName] = null;
