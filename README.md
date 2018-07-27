@@ -1,10 +1,7 @@
 # EverMonkey
 
 [![Build Status](https://travis-ci.org/michalyao/evermonkey.svg?branch=master)](https://travis-ci.org/michalyao/evermonkey)
-[![bitHound Overall Score](https://www.bithound.io/github/michalyao/evermonkey/badges/score.svg)](https://www.bithound.io/github/michalyao/evermonkey)
-[![bitHound Code](https://www.bithound.io/github/michalyao/evermonkey/badges/code.svg)](https://www.bithound.io/github/michalyao/evermonkey)
-[![bitHound Dependencies](https://www.bithound.io/github/michalyao/evermonkey/badges/dependencies.svg)](https://www.bithound.io/github/michalyao/evermonkey/master/dependencies/npm)
-[![bitHound Dev Dependencies](https://www.bithound.io/github/michalyao/evermonkey/badges/devDependencies.svg)](https://www.bithound.io/github/michalyao/evermonkey/master/dependencies/npm)
+
 
 
 Evernoting in vscode with *Markdown* Support!
