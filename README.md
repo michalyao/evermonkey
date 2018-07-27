@@ -7,6 +7,7 @@
 Evernoting in vscode with *Markdown* Support!
 
 ### Great thanks for [CodeMagics](https://www.codesmagic.com/mybatisplugin). The Best MyBatis Plugin for IDEA.
+![](https://res.cloudinary.com/webimagecodesmagic/image/upload/v1515051108/logo.png)
 
 ### 中国的朋友可以加我的微信公众号，**自在极客(微信号:javadev_)**。我会分享一些编程以及工作生活经验。有evermonkey 的使用问题也可以通过公众号反馈。
 
@@ -58,8 +59,6 @@ If you really like evermonkey, what about buying me a coffee? :smile:
 [paypal](https://paypal.me/Michalyao)
 
 ![支付宝](assets/alipay.png)
-
-![微信](assets/wechatpay.jpeg)
 
 **Have fun!**
 
