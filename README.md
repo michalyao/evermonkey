@@ -10,13 +10,14 @@ Evernoting in vscode with *Markdown* Support!
 
 <img src="https://res.cloudinary.com/webimagecodesmagic/image/upload/v1515051108/logo.png" width="200" height="60" />
 
-### 中国的朋友可以加我的微信公众号，**自在极客(微信号:javadev_)**。我会分享一些编程以及工作生活经验。有evermonkey 的使用问题也可以通过公众号反馈。
-
 ![](https://www.yourkit.com/images/yklogo.png)
 YourKit supports open source projects with its full-featured Java Profiler.
 YourKit, LLC is the creator of <a href="https://www.yourkit.com/java/profiler/">YourKit Java Profiler</a>
 and <a href="https://www.yourkit.com/.net/profiler/">YourKit .NET Profiler</a>,
 innovative and intelligent tools for profiling Java and .NET applications.
+
+中国的朋友可以加我的微信公众号，**自在极客(微信号:javadev_)**。我会分享一些编程以及工作生活经验。有evermonkey 的使用问题也可以通过公众号反馈。
+
 
 
 [Get Full Doc And Star Me](http://monkey.yoryor.top)
