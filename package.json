@@ -220,6 +220,11 @@
                     "type": "boolean",
                     "default": "true",
                     "description": "Enable readonly notes feature."
+                },
+                "evermonkey.preferMarkdown": {
+                    "type": "boolean",
+                    "default": "true",
+                    "description": "Prefect open as Markdown format"
                 }
             }
         }
