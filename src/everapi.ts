@@ -10,7 +10,7 @@ if (config.noteReadonly) {
   attributes = {
     contentClass: "michalyao.vscode.evermonkey"
   }
-} 
+}
 
 
 export class EvernoteClient {
@@ -30,10 +30,10 @@ export class EvernoteClient {
     return this.noteStore.findNotesMetadata({
       order: Evernote.Types.NoteSortOrder.UPDATED
     }, 0, RECENT_NOTE_COUNT, {
-      includeTitle: true,
-      includeNotebookGuid: true,
-      includeTagGuids: true
-    });
+        includeTitle: true,
+        includeNotebookGuid: true,
+        includeTagGuids: true
+      });
   }
 
   listMyNotes(intitle) {
@@ -58,10 +58,10 @@ export class EvernoteClient {
     return this.noteStore.findNotesMetadata({
       notebookGuid
     }, 0, MAX_NOTE_COUNT, {
-      includeTitle: true,
-      includeNotebookGuid: true,
-      includeTagGuids: true
-    });
+        includeTitle: true,
+        includeNotebookGuid: true,
+        includeTagGuids: true
+      });
   }
 
   getNoteContent(noteGuid) {
@@ -131,9 +131,9 @@ export class EvernoteClient {
     return this.noteStore.findNotesMetadata({
       words
     }, 0, MAX_NOTE_COUNT, {
-      includeNotebookGuid: true,
-      includeTitle: true
-    });
+        includeNotebookGuid: true,
+        includeTitle: true
+      });
   }
 
   getTag(guid) {

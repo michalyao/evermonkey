@@ -56,7 +56,7 @@ function exactMetadata(text) {
       let metaArray = metadataStr.split("\n");
       metaArray.forEach(value => {
         let sep = value.indexOf(":");
-        metadata[value.substring(0, sep).trim()] = value.substring(sep+1).trim();
+        metadata[value.substring(0, sep).trim()] = value.substring(sep + 1).trim();
       });
       if (metadata["tags"]) {
         let tagStr = metadata["tags"];
@@ -349,7 +349,7 @@ async function publishNote() {
         attachmentsCache[doc.fileName] = [];
         return vscode.window.showInformationMessage(`${notebookName}>>${title} created successfully.`);
       }
-   }
+    }
   } catch (err) {
     wrapError(err);
   }
@@ -418,17 +418,17 @@ async function getNotebookGuid(notebook) {
 }
 
 async function getNoteGuid(meta) {
-    let title = meta["title"];
-    let intitle = 'intitle:' + '"' + title + '"';
-    let nguid = null;
-    let re = await client.listMyNotes(intitle);
-    let resul = re.notes;
-    let arrayLength = resul.length;
-    let i;
-    for (i = 0; i < arrayLength; i ++) {
-        if (resul[i].title == title) nguid = resul[i].guid;
-    }
-    return nguid;
+  let title = meta["title"];
+  let intitle = 'intitle:' + '"' + title + '"';
+  let nguid = null;
+  let re = await client.listMyNotes(intitle);
+  let resul = re.notes;
+  let arrayLength = resul.length;
+  let i;
+  for (i = 0; i < arrayLength; i++) {
+    if (resul[i].title == title) nguid = resul[i].guid;
+  }
+  return nguid;
 }
 
 async function updateNoteOnServer(meta, content, resources, nguid) {
@@ -727,7 +727,7 @@ function activate(context) {
   filesSettings.update("eol", "\n", true);
 
   const markdownSettings = vscode.workspace.getConfiguration();
-  markdownSettings.update("[markdown]", {"editor.quickSuggestions": true}, true);
+  markdownSettings.update("[markdown]", { "editor.quickSuggestions": true }, true);
   if (!config.token || !config.noteStoreUrl) {
     vscode.window.showInformationMessage("Evernote token not set, please enter ever token command to help you configure.");
   }
@@ -736,24 +736,24 @@ function activate(context) {
     "scheme": "untitled",
     "language": "markdown"
   }], {
-    provideCompletionItems(doc, position) {
-      // simple but enough validation for title, tags, notebook
-      // title dont show tips.
-      if (position.line === 1) {
-        return [];
-      } else if (position.line === 2) {
-        // tags
-        if (tagCache) {
-          return _.values(tagCache).map(tag => new vscode.CompletionItem(tag));
+      provideCompletionItems(doc, position) {
+        // simple but enough validation for title, tags, notebook
+        // title dont show tips.
+        if (position.line === 1) {
+          return [];
+        } else if (position.line === 2) {
+          // tags
+          if (tagCache) {
+            return _.values(tagCache).map(tag => new vscode.CompletionItem(tag));
+          }
+        } else if (position.line === 3) {
+          if (notebooks) {
+            return notebooks.map(notebook => new vscode.CompletionItem(notebook.name));
+          }
         }
-      } else if (position.line === 3) {
-        if (notebooks) {
-          return notebooks.map(notebook => new vscode.CompletionItem(notebook.name));
-        }
-      }
 
-    }
-  });
+      }
+    });
   vscode.workspace.onDidCloseTextDocument(removeLocal);
   vscode.workspace.onDidSaveTextDocument(alertToUpdate);
   let listAllNotebooksCmd = vscode.commands.registerCommand("extension.navToNote", navToNote);
@@ -808,5 +808,5 @@ function alertToUpdate() {
 }
 
 // this method is called when your extension is deactivated
-function deactivate() {}
+function deactivate() { }
 exports.deactivate = deactivate;
