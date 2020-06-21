@@ -6,10 +6,6 @@
 
 Evernoting in vscode with *Markdown* Support!
 
-### Great thanks for [CodeMagics](https://www.codesmagic.com/mybatisplugin). The Best MyBatis Plugin for IDEA.
-
-<img src="https://res.cloudinary.com/webimagecodesmagic/image/upload/v1515051108/logo.png" width="200" height="60" />
-
 ![](https://www.yourkit.com/images/yklogo.png)
 YourKit supports open source projects with its full-featured Java Profiler.
 YourKit, LLC is the creator of <a href="https://www.yourkit.com/java/profiler/">YourKit Java Profiler</a>
