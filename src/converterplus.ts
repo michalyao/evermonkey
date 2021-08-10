@@ -102,12 +102,14 @@ export default class Converter {
   }
 
   async toEnml(markcontent) {
+    let BEGIN_NEW_MARK = '<span style="display:none">' + MAGIC_SPELL;
+    let END_NEW_MARK = MAGIC_SPELL + "</span>";
     const html = await this.toHtml(markcontent);
     let enml = '<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE en-note SYSTEM "http://xml.evernote.com/pub/enml2.dtd"><en-note>';
-    enml += "<!--" + MAGIC_SPELL;
+    enml += html; // prepend html content to prevent showing base64 in summary when using evernote web.
+    enml += BEGIN_NEW_MARK;
     enml += Buffer.from(markcontent, "utf-8").toString("base64");
-    enml += MAGIC_SPELL + "-->";
-    enml += html;
+    enml += END_NEW_MARK; 
     enml += "</en-note>";
     return enml;
   }
@@ -156,15 +158,30 @@ export default class Converter {
     let startIndex = enml.indexOf(">", beginTagIndex) + 1;
     let endIndex = enml.indexOf("</en-note>");
     let rawContent = enml.substring(startIndex, endIndex);
-    if (rawContent.indexOf(MAGIC_SPELL) !== -1) {
-      let beginMark = "<!--" + MAGIC_SPELL;
-      let beginMagicIdx = rawContent.indexOf(beginMark) + beginMark.length;
-      let endMagicIdx = rawContent.indexOf(MAGIC_SPELL + "-->");
+
+    let BEGIN_COMMENT_MARK = "<!--"+MAGIC_SPELL;
+    let END_COMMENT_MARK = MAGIC_SPELL+"-->";
+    
+    let BEGIN_NEW_MARK = '<span style="display:none">' + MAGIC_SPELL;
+    let END_NEW_MARK = MAGIC_SPELL + "</span>";
+    
+    //needs refactoring
+    if (rawContent.indexOf(BEGIN_COMMENT_MARK) !== -1) {
+      let beginMagicIdx = rawContent.indexOf(BEGIN_COMMENT_MARK) + BEGIN_COMMENT_MARK.length;
+      let endMagicIdx = rawContent.indexOf(END_COMMENT_MARK);
+      let magicString = rawContent.substring(beginMagicIdx, endMagicIdx);
+      magicString = magicString.replace(BEGIN_COMMENT_MARK,"");
+      magicString = magicString.replace(END_COMMENT_MARK, "");
+      let base64content = new Buffer(magicString, "base64");
+      return base64content.toString("utf-8");
+    }else if(rawContent.indexOf(BEGIN_NEW_MARK) !== -1){
+      let beginMagicIdx = rawContent.indexOf(BEGIN_NEW_MARK) + BEGIN_NEW_MARK.length;
+      let endMagicIdx = rawContent.indexOf(END_NEW_MARK);
       let magicString = rawContent.substring(beginMagicIdx, endMagicIdx);
       let base64content = new Buffer(magicString, "base64");
       return base64content.toString("utf-8");
     } else {
-      let commentRegex = /<!--.*?-->/;
+      let commentRegex = /<span style="display:none">.*?<\/span>/;
       let htmlStr = rawContent.replace(commentRegex, "");
       let mdtxt = toMarkdown(htmlStr);
       return this.todoFix(mdtxt);
