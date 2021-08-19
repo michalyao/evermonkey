@@ -2,7 +2,7 @@
     "name": "evermonkey",
     "displayName": "evermonkey",
     "description": "Markdown support for Evernote.",
-    "version": "2.4.1",
+    "version": "2.4.6",
     "publisher": "michalyao",
     "engines": {
         "vscode": "^1.10.0"
@@ -34,8 +34,7 @@
         "onCommand:extension.openRecentNotes"
     ],
     "contributes": {
-        "commands": [
-            {
+        "commands": [{
                 "command": "extension.navToNote",
                 "title": "Ever open: Open note in a tree-like structure."
             },
@@ -84,8 +83,7 @@
                 "title": "Ever everclient: View note in evernote client."
             }
         ],
-        "keybindings": [
-            {
+        "keybindings": [{
                 "command": "extension.navToNote",
                 "key": "alt+o"
             },
