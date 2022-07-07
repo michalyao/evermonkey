@@ -10,13 +10,12 @@ import * as evernote from "evernote";
 import { EvernoteClient } from "./everapi";
 import { openFilePicker } from "./vscode-util";
 import * as os from "os";
+import { AttachType, EnhanceQuickPickItem } from "./interface";
 
 const config = vscode.workspace.getConfiguration("evermonkey");
 
 const ATTACHMENT_FOLDER_PATH =
   config.attachmentsFolder || path.join(__dirname, "../../attachments");
-const ATTACHMENT_SOURCE_LOCAL = 0;
-const ATTACHMENT_SOURCE_SERVER = 1;
 const TIP_BACK = "back...";
 const METADATA_PATTERN =
   /^---[ \t]*\n((?:[ \t]*[^ \t:]+[ \t]*:[^\n]*\n)+)---[ \t]*\n/;
@@ -220,7 +219,6 @@ async function removeAttachment() {
   }
 }
 
-// list current file attachment.
 async function listResources() {
   try {
     const editor = await vscode.window.activeTextEditor;
@@ -239,27 +237,31 @@ async function listResources() {
     localResources = attachmentsCache[doc.fileName].map(
       (cache) => _.values(cache)[0]
     );
-    let serverResourcesName = [];
-    let localResourcesName = [];
+    let serverResourcesName: EnhanceQuickPickItem[] = [];
+    let localResourcesName: EnhanceQuickPickItem[] = [];
 
     if (serverResources) {
-      serverResourcesName = serverResources.map(
-        (attachment) =>
-          "(server) " +
-          attachment.attributes.fileName +
-          " -- At " +
-          new Date(attachment.attributes.timestamp).toLocaleString()
-      );
+      serverResourcesName = serverResources.map((attachment) => {
+        const attr = attachment.attributes;
+        return {
+          label: attr.fileName,
+          description: "server - " + new Date(attr.timestamp).toLocaleString(),
+          guid: attachment.guid,
+          type: AttachType.server,
+        };
+      });
     }
 
     if (localResources) {
-      localResourcesName = localResources.map(
-        (attachment) =>
-          "(local) " +
-          attachment.attributes.fileName +
-          " -- At " +
-          new Date(attachment.attributes.timestamp).toLocaleString()
-      );
+      localResourcesName = localResources.map((attachment) => {
+        const attr = attachment.attributes;
+        return {
+          label: attr.fileName,
+          description: "local - " + new Date(attr.timestamp).toLocaleString(),
+          guid: attachment.guid,
+          type: AttachType.local,
+        };
+      });
     }
 
     if (serverResourcesName || localResourcesName) {
@@ -270,28 +272,18 @@ async function listResources() {
       if (!selected) {
         throw "";
       }
-      let selectedAttachment;
-      let selectedFileName;
-      let source;
-      let uri;
-      if (selected.startsWith("(server) ")) {
-        selectedFileName = selected.substr(9);
-        selectedAttachment = serverResources.find(
-          (resource) => resource.attributes.fileName === selectedFileName
+      if (selected.type === AttachType.server) {
+        const selectedAttachment = serverResources.find(
+          (resource) => resource.guid === selected.guid
         );
-        source = ATTACHMENT_SOURCE_SERVER;
+        openAttachment(selected.type, selectedAttachment);
       } else {
-        selectedFileName = selected.substr(8);
-        selectedAttachment = localResources.find(
-          (resource) => resource.attributes.fileName === selectedFileName
+        const selectedCache = attachmentsCache[doc.fileName].find(
+          (cache) => _.values(cache)[0].guid === selected.guid
         );
-        source = ATTACHMENT_SOURCE_LOCAL;
-        let selectedCache = attachmentsCache[doc.fileName].find(
-          (cache) => _.values(cache)[0].attributes.fileName === selectedFileName
-        );
-        uri = _.keys(selectedCache)[0];
+        const uri = _.keys(selectedCache)[0];
+        openAttachment(selected.type, uri);
       }
-      openAttachment(selectedAttachment, source, uri);
     } else {
       vscode.window.showInformationMessage("No resouce to show.");
     }
@@ -300,18 +292,21 @@ async function listResources() {
   }
 }
 
+function openAttachment(type: AttachType.server, attachment);
+function openAttachment(type: AttachType.local, uri: string);
+
 // open an attachment, use default app.
-async function openAttachment(attachment, source, uri) {
-  switch (source) {
-    case ATTACHMENT_SOURCE_LOCAL:
+async function openAttachment(type: AttachType, entity: unknown) {
+  switch (type) {
+    case AttachType.local:
       try {
-        open(uri);
+        await open(entity as string, { wait: true });
       } catch (err) {
         wrapError(err);
       }
       break;
-    case ATTACHMENT_SOURCE_SERVER:
-      const resource = await client.getResource(attachment.guid);
+    case AttachType.server:
+      const resource = await client.getResource((entity as any).guid);
       const fileName = resource.attributes.fileName;
       const data = resource.data.body;
       try {
