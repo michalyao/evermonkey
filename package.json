@@ -2,10 +2,10 @@
     "name": "evermonkey",
     "displayName": "evermonkey",
     "description": "Markdown support for Evernote.",
-    "version": "2.4.5",
+    "version": "2.5.0",
     "publisher": "michalyao",
     "engines": {
-        "vscode": "^1.10.0"
+        "vscode": "^1.71.0"
     },
     "categories": [
         "Other",
@@ -23,7 +23,7 @@
     },
     "icon": "assets/icon.png",
     "homepage": "http://monkey.yoryor.me",
-    "main": "./out/src/extension",
+    "main": "./out/extension.js",
     "activationEvents": [
         "onCommand:extension.navToNote",
         "onCommand:extension.publishNote",
@@ -220,15 +220,22 @@
                     "type": "boolean",
                     "default": "true",
                     "description": "Enable readonly notes feature."
+                },
+                "evermonkey.preferMarkdown": {
+                    "type": "boolean",
+                    "default": "true",
+                    "description": "Prefect open as Markdown format"
                 }
             }
         }
     },
     "scripts": {
-        "vscode:prepublish": "tsc -p ./",
-        "compile": "tsc -watch -p ./",
-        "postinstall": "node ./node_modules/vscode/bin/install"
-    },
+        "vscode:prepublish": "npm run compile",
+        "compile": "tsc -p ./",
+        "watch": "tsc -watch -p ./",
+        "pretest": "npm run compile",
+        "test": "node ./out/test/runTest.js"
+      },
     "dependencies": {
         "bluebird": "^3.5.0",
         "cheerio": "^0.22.0",
@@ -248,11 +255,14 @@
         "to-markdown": "3.0.4"
     },
     "devDependencies": {
-        "typescript": "^2.0.3",
-        "vscode": "^1.1.0",
-        "mocha": "^3.2.0",
+        "typescript": "^4.7.4",
+        "@types/vscode": "^1.71.0",
+        "@vscode/test-electron": "^2.1.5",
+        "mocha": "^10.0.0",
+        "glob": "^8.0.3",
         "eslint": "^3.6.0",
-        "@types/node": "7.0.12",
-        "@types/mocha": "^2.2.32"
+        "@types/node": "16.x",
+        "@types/mocha": "^9.1.1",
+        "@types/glob": "^7.2.0"
     }
 }

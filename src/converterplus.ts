@@ -54,7 +54,7 @@ export default class Converter {
         if (lang && hljs.getLanguage(lang)) {
           try {
             return `<pre class="hljs"><code>${hljs.highlight(lang, code, true).value}</code></pre>`;
-          } catch (err) {}
+          } catch (err) { }
         }
         return `<pre class="hljs"><code>${md.utils.escapeHtml(code)}</code></pre>`;
       },
