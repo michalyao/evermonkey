@@ -60,8 +60,6 @@ Then open your user setting by `Preferences: Open User Settings`, and copy&paste
 
 If you really like evermonkey, what about buying me a coffee? :smile:
 
-[paypal](https://paypal.me/Michalyao)
-
 ![支付宝](assets/alipay.png)
 
 **Have fun!**
