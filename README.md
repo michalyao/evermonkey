@@ -62,6 +62,7 @@ If you really like evermonkey, what about buying me a coffee? :smile:
 
 ![支付宝](assets/alipay.png)
 
+![微信](assets/wechatpay.jpeg)
 
 **Have fun!**
 
