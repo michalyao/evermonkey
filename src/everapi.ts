@@ -6,12 +6,28 @@ const config = vscode.workspace.getConfiguration("evermonkey");
 const RECENT_NOTE_COUNT = config.recentNotesCount || 10;
 const MAX_NOTE_COUNT = config.maxNoteCount || 50;
 let attributes = {};
+let html_attributes = {};
 if (config.noteReadonly) {
   attributes = {
     contentClass: "michalyao.vscode.evermonkey"
   }
-} 
+}
 
+function getDefaultAttributes(isMD) {
+  return isMD ? attributes : html_attributes
+}
+
+export type Note = {
+  guid: any,
+  notebookGuid: any,
+  resources: any,
+  content: any,
+  isMD: boolean,
+  /* metadata */
+  title: string,
+  tagNames: Array<string>,
+  notebook: string,
+}
 
 export class EvernoteClient {
   noteStore;
@@ -30,10 +46,10 @@ export class EvernoteClient {
     return this.noteStore.findNotesMetadata({
       order: Evernote.Types.NoteSortOrder.UPDATED
     }, 0, RECENT_NOTE_COUNT, {
-      includeTitle: true,
-      includeNotebookGuid: true,
-      includeTagGuids: true
-    });
+        includeTitle: true,
+        includeNotebookGuid: true,
+        includeTagGuids: true
+      });
   }
 
   listMyNotes(intitle) {
@@ -58,10 +74,10 @@ export class EvernoteClient {
     return this.noteStore.findNotesMetadata({
       notebookGuid
     }, 0, MAX_NOTE_COUNT, {
-      includeTitle: true,
-      includeNotebookGuid: true,
-      includeTagGuids: true
-    });
+        includeTitle: true,
+        includeNotebookGuid: true,
+        includeTagGuids: true
+      });
   }
 
   getNoteContent(noteGuid) {
@@ -81,26 +97,26 @@ export class EvernoteClient {
     return this.noteStore.getResource(guid, true, false, true, false);
   }
 
-  updateNoteContent(guid, title, content, tagNames, notebookGuid) {
+  updateNoteContent(note: Note) {
     return this.noteStore.updateNote({
-      guid,
-      title,
-      content,
-      tagNames,
-      notebookGuid,
-      attributes
+      guid: note.guid,
+      title: note.title,
+      content: note.content,
+      tagNames: note.tagNames,
+      notebookGuid: note.notebookGuid,
+      attributes: getDefaultAttributes(note.isMD),
     });
   }
 
-  updateNoteResources(guid, title, content, tagNames, notebookGuid, resources) {
+  updateNoteResources(note: Note) {
     return this.noteStore.updateNote({
-      guid,
-      title,
-      content,
-      tagNames,
-      notebookGuid,
-      resources,
-      attributes
+      guid: note.guid,
+      title: note.title,
+      content: note.content,
+      tagNames: note.tagNames,
+      notebookGuid: note.notebookGuid,
+      resources: note.resources || void 0,
+      attributes: getDefaultAttributes(note.isMD),
     });
   }
 
@@ -111,14 +127,14 @@ export class EvernoteClient {
     });
   }
 
-  createNote(title, notebookGuid, content, tagNames, resources) {
+  createNote(note: Note) {
     return this.noteStore.createNote({
-      title,
-      notebookGuid,
-      content,
-      tagNames,
-      resources,
-      attributes
+      title: note.title,
+      notebookGuid: note.notebookGuid,
+      content: note.content,
+      tagNames: note.tagNames,
+      resources: note.resources || void 0,
+      attributes: getDefaultAttributes(note.isMD),
     });
   }
 
@@ -131,9 +147,9 @@ export class EvernoteClient {
     return this.noteStore.findNotesMetadata({
       words
     }, 0, MAX_NOTE_COUNT, {
-      includeNotebookGuid: true,
-      includeTitle: true
-    });
+        includeNotebookGuid: true,
+        includeTitle: true
+      });
   }
 
   getTag(guid) {

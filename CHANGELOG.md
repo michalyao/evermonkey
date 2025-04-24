@@ -1,5 +1,9 @@
 # Change Log
 
+## [Unreleased]
+- 2.5.0
+  - add `evermonkey.preferMarkdown`
+
 ## [Released]
 - 2.4.5
     - fixed #97 update note failed when local cache crashed.
