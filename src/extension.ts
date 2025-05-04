@@ -171,7 +171,7 @@ async function attachToNote() {
     editor.edit(edit => {
       edit.insert(position, util.format('<en-media type="%s" hash="%s"></en-media>', attachment.mime, Buffer.from(attachment.data.bodyHash).toString("hex")));
     });
-    vscode.window.showInformationMessage(util.format("%s has been attched to current note.", fileName));
+    vscode.window.showInformationMessage(util.format("%s has been attached to current note.", fileName));
   } catch (err) {
     wrapError(err);
   }
@@ -301,7 +301,7 @@ async function publishNote() {
     }
     if (localNote[doc.fileName]) {
       // update the note.
-      vscode.window.setStatusBarMessage("Updaing the note.", 2000);
+      vscode.window.setStatusBarMessage("Updating the note.", 2000);
       let updatedNote;
       let noteGuid = localNote[doc.fileName].guid;
       const noteResources = await client.getNoteResources(noteGuid);
